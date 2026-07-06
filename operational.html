@@ -113,7 +113,7 @@ a.nav-item{text-decoration:none}
 .action-dot{width:32px;height:30px;border:1px solid var(--line);border-radius:7px;background:#fff;color:#56606a;font-size:20px;line-height:20px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}.action-dot:hover{border-color:var(--blue);color:var(--blue);background:#f5fbfe}
 .action-popover{position:fixed;z-index:1200;min-width:190px;background:#fff;border:1px solid var(--line);border-radius:9px;box-shadow:0 14px 36px rgba(20,30,40,.2);padding:6px;animation:pop .14s ease}.action-popover button{border:0;background:#fff;width:100%;text-align:left;padding:9px 10px;border-radius:6px;color:#414a53;cursor:pointer;font-size:12px}.action-popover button:hover{background:#eef8fc;color:var(--cyan-dark)}.action-popover button.danger{color:var(--red)}.action-popover button.danger:hover{background:var(--red-bg)}
 .import-preview{max-height:280px;overflow:auto;border:1px solid var(--line);border-radius:8px}.import-preview table{font-size:11px}.pod-preview{display:grid;grid-template-columns:minmax(230px,1.15fr) minmax(220px,.85fr);gap:14px}.pod-photo{min-height:260px;border:1px solid var(--line);border-radius:10px;background:#f5f7f8;display:flex;align-items:center;justify-content:center;overflow:hidden}.pod-photo img{width:100%;height:100%;max-height:390px;object-fit:contain}.signature-box{min-height:95px;border:1px dashed #aab5bd;border-radius:8px;background:#fbfcfc;display:flex;align-items:center;justify-content:center;font-family:cursive;font-size:25px;color:#34404a;padding:12px;text-align:center}.doc-selection-table{border:1px solid var(--line);border-radius:8px;overflow:auto;margin-top:8px}.doc-selection-table table{font-size:11px}.refresh-strip{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 13px 0;padding:8px 10px;border:1px solid #d8edf5;background:#f4fbfe;border-radius:8px;font-size:10px;color:#5e6b74}.refresh-strip button{border:0;background:none;color:var(--cyan-dark);font-weight:600;cursor:pointer}
-@media(max-width:760px){.pod-preview{grid-template-columns:1fr}.page-head .head-actions .input{min-width:145px}.action-popover{min-width:170px}.toolbar #readyFleetSelect,.toolbar #readyShippingOption,.toolbar #readyHubFilter{min-width:100%;width:100%}}
+@media(max-width:760px){.pod-preview{grid-template-columns:1fr}.page-head .head-actions .input{min-width:145px}.action-popover{min-width:170px}.toolbar #readyShippingOption,.toolbar #readyHubFilter{min-width:100%;width:100%}}
 
 
 /* ===== OPERATIONAL REVISION V4 ===== */
@@ -237,7 +237,7 @@ a.nav-item{text-decoration:none}
 <div class="window">
 <div class="tabs"><button class="tab active" onclick="planningTab(this,'candidatePanel')">Ready Documents</button><button class="tab" onclick="planningTab(this,'planPanel')">Shipment Plans</button><button class="tab" onclick="planningTab(this,'recommendPanel');generateRecommendations()">Auto Group Recommendation</button></div>
 <div id="candidatePanel">
-<div class="toolbar"><input class="input" id="docSearch" onkeydown="if(event.key==='Enter')renderDocuments()" placeholder="Document / recipient / destination"/><select class="select" id="docTypeFilter" onchange="renderDocuments()"><option value="">All Document Types</option><option value="DO">Delivery Order</option><option value="STO">Stock Transfer Out</option></select><select class="select" id="readyHubFilter" onchange="renderDocuments()"><option value="">All Origin Hubs</option></select><select class="select" id="readyShippingOption" onchange="updateReadyFleetOptions()"><option>Fleet Company</option><option>Expedition</option></select><select class="select" id="readyFleetSelect"><option value="">Auto Select Fleet</option></select><button class="btn btn-outline" onclick="renderDocuments()">Search</button><span class="spacer"></span><button class="btn btn-ghost" onclick="openDocumentImport()">Import Excel</button><button class="btn btn-primary" onclick="openShipmentWizard()">Create Plan</button></div>
+<div class="toolbar"><input class="input" id="docSearch" onkeydown="if(event.key==='Enter')renderDocuments()" placeholder="Document / recipient / destination"/><select class="select" id="docTypeFilter" onchange="renderDocuments()"><option value="">All Document Types</option><option value="DO">Delivery Order</option><option value="STO">Stock Transfer Out</option></select><select class="select" id="readyHubFilter" onchange="renderDocuments()"><option value="">All Origin Hubs</option></select><select class="select" id="readyShippingOption"><option>Fleet Company</option><option>Expedition</option></select><button class="btn btn-outline" onclick="renderDocuments()">Search</button><span class="spacer"></span><button class="btn btn-ghost" onclick="openDocumentImport()">Import Excel</button><button class="btn btn-primary" onclick="openShipmentWizard()">Create Plan</button></div>
 <div class="notice" id="selectedDocInfo" style="margin:12px 14px">No document selected.</div>
 <div class="table-wrap"><table class="tbl"><thead><tr><th style="width:38px">Select</th><th>Dispatch Deadline</th><th>Document</th><th>Customer / Recipient</th><th>Origin Hub</th><th>Destination</th><th>Weight</th><th>Volume</th><th>Priority</th><th>Status</th><th>Action</th></tr></thead><tbody id="documentTbody"></tbody></table></div>
 <div class="pager">Demo import contains 120+ documents for testing.</div>
@@ -1165,7 +1165,7 @@ function driverAction(a){
 
 /* ===== OPERATIONAL REVISION V4 LOGIC ===== */
 let operationalMobileView='trips';
-let mobilePodDraft={key:'',fileName:'',photoData:'',signatureData:''};
+let mobilePodDraft={key:'',fileName:'',photoData:'',signatureData:'',receiverName:'',deliveryResult:'Successfully Delivered',deliveryReason:''};
 
 function wizardSelectedDocuments(){
   const ids=(document.getElementById('sw-docs')?.value||'').split('|').filter(Boolean);
@@ -1264,7 +1264,7 @@ function updateMobileFooter(){
   const titles={trips:'My Trips',route:'Route',exception:'Exception',profile:'Profile'},title=document.getElementById('phoneTitle');if(title)title.textContent=titles[operationalMobileView]||'Driver Mobile';
 }
 function currentDriverRecord(){return driverByUsername(db.mobileDriverUser)}
-function ensurePodDraft(p,st){const key=p.id+':'+Number(st.currentStop||0);if(mobilePodDraft.key!==key)mobilePodDraft={key,fileName:'',photoData:'',signatureData:''};}
+function ensurePodDraft(p,st){const key=p.id+':'+Number(st.currentStop||0);if(mobilePodDraft.key!==key)mobilePodDraft={key,fileName:'',photoData:'',signatureData:'',receiverName:'',deliveryResult:'Successfully Delivered',deliveryReason:''};}
 function renderMobileRoute(p,st){
   if(!p)return '<div class="empty">No route assigned.</div>';const current=Number(st.currentStop||0);
   return `<div class="mobile-route-head"><h4>${esc(p.route||p.origin+' → '+p.destination)}</h4><p>${p.stopCategory==='Hub'&&p.transitHub?'Transit via '+esc(p.transitHub)+' • ':''}${p.stops.length} delivery stop(s)</p></div><div class="phone-section-title">Route Progress</div>${p.stops.map((s,i)=>`<div class="mobile-route-stop ${i<current||s.pod?'done':i===current?'current':''}"><span class="stop-number">${i<current||s.pod?'✓':i+1}</span><div class="stop-detail"><b>${esc(s.customer)}</b><p>${esc(s.destination||s.doc)} • ${esc(s.doc)}</p><p>${s.pod?'Completed '+esc(s.arrival||''):i===current?'Current / next stop':'Upcoming'}</p></div></div>`).join('')}<button class="phone-btn" onclick="setMobileView('trips')">Open Current Trip Action</button>`;
@@ -1277,8 +1277,10 @@ function renderMobileProfile(p,st){
   return `<div class="phone-card"><h4>${esc(d?.name||db.mobileDriverUser||'Driver')}</h4><div class="phone-row"><span>Username</span><b>${esc(d?.username||'-')}</b></div><div class="phone-row"><span>Phone</span><b>${esc(d?.phone||'-')}</b></div><div class="phone-row"><span>SIM</span><b>${esc(d?.sim||'-')}</b></div><div class="phone-row"><span>Carrier</span><b>${esc(d?.carrier||'-')}</b></div><div class="phone-row"><span>Base Pool</span><b>${esc(d?.pool||'-')}</b></div></div><div class="mobile-stat-grid"><div class="mobile-stat"><span>Assigned Trips</span><b>${assigned.length}</b></div><div class="mobile-stat"><span>Completed</span><b>${completed}</b></div><div class="mobile-stat"><span>First Odometer</span><b>${st?.odometerStart?Number(st.odometerStart).toLocaleString('id-ID')+' km':'-'}</b></div><div class="mobile-stat"><span>First Fuel</span><b>${st?.fuelStart!==undefined&&st?.fuelStart!==''?st.fuelStart+'%':'-'}</b></div></div>${p?`<div class="phone-card"><h4>Current Vehicle</h4><div class="phone-row"><span>Plate</span><b>${esc(p.vehicle)}</b></div><div class="phone-row"><span>Type</span><b>${esc(v?.type||'-')}</b></div><div class="phone-row"><span>Status</span><b>${esc(v?.status||'-')}</b></div></div>`:''}<button class="phone-btn ghost" onclick="refreshDriverMobile()">Refresh Profile & Assignment</button>`;
 }
 function renderPodForm(p,st){
-  ensurePodDraft(p,st);const photo=mobilePodDraft.photoData?`src="${mobilePodDraft.photoData}" style="display:block"`:'';
-  return `${tripCard(p)}<div class="phone-card"><h4>Delivery Result & ePOD</h4><label class="field-label-mobile">Delivery Result</label><select class="select" id="mobileResult" style="width:100%" onchange="document.getElementById('unsuccessNote').style.display=this.value==='Unsuccessfully Delivered'?'block':'none'"><option>Successfully Delivered</option><option>Unsuccessfully Delivered</option></select><input class="input" id="receiverName" placeholder="Receiver Name" style="width:100%;margin-top:8px"><textarea class="textarea unsuccess-note" id="unsuccessNote" placeholder="Reason for unsuccessful delivery"></textarea><div class="upload-box"><label for="podPhoto">▣ Choose POD Photo<input id="podPhoto" type="file" accept="image/*" hidden onchange="handlePodFile(this)"></label><div class="upload-status" id="podUploadStatus">${mobilePodDraft.fileName?esc(mobilePodDraft.fileName):'No photo selected'}</div><img class="pod-thumb" id="podPhotoPreview" ${photo} alt="POD preview"></div><div class="signature-wrap"><label><span>Receiver Signature</span><button type="button" onclick="clearSignature()">Clear</button></label><canvas class="signature-canvas" id="signatureCanvas"></canvas><div class="signature-hint">Sign directly inside the box using finger, mouse, or stylus.</div></div></div><button class="phone-btn" onclick="driverAction('pod')">Submit ePOD</button>`;
+  ensurePodDraft(p,st);
+  const photo=mobilePodDraft.photoData?`src="${mobilePodDraft.photoData}" style="display:block"`:'';
+  const successful=mobilePodDraft.deliveryResult!=='Unsuccessfully Delivered';
+  return `${tripCard(p)}<div class="phone-card"><h4>Delivery Result & ePOD</h4><label class="field-label-mobile">Delivery Result</label><select class="select" id="mobileResult" style="width:100%" onchange="mobilePodDraft.deliveryResult=this.value;document.getElementById('unsuccessNote').style.display=this.value==='Unsuccessfully Delivered'?'block':'none'"><option ${successful?'selected':''}>Successfully Delivered</option><option ${!successful?'selected':''}>Unsuccessfully Delivered</option></select><input class="input" id="receiverName" value="${esc(mobilePodDraft.receiverName||'')}" oninput="mobilePodDraft.receiverName=this.value" placeholder="Receiver Name" style="width:100%;margin-top:8px"><textarea class="textarea unsuccess-note" id="unsuccessNote" oninput="mobilePodDraft.deliveryReason=this.value" placeholder="Reason for unsuccessful delivery" style="display:${successful?'none':'block'}">${esc(mobilePodDraft.deliveryReason||'')}</textarea><div class="upload-box"><label for="podPhoto">▣ Choose POD Photo<input id="podPhoto" type="file" accept="image/*" hidden onchange="handlePodFile(this)"></label><div class="upload-status" id="podUploadStatus">${mobilePodDraft.fileName?esc(mobilePodDraft.fileName):'No photo selected'}</div><img class="pod-thumb" id="podPhotoPreview" ${photo} alt="POD preview"></div><div class="signature-wrap"><label><span>Receiver Signature</span><button type="button" onclick="clearSignature()">Clear</button></label><canvas class="signature-canvas" id="signatureCanvas"></canvas><div class="signature-hint">Sign directly inside the box using finger, mouse, or stylus.</div></div></div><button class="phone-btn" onclick="driverAction('pod')">Submit ePOD</button>`;
 }
 function renderDriverTripWorkflow(p,st){
   const s=Number(st.step||0),fo=fleetOrderForPlan(p.id),current=p.stops[Math.min(st.currentStop||0,p.stops.length-1)],vehicle=db.vehicles.find(v=>v.plate===p.vehicle),fleetMap=db.fleetMappings?.find(v=>v.id===p.vehicle),currentOdo=Number(st.odometerStart||fleetMap?.odometer||vehicle?.odometer||0),loaded=(p.loadedDocs||[]).length,allLoaded=loaded===p.docs.length;let html=`<div class="refresh-strip"><span>Shared live data • ${esc(p.lastUpdate||'-')}</span><button onclick="refreshDriverMobile()">↻ Refresh</button></div>`;
@@ -1304,8 +1306,11 @@ function renderDriverMobile(){
   let html='',needsSignature=false;if(operationalMobileView==='route')html=renderMobileRoute(p,st);else if(operationalMobileView==='exception')html=renderMobileExceptions(p);else if(operationalMobileView==='profile')html=renderMobileProfile(p,st);else{const r=renderDriverTripWorkflow(p,st);html=r.html;needsSignature=r.needsSignature;}body.innerHTML=html;updateMobileFooter();if(needsSignature)requestAnimationFrame(initSignaturePad);
 }
 function handlePodFile(input){
+  mobilePodDraft.receiverName=document.getElementById('receiverName')?.value||mobilePodDraft.receiverName||'';
+  mobilePodDraft.deliveryResult=document.getElementById('mobileResult')?.value||mobilePodDraft.deliveryResult||'Successfully Delivered';
+  mobilePodDraft.deliveryReason=document.getElementById('unsuccessNote')?.value||mobilePodDraft.deliveryReason||'';
   const file=input.files?.[0];if(!file)return;if(!file.type.startsWith('image/')){toast('POD attachment harus berupa gambar');input.value='';return;}if(file.size>10*1024*1024){toast('Ukuran file maksimal 10 MB');input.value='';return;}
-  const reader=new FileReader();reader.onerror=()=>toast('File POD tidak dapat dibaca');reader.onload=()=>{const img=new Image();img.onload=()=>{const max=1100,scale=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));c.getContext('2d').drawImage(img,0,0,c.width,c.height);mobilePodDraft.fileName=file.name;mobilePodDraft.photoData=c.toDataURL('image/jpeg',.78);const status=document.getElementById('podUploadStatus'),preview=document.getElementById('podPhotoPreview');if(status)status.textContent=file.name+' • '+Math.round(file.size/1024)+' KB';if(preview){preview.src=mobilePodDraft.photoData;preview.style.display='block';}toast('POD photo attached');};img.onerror=()=>toast('Gambar POD tidak valid');img.src=String(reader.result||'');};reader.readAsDataURL(file);
+  const reader=new FileReader();reader.onerror=()=>toast('File POD tidak dapat dibaca');reader.onload=()=>{const img=new Image();img.onload=()=>{const max=1100,scale=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));c.getContext('2d').drawImage(img,0,0,c.width,c.height);mobilePodDraft.fileName=file.name;mobilePodDraft.photoData=c.toDataURL('image/jpeg',.78);const status=document.getElementById('podUploadStatus'),preview=document.getElementById('podPhotoPreview'),receiver=document.getElementById('receiverName');if(status)status.textContent=file.name+' • '+Math.round(file.size/1024)+' KB';if(preview){preview.src=mobilePodDraft.photoData;preview.style.display='block';}if(receiver&&receiver.value!==mobilePodDraft.receiverName)receiver.value=mobilePodDraft.receiverName;toast('POD photo attached');};img.onerror=()=>toast('Gambar POD tidak valid');img.src=String(reader.result||'');};reader.readAsDataURL(file);
 }
 function initSignaturePad(){
   const canvas=document.getElementById('signatureCanvas');if(!canvas)return;const rect=canvas.getBoundingClientRect(),ratio=Math.max(1,window.devicePixelRatio||1);canvas.width=Math.round(rect.width*ratio);canvas.height=Math.round(rect.height*ratio);const ctx=canvas.getContext('2d');ctx.scale(ratio,ratio);ctx.fillStyle='#fff';ctx.fillRect(0,0,rect.width,rect.height);ctx.strokeStyle='#26343d';ctx.lineWidth=2;ctx.lineCap='round';ctx.lineJoin='round';
@@ -1315,7 +1320,7 @@ function initSignaturePad(){
 function clearSignature(){mobilePodDraft.signatureData='';initSignaturePad();}
 function finishDriverPod(p,st,fo,driver,vehicle,result,receiver,signatureData,photoName,photoData,reason=''){
   const stop=p.stops[st.currentStop||0];stop.status=result;stop.pod=true;stop.receiver=receiver;stop.podRef=photoName||'Receiver Signature';stop.signatureRef='Receiver Signature';stop.signatureData=signatureData;stop.podPhotoName=photoName||'No photo file';stop.podPhotoData=photoData||'';stop.deliveryReason=reason;stop.arrival=new Date().toLocaleString('sv-SE').slice(0,16);p.lastUpdate='ePOD submitted for '+stop.doc;if(result!=='Successfully Delivered')p.health='Exception';integrationEvent('POD',stop.doc,'delivery.pod.received',result+' • receiver '+receiver,'McEasy → Prieds');
-  mobilePodDraft={key:'',fileName:'',photoData:'',signatureData:''};if((st.currentStop||0)<p.stops.length-1){st.currentStop=(st.currentStop||0)+1;st.step=4;p.status='In Transit';if(fo){fo.status='OTW Tujuan';fo.updated='Proceeding to next stop';}}else{st.step=7;p.status='Returning';if(driver)driver.status='Returning';if(vehicle)vehicle.status='Returning';if(fo){fo.status='Delivered';fo.updated='All stops processed';fo.lastLocation=p.destination;}integrationEvent('Fleet Order',fo?.id||p.id,'order.delivered','All stops processed and POD synchronized','McEasy → Prieds');}saveDB();renderAll();renderDriverMobile();toast('ePOD, photo, and signature saved');
+  mobilePodDraft={key:'',fileName:'',photoData:'',signatureData:'',receiverName:'',deliveryResult:'Successfully Delivered',deliveryReason:''};if((st.currentStop||0)<p.stops.length-1){st.currentStop=(st.currentStop||0)+1;st.step=4;p.status='In Transit';if(fo){fo.status='OTW Tujuan';fo.updated='Proceeding to next stop';}}else{st.step=7;p.status='Returning';if(driver)driver.status='Returning';if(vehicle)vehicle.status='Returning';if(fo){fo.status='Delivered';fo.updated='All stops processed';fo.lastLocation=p.destination;}integrationEvent('Fleet Order',fo?.id||p.id,'order.delivered','All stops processed and POD synchronized','McEasy → Prieds');}saveDB();renderAll();renderDriverMobile();toast('ePOD, photo, and signature saved');
 }
 function driverAction(a){
   const p=driverPlan(),st=selectedDriverState();if(!p||!st)return;const fo=fleetOrderForPlan(p.id),driver=db.drivers.find(x=>x.name===p.driver),vehicle=db.vehicles.find(x=>x.plate===p.vehicle);
@@ -2211,6 +2216,83 @@ const moduleName=v6Module();if(moduleName==='MASTER')v6InstallMasterUI();else if
   ensureDriverHistoryData();renderAll();if(document.getElementById('page-'+(document.body.dataset.initialPage||'dashboard')))goPage(document.body.dataset.initialPage||'dashboard');
 })();
 
+</script>
+
+
+<script>
+/* ===== Operational Revision: Remove Plate Filter + Preserve POD Draft + First Odometer Barrier ===== */
+(function operationalDriverGuardRevision(){
+  function validOdometerValue(value){
+    return value !== undefined && value !== null && String(value).trim() !== '' && Number.isFinite(Number(value));
+  }
+
+  window.ensureFirstOdometerState=function(plan,state){
+    if(!plan||!state)return null;
+    if(validOdometerValue(state.odometerStart))return Number(state.odometerStart);
+    const vehicle=(db.vehicles||[]).find(x=>x.plate===plan.vehicle);
+    const fleetMap=(db.fleetMappings||[]).find(x=>x.id===plan.vehicle||x.plate===plan.vehicle);
+    const fallback=[fleetMap?.odometer,vehicle?.odometer].find(validOdometerValue);
+    if(fallback===undefined)return null;
+    state.odometerStart=Number(fallback);
+    return state.odometerStart;
+  };
+
+  const baseRenderDriverTripWorkflow=window.renderDriverTripWorkflow;
+  window.renderDriverTripWorkflow=function(plan,state){
+    ensureFirstOdometerState(plan,state);
+    return baseRenderDriverTripWorkflow(plan,state);
+  };
+
+  const baseRenderMobileProfile=window.renderMobileProfile;
+  window.renderMobileProfile=function(plan,state){
+    if(plan&&state)ensureFirstOdometerState(plan,state);
+    return baseRenderMobileProfile(plan,state);
+  };
+
+  const baseDriverActionWithMasterValidation=window.driverAction;
+  window.driverAction=function(action){
+    const plan=driverPlan(),state=selectedDriverState();
+    if(action==='close'){
+      const first=ensureFirstOdometerState(plan,state);
+      if(first===null){
+        toast('First Odometer wajib tersedia sebelum trip dapat ditutup');
+        return;
+      }
+    }
+    return baseDriverActionWithMasterValidation(action);
+  };
+
+  const baseOperationalRiskValidation=window.runOperationalRiskValidation;
+  window.runOperationalRiskValidation=function(scope,silent=false){
+    const result=baseOperationalRiskValidation(scope,silent);
+    const scopes=scope?[scope]:['Shipment Planning','Shipment Schedule','Loading & Dispatch','Monitoring Shipment','Driver Mobile'];
+    if(scopes.includes('Driver Mobile')){
+      Object.entries(db.driverStates||{}).forEach(([planId,state])=>{
+        const plan=(db.plans||[]).find(x=>x.id===planId);
+        if(!plan)return;
+        const first=ensureFirstOdometerState(plan,state);
+        if(state.step>=2&&first===null&&typeof rcEmit==='function'){
+          rcEmit({
+            rule:'FIRST_ODOMETER_MISSING',
+            sourceModule:'Driver Mobile',
+            sourceType:'Driver Mobile',
+            sourceRef:planId,
+            title:'First Odometer is mandatory',
+            negativeCase:`${planId} sudah melewati Pre-Trip tetapi First Odometer kosong.`,
+            expectedCondition:'First Odometer wajib tercatat sebelum Loading, Dispatch, ePOD, dan Close Trip.',
+            actualCondition:'First Odometer tidak tersedia pada Driver State maupun Vehicle Master.',
+            severity:'Critical',
+            blocking:true,
+            sourceRecord:planId
+          });
+        }
+      });
+      saveDB();
+      if(typeof installOperationalRiskBanners==='function')installOperationalRiskBanners();
+    }
+    return result;
+  };
+})();
 </script>
 
 <script>
