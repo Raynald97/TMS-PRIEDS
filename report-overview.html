@@ -220,6 +220,21 @@ a.nav-item{text-decoration:none}
 /* ===== Report Center Interactive KPI & Search Revision V2 ===== */
 .kpi.kpi-clickable{cursor:pointer;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}.kpi.kpi-clickable:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(20,30,40,.10);border-color:#b9dfea}.kpi.kpi-clickable:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(40,169,224,.13)}.kpi-open-hint{margin-top:8px;padding-top:7px;border-top:1px solid #eef1f3;color:var(--cyan-dark);font-size:9.5px;font-weight:600}.report-filter-toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.report-filter-toolbar .input{min-width:230px;flex:1}.report-filter-toolbar .select{min-width:170px}.report-detail-table.compact{min-width:760px}.report-detail-status{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:11px;font-size:10px;font-weight:500}.report-detail-status.good{background:var(--green-bg);color:var(--green)}.report-detail-status.warn{background:var(--orange-bg);color:var(--orange)}.report-detail-status.bad{background:var(--red-bg);color:var(--red)}.report-detail-status.neutral{background:#eceef0;color:#6f7780}
 @media(max-width:760px){.report-filter-toolbar .input,.report-filter-toolbar .select,.report-filter-toolbar .btn{min-width:100%;width:100%}.kpi-open-hint{display:none}}
+
+
+/* ===== Overview Dashboard Calendar & Matrix Revision V3 ===== */
+.dashboard-filter-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 13px;margin-bottom:14px;box-shadow:0 1px 3px rgba(20,30,40,.04)}
+.dashboard-filter-title{display:flex;flex-direction:column;min-width:245px}.dashboard-filter-title b{font-size:11.5px}.dashboard-filter-title small{font-size:9.5px;color:var(--muted);margin-top:2px}
+.dashboard-filter-group{display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap}.dashboard-filter-group label{display:flex;flex-direction:column;gap:4px;font-size:9.5px;color:var(--muted);font-weight:500}.dashboard-filter-group .input{min-width:145px;padding:7px 9px}.dashboard-filter-separator{padding-bottom:8px;color:var(--muted);font-size:10px}
+.dashboard-period-chip{margin-left:auto;display:inline-flex;align-items:center;padding:5px 10px;border-radius:14px;background:#eaf6fa;color:var(--cyan-dark);font:500 10px 'Roboto Mono',monospace;white-space:nowrap}
+.dashboard-extra-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}.dashboard-extra-grid .card-body{min-height:235px;display:flex;flex-direction:column}.dashboard-extra-grid .report-card-action{margin-top:auto}
+.dashboard-live-note{font-size:9.5px;color:#6b747d;background:#f5f7f8;border:1px solid #e7eaed;border-radius:6px;padding:6px 8px;margin-bottom:8px}
+.dashboard-activity-meta{font-size:10px;color:var(--muted);margin-bottom:2px}.dashboard-bars{overflow-x:auto;overflow-y:hidden;padding-bottom:22px}.dashboard-bars .bar{min-width:34px}.dashboard-bars .bar b{position:absolute;left:50%;transform:translateX(-50%);top:-17px;font:600 9px 'Roboto Mono';color:#4e5963}.dashboard-bars .bar span{white-space:nowrap}
+.dashboard-report-period{display:flex;align-items:center;gap:7px;padding:8px 10px;margin-bottom:12px;border:1px solid #d5eaf2;background:#f4fbfd;color:#316f86;border-radius:7px;font-size:10.5px}.dashboard-report-period b{font-family:'Roboto Mono',monospace}
+.dashboard-report-section{font-size:12px;font-weight:600;margin:16px 0 8px;border-left:3px solid var(--blue);padding-left:8px}
+@media(max-width:1050px){.dashboard-extra-grid{grid-template-columns:1fr}.dashboard-period-chip{margin-left:0}}
+@media(max-width:760px){.dashboard-filter-bar,.dashboard-filter-group{align-items:stretch}.dashboard-filter-group,.dashboard-filter-group label,.dashboard-filter-group .input,.dashboard-filter-group .btn{width:100%}.dashboard-filter-separator{display:none}.dashboard-filter-title{min-width:0;width:100%}.dashboard-period-chip{width:100%;justify-content:center}.dashboard-extra-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body data-initial-page="dashboard">
@@ -240,16 +255,33 @@ a.nav-item{text-decoration:none}
 <section class="page active" id="page-dashboard">
 <div class="page-head"><div><h1>Overview Dashboard</h1><p>Ringkasan real-time dari Master Data, Shipment Planning, Loading, Driver Mobile, Integration, dan Report.</p></div><div class="head-actions"><button class="btn btn-outline" onclick="reloadSharedDB()">↻ Refresh Data</button></div></div>
 <div class="shared-banner"><span class="shared-dot"></span><span>Seluruh KPI menggunakan database yang sama. Perubahan pada Master dan Operational langsung tercermin pada dashboard ini.</span></div>
+<div class="dashboard-filter-bar">
+  <div class="dashboard-filter-title"><b>Calendar Date Filter</b><small>Memfilter shipment, document planning, activity, dan operational matrix berdasarkan tanggal.</small></div>
+  <div class="dashboard-filter-group">
+    <label>From<input class="input" id="dashboardDateFrom" type="date"></label>
+    <span class="dashboard-filter-separator">to</span>
+    <label>To<input class="input" id="dashboardDateTo" type="date"></label>
+    <button class="btn btn-primary" type="button" onclick="applyDashboardDateFilter()">Search</button>
+    <button class="btn btn-ghost" type="button" onclick="resetDashboardDateFilter()">Reset</button>
+  </div>
+  <span class="dashboard-period-chip" id="dashboardPeriodLabel">All available dates</span>
+</div>
 <div class="kpi-grid" id="dashboardKpis"></div>
 <div class="dashboard-layout">
 <div class="dashboard-stack">
-<div class="card"><div class="card-head">Shipment Status Distribution <span>live plan status</span></div><div class="card-body" id="statusMetrics"></div></div>
-<div class="card"><div class="card-head">Weekly Delivery Activity <span>7-day activity</span></div><div class="card-body"><div class="timeline-mini" id="deliveryBars"></div></div></div>
+<div class="card"><div class="card-head">Shipment Status Distribution <span>selected period</span></div><div class="card-body"><div id="statusMetrics"></div><div class="report-card-action"><button class="btn btn-outline" type="button" onclick="openDashboardReport('status')">View Report</button></div></div></div>
+<div class="card"><div class="card-head">Delivery Activity <span>selected period</span></div><div class="card-body"><div class="dashboard-activity-meta" id="deliveryActivityMeta"></div><div class="timeline-mini dashboard-bars" id="deliveryBars"></div><div class="report-card-action"><button class="btn btn-outline" type="button" onclick="openDashboardReport('activity')">View Report</button></div></div></div>
 </div>
 <div class="dashboard-stack">
-<div class="card"><div class="card-head">Fleet Availability <span>from Vehicle Master</span></div><div class="card-body" id="fleetMetrics"></div></div>
-<div class="card"><div class="card-head">Upcoming Shipments <span>planned &amp; loading</span></div><div class="card-body"><div class="ship-list" id="upcomingList"></div></div></div>
+<div class="card"><div class="card-head">Fleet Availability <span>live master data</span></div><div class="card-body"><div class="dashboard-live-note">Live data — tidak dipengaruhi calendar date filter.</div><div id="fleetMetrics"></div><div class="report-card-action"><button class="btn btn-outline" type="button" onclick="openDashboardReport('fleet')">View Report</button></div></div></div>
+<div class="card"><div class="card-head">Upcoming Shipments <span>planned &amp; loading</span></div><div class="card-body"><div class="ship-list" id="upcomingList"></div><div class="report-card-action"><button class="btn btn-outline" type="button" onclick="openDashboardReport('upcoming')">View Report</button></div></div></div>
 </div>
+</div>
+<div class="dashboard-extra-grid">
+<div class="card"><div class="card-head">Master Data Readiness <span>live master data</span></div><div class="card-body"><div id="masterReadinessMetrics"></div><div class="report-card-action"><button class="btn btn-outline" type="button" onclick="openDashboardReport('masterReadiness')">View Report</button></div></div></div>
+<div class="card"><div class="card-head">Operational Readiness <span>selected period</span></div><div class="card-body"><div id="operationalReadinessMetrics"></div><div class="report-card-action"><button class="btn btn-outline" type="button" onclick="openDashboardReport('operationalReadiness')">View Report</button></div></div></div>
+<div class="card"><div class="card-head">Capacity Utilization <span>selected period</span></div><div class="card-body"><div id="capacityMetrics"></div><div class="report-card-action"><button class="btn btn-outline" type="button" onclick="openDashboardReport('capacity')">View Report</button></div></div></div>
+<div class="card"><div class="card-head">Maintenance &amp; Compliance <span>live master data</span></div><div class="card-body"><div class="dashboard-live-note">Live data — status task, STNK, dan KIR terbaru.</div><div id="maintenanceComplianceMetrics"></div><div class="report-card-action"><button class="btn btn-outline" type="button" onclick="openDashboardReport('maintenance')">View Report</button></div></div></div>
 </div>
 </section>
 <section class="page" id="page-report">
@@ -2298,6 +2330,225 @@ const moduleName=v6Module();if(moduleName==='MASTER')v6InstallMasterUI();else if
   });
   window.addEventListener('hashchange', ()=>openPage(location.hash.replace('#',''), false));
   openPage(initial, false);
+})();
+</script>
+
+
+<script>
+/* ===== Overview Dashboard Calendar & Matrix Revision V3 ===== */
+(function dashboardRevisionV3(){
+  const previousDashboardRender = typeof window.renderDashboard === 'function' ? window.renderDashboard : null;
+
+  function dashboardAvailableDates(){
+    const dates=(db.plans||[]).map(x=>x.shipmentDate).filter(Boolean)
+      .concat((db.documents||[]).map(x=>String(x.alert||x.date||'').slice(0,10)).filter(Boolean))
+      .sort();
+    return {from:dates[0]||todayISO(),to:dates.at(-1)||todayISO()};
+  }
+  function ensureDashboardDateDefaults(force){
+    const from=document.getElementById('dashboardDateFrom'),to=document.getElementById('dashboardDateTo');
+    if(!from||!to)return dashboardAvailableDates();
+    const defaults=dashboardAvailableDates();
+    if(force||!from.value)from.value=defaults.from;
+    if(force||!to.value)to.value=defaults.to;
+    return {from:from.value||defaults.from,to:to.value||defaults.to};
+  }
+  function dashboardRange(){
+    const r=ensureDashboardDateDefaults(false);
+    return r.from<=r.to?r:{from:r.to,to:r.from};
+  }
+  function dashboardDateMatch(date,range){
+    const value=String(date||'').slice(0,10);
+    return !value||(value>=range.from&&value<=range.to);
+  }
+  function dashboardDocumentDate(doc){return String(doc.alert||doc.date||doc.createdAt||'').slice(0,10)}
+  function dashboardData(){
+    const range=dashboardRange();
+    const plans=(db.plans||[]).filter(p=>dashboardDateMatch(p.shipmentDate,range));
+    const documents=(db.documents||[]).filter(d=>dashboardDateMatch(dashboardDocumentDate(d),range));
+    return {range,plans,documents};
+  }
+  function dashboardPeriodText(range){
+    const fmt=d=>new Date(d+'T00:00:00').toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
+    return `${fmt(range.from)} — ${fmt(range.to)}`;
+  }
+  function metricRows(items,total){
+    const denominator=Math.max(1,total);
+    return items.map(x=>`<div class="metric-row"><span class="name">${esc(x.label)}</span><div class="progress"><span style="width:${Math.max(0,Math.min(100,(x.value/denominator)*100))}%;background:${x.color||'var(--cyan-dark)'}"></span></div><b>${esc(x.display??x.value)}</b></div>`).join('');
+  }
+  function pctMetricRows(items){
+    return items.map(x=>`<div class="metric-row"><span class="name">${esc(x.label)}</span><div class="progress"><span style="width:${Math.max(0,Math.min(100,x.value))}%;background:${x.color||'var(--cyan-dark)'}"></span></div><b>${esc(x.display??(Math.round(x.value)+'%'))}</b></div>`).join('');
+  }
+  function activityPoints(plans,range){
+    const start=isoDate(range.from),end=isoDate(range.to),days=Math.max(1,Math.round((end-start)/86400000)+1),points=[];
+    if(days<=14){
+      for(let i=0;i<days;i++){
+        const date=addDays(range.from,i),count=plans.filter(p=>p.shipmentDate===date).length;
+        points.push({from:date,to:date,count,label:new Date(date+'T00:00:00').toLocaleDateString('en-US',{weekday:'short'})});
+      }
+    }else{
+      for(let i=0;i<days;i+=7){
+        const from=addDays(range.from,i),to=addDays(range.from,Math.min(days-1,i+6));
+        const count=plans.filter(p=>p.shipmentDate>=from&&p.shipmentDate<=to).length;
+        points.push({from,to,count,label:new Date(from+'T00:00:00').toLocaleDateString('id-ID',{day:'2-digit',month:'short'})});
+      }
+    }
+    return points;
+  }
+  function vehicleDocumentStatus(v){
+    const stnk=expiryInfo(v.stnkExpiry),kir=expiryInfo(v.kirExpiry);
+    return stnk.status==='Expired'||kir.status==='Expired'?'Expired':stnk.status==='Expiring Soon'||kir.status==='Expiring Soon'?'Expiring Soon':'Valid';
+  }
+  function renderDashboardEnhanced(){
+    if(previousDashboardRender)previousDashboardRender();
+    const k=document.getElementById('dashboardKpis');if(!k)return;
+    const {range,plans,documents}=dashboardData(),vehicles=db.vehicles||[],tasks=db.maintenanceTasks||[];
+    const active=plans.filter(p=>!['Completed','Draft','Cancelled'].includes(p.status)).length;
+    const needPlanning=documents.filter(d=>d.status==='Need Planning').length;
+    const inTransit=plans.filter(p=>p.status==='In Transit').length;
+    const available=vehicles.filter(v=>v.status==='Available').length;
+    const completed=plans.filter(p=>p.status==='Completed').length;
+    const periodLabel=document.getElementById('dashboardPeriodLabel');if(periodLabel)periodLabel.textContent=dashboardPeriodText(range);
+
+    k.innerHTML=kpiCards([
+      {l:'Active Shipments',v:active,f:'Selected shipment date period',a:'var(--blue)',click:"openDashboardReport('active')"},
+      {l:'Need Planning',v:needPlanning,f:'DO / STO in selected period',a:'var(--orange)',click:"openDashboardReport('needPlanning')"},
+      {l:'In Transit',v:inTransit,f:'Selected period • live status',a:'var(--purple)',click:"openDashboardReport('inTransit')"},
+      {l:'Available Vehicles',v:available,f:`Live • ${vehicles.length} registered vehicles`,a:'var(--green)',click:"openDashboardReport('fleet')"},
+      {l:'Completed Trips',v:completed,f:'Closed shipment plans in period',a:'var(--cyan-dark)',click:"openDashboardReport('completed')"}
+    ]);
+
+    const statusItems=[
+      {label:'Planned',value:plans.filter(p=>p.status==='Planned').length,color:'var(--blue)'},
+      {label:'Loading',value:plans.filter(p=>['Loading','Ready to Dispatch'].includes(p.status)).length,color:'var(--orange)'},
+      {label:'In Transit',value:inTransit,color:'var(--purple)'},
+      {label:'Completed',value:completed,color:'var(--green)'}
+    ];
+    const statusEl=document.getElementById('statusMetrics');if(statusEl)statusEl.innerHTML=metricRows(statusItems,Math.max(1,plans.length));
+
+    const points=activityPoints(plans,range),max=Math.max(1,...points.map(x=>x.count)),bars=document.getElementById('deliveryBars');
+    if(bars)bars.innerHTML=points.map(x=>`<div class="bar" title="${x.from}${x.to!==x.from?' to '+x.to:''}: ${x.count} shipment" style="height:${Math.max(8,x.count/max*100)}px"><b>${x.count}</b><span>${esc(x.label)}</span></div>`).join('');
+    const activityMeta=document.getElementById('deliveryActivityMeta');if(activityMeta)activityMeta.textContent=`${plans.length} shipment plan(s) • ${points.length} calendar bucket(s)`;
+
+    const fleetItems=['Available','Reserved','Loading','In Transit','Maintenance'].map(status=>({label:status,value:vehicles.filter(v=>v.status===status).length,color:status==='Available'?'var(--green)':status==='Maintenance'?'var(--red)':'var(--cyan-dark)'}));
+    const fleetEl=document.getElementById('fleetMetrics');if(fleetEl)fleetEl.innerHTML=metricRows(fleetItems,vehicles.length);
+
+    const upcoming=plans.filter(p=>['Planned','Loading','Ready to Dispatch'].includes(p.status)).sort((a,b)=>(a.shipmentDate||'').localeCompare(b.shipmentDate||''));
+    const upcomingEl=document.getElementById('upcomingList');if(upcomingEl)upcomingEl.innerHTML=upcoming.slice(0,5).map(p=>`<div class="ship-item" onclick="planDetail('${esc(p.id)}')"><div class="top"><b>${esc(p.id)}</b>${statusBadge(p.status)}<span class="age">${esc(p.shipmentDate||'-')}</span></div><div class="meta">${esc(p.destination||'-')} • ${esc(p.source==='Fleet Company'?(p.vehicle||p.driver):(p.supplier||'-'))}</div></div>`).join('')||'<div class="empty">No upcoming shipment in selected period.</div>';
+
+    const hubs=db.hubs||[],carriers=db.carriers||[],contracts=db.contracts||[],drivers=db.drivers||[],routes=db.routes||[];
+    const masterItems=[
+      {label:'Active Hubs',value:hubs.filter(x=>x.status==='Active').length,display:`${hubs.filter(x=>x.status==='Active').length}/${hubs.length}`,color:'var(--green)'},
+      {label:'Active Carriers',value:carriers.filter(x=>x.status==='Active').length,display:`${carriers.filter(x=>x.status==='Active').length}/${carriers.length}`,color:'var(--blue)'},
+      {label:'Active Contracts',value:contracts.filter(x=>x.status==='Active').length,display:`${contracts.filter(x=>x.status==='Active').length}/${contracts.length}`,color:'var(--cyan-dark)'},
+      {label:'Ready Drivers',value:drivers.filter(x=>x.status==='Available').length,display:`${drivers.filter(x=>x.status==='Available').length}/${drivers.length}`,color:'var(--purple)'},
+      {label:'Active Routes',value:routes.filter(x=>x.status==='Active').length,display:`${routes.filter(x=>x.status==='Active').length}/${routes.length}`,color:'var(--orange)'}
+    ];
+    const masterDenominator=Math.max(1,hubs.length,carriers.length,contracts.length,drivers.length,routes.length);
+    const masterEl=document.getElementById('masterReadinessMetrics');if(masterEl)masterEl.innerHTML=metricRows(masterItems,masterDenominator);
+
+    const operationalItems=[
+      {label:'Need Planning',value:needPlanning,color:'var(--orange)'},
+      {label:'Planned',value:statusItems[0].value,color:'var(--blue)'},
+      {label:'Loading / Ready',value:statusItems[1].value,color:'var(--cyan-dark)'},
+      {label:'In Transit',value:inTransit,color:'var(--purple)'},
+      {label:'Completed',value:completed,color:'var(--green)'}
+    ];
+    const operationalEl=document.getElementById('operationalReadinessMetrics');if(operationalEl)operationalEl.innerHTML=metricRows(operationalItems,Math.max(1,needPlanning+plans.length));
+
+    const capacityPlans=plans.filter(p=>Number(p.weightUtil||p.volumeUtil||p.util||0)>0);
+    const avgWeight=capacityPlans.length?capacityPlans.reduce((a,p)=>a+Number(p.weightUtil||0),0)/capacityPlans.length:0;
+    const avgVolume=capacityPlans.length?capacityPlans.reduce((a,p)=>a+Number(p.volumeUtil||0),0)/capacityPlans.length:0;
+    const avgOverall=capacityPlans.length?capacityPlans.reduce((a,p)=>a+Number(p.util||Math.max(Number(p.weightUtil||0),Number(p.volumeUtil||0))),0)/capacityPlans.length:0;
+    const healthy=capacityPlans.filter(p=>{const u=Number(p.util||Math.max(Number(p.weightUtil||0),Number(p.volumeUtil||0)));return u>=50&&u<=90}).length;
+    const over=capacityPlans.filter(p=>Number(p.util||Math.max(Number(p.weightUtil||0),Number(p.volumeUtil||0)))>100).length;
+    const capacityEl=document.getElementById('capacityMetrics');if(capacityEl)capacityEl.innerHTML=pctMetricRows([
+      {label:'Avg Weight Util.',value:avgWeight,color:'var(--blue)'},
+      {label:'Avg Volume Util.',value:avgVolume,color:'var(--cyan-dark)'},
+      {label:'Avg Overall Util.',value:avgOverall,color:'var(--purple)'},
+      {label:'Healthy Utilization',value:capacityPlans.length?healthy/capacityPlans.length*100:0,display:`${healthy}/${capacityPlans.length}`,color:'var(--green)'},
+      {label:'Over Capacity',value:capacityPlans.length?over/capacityPlans.length*100:0,display:String(over),color:'var(--red)'}
+    ]);
+
+    const docStatuses=vehicles.map(vehicleDocumentStatus),expired=docStatuses.filter(x=>x==='Expired').length,expiring=docStatuses.filter(x=>x==='Expiring Soon').length,valid=docStatuses.filter(x=>x==='Valid').length;
+    const maintenanceItems=[
+      {label:'In Progress Tasks',value:tasks.filter(x=>x.status==='In Progress').length,color:'var(--orange)'},
+      {label:'Scheduled Tasks',value:tasks.filter(x=>['Scheduled','Open','Pending'].includes(x.status)).length,color:'var(--blue)'},
+      {label:'Expired Documents',value:expired,color:'var(--red)'},
+      {label:'Expiring ≤30 Days',value:expiring,color:'var(--orange)'},
+      {label:'Valid Vehicle Docs',value:valid,color:'var(--green)'}
+    ];
+    const maintenanceEl=document.getElementById('maintenanceComplianceMetrics');if(maintenanceEl)maintenanceEl.innerHTML=metricRows(maintenanceItems,Math.max(1,vehicles.length,tasks.length));
+  }
+
+  function reportSummary(items){return `<div class="report-detail-summary">${items.map(x=>`<div class="report-detail-stat"><span>${esc(x[0])}</span><b>${esc(x[1])}</b></div>`).join('')}</div>`}
+  function reportTable(headers,rows,empty){return `<div class="table-wrap"><table class="tbl blue report-detail-table"><thead><tr>${headers.map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.length?rows.map(row=>`<tr>${row.map(cell=>`<td>${cell}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="${headers.length}" class="empty">${esc(empty||'No data found.')}</td></tr>`}</tbody></table></div>`}
+  function showDashboardReport(title,summary,headers,rows,live){
+    const range=dashboardRange(),period=live?'Live Master Data':dashboardPeriodText(range);
+    openModal(title,`<div class="dashboard-report-period"><span>${live?'●':'▣'}</span><span>${live?'Current database state':'Calendar period'}: <b>${esc(period)}</b></span></div>${reportSummary(summary)}${reportTable(headers,rows)}`,'<button class="btn btn-ghost" type="button" onclick="closeModal()">Close</button>');
+  }
+
+  window.openDashboardReport=function(metric){
+    const {plans,documents}=dashboardData(),vehicles=db.vehicles||[],tasks=db.maintenanceTasks||[];
+    const basePlanRows=list=>list.map(p=>[`<button class="link-cell" onclick="closeModal();planDetail('${esc(p.id)}')">${esc(p.id)}</button>`,esc(p.shipmentDate||'-'),esc(p.source||'-'),esc(p.source==='Fleet Company'?[p.vehicle,p.driver].filter(Boolean).join(' / '):(p.supplier||'-')),esc(p.destination||'-'),statusBadge(p.status||'-'),fmtIDR(Number(p.plannedCost||0))]);
+    if(metric==='active'){
+      const rows=plans.filter(p=>!['Completed','Draft','Cancelled'].includes(p.status));
+      return showDashboardReport('Active Shipments Report',[['Active Shipments',rows.length],['Planned',rows.filter(x=>x.status==='Planned').length],['Loading / Ready',rows.filter(x=>['Loading','Ready to Dispatch'].includes(x.status)).length],['In Transit',rows.filter(x=>x.status==='In Transit').length]],['Plan','Shipment Date','Shipping Option','Vehicle / Carrier','Destination','Status','Planned Cost'],basePlanRows(rows));
+    }
+    if(metric==='needPlanning'){
+      const rows=documents.filter(d=>d.status==='Need Planning');
+      return showDashboardReport('Need Planning Documents Report',[['Need Planning',rows.length],['High Priority',rows.filter(x=>x.priority==='High').length],['Total Weight',rows.reduce((a,x)=>a+Number(x.weight||0),0).toLocaleString('id-ID')+' kg'],['Total Volume',rows.reduce((a,x)=>a+Number(x.volume||0),0).toLocaleString('id-ID')+' m³']],['Document','Type','Calendar Date','Customer','Origin','Destination','Weight / Volume','Priority','Status'],rows.map(d=>[`<span class="mono">${esc(d.id)}</span>`,esc(d.type||'-'),esc(dashboardDocumentDate(d)||'-'),esc(d.customer||'-'),esc(d.origin||'-'),esc(d.destination||'-'),`${Number(d.weight||0).toLocaleString('id-ID')} kg / ${Number(d.volume||0).toLocaleString('id-ID')} m³`,statusBadge(d.priority||'Normal'),statusBadge(d.status||'-')]));
+    }
+    if(metric==='inTransit'||metric==='completed'||metric==='status'||metric==='activity'||metric==='upcoming'){
+      let rows=plans,title='Shipment Status Distribution Report';
+      if(metric==='inTransit'){rows=plans.filter(p=>p.status==='In Transit');title='In Transit Shipments Report'}
+      if(metric==='completed'){rows=plans.filter(p=>p.status==='Completed');title='Completed Trips Report'}
+      if(metric==='upcoming'){rows=plans.filter(p=>['Planned','Loading','Ready to Dispatch'].includes(p.status)).sort((a,b)=>(a.shipmentDate||'').localeCompare(b.shipmentDate||''));title='Upcoming Shipments Report'}
+      if(metric==='activity')title='Delivery Activity Report';
+      return showDashboardReport(title,[['Shipment Plans',rows.length],['Planned',rows.filter(x=>x.status==='Planned').length],['In Transit',rows.filter(x=>x.status==='In Transit').length],['Completed',rows.filter(x=>x.status==='Completed').length]],['Plan','Shipment Date','Shipping Option','Vehicle / Carrier','Destination','Status','Planned Cost'],basePlanRows(rows));
+    }
+    if(metric==='fleet'){
+      const rows=vehicles.map(v=>[`<b>${esc(v.plate||'-')}</b><div class="muted">${esc(v.id||'-')}</div>`,esc(v.type||'-'),esc(v.carrier||'-'),esc(v.pool||'-'),statusBadge(v.status||'-'),Number(v.weight||0).toLocaleString('id-ID')+' kg',Number(v.volume||0).toLocaleString('id-ID')+' m³',statusBadge(vehicleDocumentStatus(v))]);
+      return showDashboardReport('Fleet Availability Report',[['Registered Vehicles',vehicles.length],['Available',vehicles.filter(x=>x.status==='Available').length],['Reserved / Assigned',vehicles.filter(x=>['Reserved','Assigned'].includes(x.status)).length],['Maintenance',vehicles.filter(x=>x.status==='Maintenance').length]],['Vehicle','Type','Carrier','Pool','Status','Weight Capacity','Volume Capacity','Document Status'],rows,true);
+    }
+    if(metric==='masterReadiness'){
+      const rows=[];
+      (db.hubs||[]).forEach(x=>rows.push(['Hub',`<span class="mono">${esc(x.id)}</span>`,esc(x.name||'-'),esc(x.location||'-'),statusBadge(x.status||'-')]));
+      (db.carriers||[]).forEach(x=>rows.push(['Carrier',`<span class="mono">${esc(x.id)}</span>`,esc(x.name||'-'),esc(x.location||'-'),statusBadge(x.status||'-')]));
+      (db.contracts||[]).forEach(x=>rows.push(['Contract',`<span class="mono">${esc(x.id)}</span>`,esc(x.carrier||'-'),`${esc(x.startDate||'-')} — ${esc(x.endDate||'-')}`,statusBadge(x.status||'-')]));
+      (db.drivers||[]).forEach(x=>rows.push(['Driver',`<span class="mono">${esc(x.id)}</span>`,esc(x.name||'-'),esc(x.pool||'-'),statusBadge(x.status||'-')]));
+      (db.routes||[]).forEach(x=>rows.push(['Route',`<span class="mono">${esc(x.id)}</span>`,`${esc(x.origin||'-')} → ${esc(x.destination||'-')}`,Number(x.distance||0).toLocaleString('id-ID')+' km',statusBadge(x.status||'-')]));
+      return showDashboardReport('Master Data Readiness Report',[['Hubs',(db.hubs||[]).length],['Carriers',(db.carriers||[]).length],['Contracts',(db.contracts||[]).length],['Drivers / Routes',(db.drivers||[]).length+' / '+(db.routes||[]).length]],['Master Data','Reference','Name / Route','Location / Period','Status'],rows,true);
+    }
+    if(metric==='operationalReadiness'){
+      const rows=[];
+      documents.filter(d=>d.status==='Need Planning').forEach(d=>rows.push(['Document',`<span class="mono">${esc(d.id)}</span>`,esc(dashboardDocumentDate(d)||'-'),esc(d.origin||'-'),esc(d.destination||'-'),'-',statusBadge(d.status||'-')]));
+      plans.forEach(p=>rows.push(['Shipment Plan',`<button class="link-cell" onclick="closeModal();planDetail('${esc(p.id)}')">${esc(p.id)}</button>`,esc(p.shipmentDate||'-'),esc(p.origin||'-'),esc(p.destination||'-'),esc(p.source==='Fleet Company'?[p.vehicle,p.driver].filter(Boolean).join(' / '):(p.supplier||'-')),statusBadge(p.status||'-')]));
+      return showDashboardReport('Operational Readiness Report',[['Need Planning',documents.filter(d=>d.status==='Need Planning').length],['Shipment Plans',plans.length],['Ready / Loading',plans.filter(p=>['Planned','Loading','Ready to Dispatch'].includes(p.status)).length],['In Transit / Completed',plans.filter(p=>['In Transit','Completed'].includes(p.status)).length]],['Source','Reference','Calendar Date','Origin','Destination','Resource','Status'],rows);
+    }
+    if(metric==='capacity'){
+      const rows=plans.map(p=>{const overall=Number(p.util||Math.max(Number(p.weightUtil||0),Number(p.volumeUtil||0))),health=overall>100?'Over Capacity':overall>=50?'Healthy':'Low Utilization';return [`<button class="link-cell" onclick="closeModal();planDetail('${esc(p.id)}')">${esc(p.id)}</button>`,esc(p.shipmentDate||'-'),Number(p.weight||0).toLocaleString('id-ID')+' kg',Number(p.volume||0).toLocaleString('id-ID')+' m³',Math.round(Number(p.weightUtil||0))+'%',Math.round(Number(p.volumeUtil||0))+'%',Math.round(overall)+'%',`<span class="report-detail-status ${overall>100?'bad':overall>=50?'good':'warn'}">${health}</span>`]});
+      const avg=key=>plans.length?Math.round(plans.reduce((a,p)=>a+Number(p[key]||0),0)/plans.length):0;
+      return showDashboardReport('Capacity Utilization Report',[['Shipment Plans',plans.length],['Avg Weight Util.',avg('weightUtil')+'%'],['Avg Volume Util.',avg('volumeUtil')+'%'],['Over Capacity',plans.filter(p=>Number(p.util||0)>100).length]],['Plan','Shipment Date','Weight','Volume','Weight Util.','Volume Util.','Overall Util.','Utilization Health'],rows);
+    }
+    if(metric==='maintenance'){
+      const rows=[];
+      vehicles.forEach(v=>rows.push(['Vehicle Document',`<span class="mono">${esc(v.id||'-')}</span>`,esc(v.plate||'-'),`STNK ${esc(v.stnkExpiry||'-')} • KIR ${esc(v.kirExpiry||'-')}`,statusBadge(vehicleDocumentStatus(v)),esc(v.pool||'-')]));
+      tasks.forEach(t=>rows.push(['Maintenance Task',`<span class="mono">${esc(t.id||'-')}</span>`,esc(t.plate||t.vehicleId||t.vehicle||'-'),`${esc(t.startDate||t.schedule||'-')} — ${esc(t.endDate||'-')}`,statusBadge(t.status||'-'),esc(t.category||'-')]));
+      return showDashboardReport('Maintenance & Compliance Report',[['Vehicles',vehicles.length],['Maintenance Tasks',tasks.length],['In Progress',tasks.filter(x=>x.status==='In Progress').length],['Expired / Expiring',vehicles.filter(v=>vehicleDocumentStatus(v)!=='Valid').length]],['Record Type','Reference','Vehicle','Date / Validity','Status','Pool / Category'],rows,true);
+    }
+  };
+
+  window.applyDashboardDateFilter=function(){
+    const from=document.getElementById('dashboardDateFrom')?.value,to=document.getElementById('dashboardDateTo')?.value;
+    if(!from||!to)return toast('From dan To date wajib diisi');
+    if(from>to)return toast('From date tidak boleh melebihi To date');
+    renderDashboardEnhanced();toast('Overview Dashboard date filter applied');
+  };
+  window.resetDashboardDateFilter=function(){ensureDashboardDateDefaults(true);renderDashboardEnhanced();toast('Dashboard date filter reset')};
+  window.renderDashboard=renderDashboardEnhanced;
+  ensureDashboardDateDefaults(false);
+  renderDashboardEnhanced();
 })();
 </script>
 
