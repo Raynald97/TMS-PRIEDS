@@ -237,7 +237,7 @@ a.nav-item{text-decoration:none}
 <div class="window">
 <div class="tabs"><button class="tab active" onclick="planningTab(this,'candidatePanel')">Ready Documents</button><button class="tab" onclick="planningTab(this,'planPanel')">Shipment Plans</button><button class="tab" onclick="planningTab(this,'recommendPanel');generateRecommendations()">Auto Group Recommendation</button></div>
 <div id="candidatePanel">
-<div class="toolbar"><input class="input" id="docSearch" onkeydown="if(event.key==='Enter')renderDocuments()" placeholder="Document / recipient / destination"/><select class="select" id="docTypeFilter" onchange="renderDocuments()"><option value="">All Document Types</option><option value="DO">Delivery Order</option><option value="STO">Stock Transfer Out</option></select><select class="select" id="readyHubFilter" onchange="renderDocuments()"><option value="">All Origin Hubs</option></select><select class="select" id="readyShippingOption"><option>Fleet Company</option><option>Expedition</option></select><button class="btn btn-outline" onclick="renderDocuments()">Search</button><span class="spacer"></span><button class="btn btn-ghost" onclick="openDocumentImport()">Import Excel</button><button class="btn btn-primary" onclick="openShipmentWizard()">Create Plan</button></div>
+<div class="toolbar"><input class="input" id="docSearch" onkeydown="if(event.key==='Enter')renderDocuments()" placeholder="Document / recipient / destination"/><select class="select" id="docTypeFilter" onchange="renderDocuments()"><option value="">All Document Types</option><option value="DO">Delivery Order</option><option value="STO">Stock Transfer Out</option></select><select class="select" id="readyHubFilter" onchange="renderDocuments()"><option value="">All Origin Hubs</option></select><button class="btn btn-outline" onclick="renderDocuments()">Search</button><button class="btn btn-ghost" onclick="refreshDocumentStatus()">Refresh Document Status</button></div>
 <div class="notice" id="selectedDocInfo" style="margin:12px 14px">No document selected.</div>
 <div class="table-wrap"><table class="tbl"><thead><tr><th style="width:38px">Select</th><th>Dispatch Deadline</th><th>Document</th><th>Customer / Recipient</th><th>Origin Hub</th><th>Destination</th><th>Weight</th><th>Volume</th><th>Priority</th><th>Status</th><th>Action</th></tr></thead><tbody id="documentTbody"></tbody></table></div>
 <div class="pager">Demo import contains 120+ documents for testing.</div>
@@ -1723,6 +1723,7 @@ function v6EnsureData(){
  db.customers=db.customers.map((x,i)=>({...x,id:x.id||('CUS-'+String(i+1).padStart(3,'0')),type:x.type||'End Customer',location:x.location||'',address:x.address||'',latitude:x.latitude??'',longitude:x.longitude??'',openTime:x.openTime||'08:00',closeTime:x.closeTime||'17:00',window:x.window||`${x.openTime||'08:00'} - ${x.closeTime||'17:00'}`,contactName:x.contactName||'',phone:x.phone||'',geofenceRadius:Number(x.geofenceRadius||150),verificationStatus:x.verificationStatus||'Pending Verification',riskStatus:x.riskStatus||'Medium',status:x.status||'Active',deliveryInstruction:x.deliveryInstruction||''}));
  v6Array(db.documents).forEach(d=>{if(V6_RENAME_CUSTOMERS[d.customer])d.customer=V6_RENAME_CUSTOMERS[d.customer]});
  v6Array(db.plans).forEach(p=>v6Array(p.stops).forEach(s=>{if(V6_RENAME_CUSTOMERS[s.customer])s.customer=V6_RENAME_CUSTOMERS[s.customer]}));
+ v6SyncOperationalDocumentMasters();
  db.dataQualityIssues=v6Array(db.dataQualityIssues);v6ResolveReferences();return db;
 }
 function v6HubByName(name){return v6Array(db.hubs).find(x=>v6NormalizeName(x.name)===v6NormalizeName(name))}
@@ -1731,6 +1732,42 @@ function v6CarrierByName(name){return v6Array(db.carriers).find(x=>v6NormalizeNa
 function v6VehicleByPlate(plate){return v6Array(db.vehicles).find(x=>v6NormalizeName(x.plate)===v6NormalizeName(plate))}
 function v6DriverByName(name){return v6Array(db.drivers).find(x=>v6NormalizeName(x.name)===v6NormalizeName(name))}
 function v6AddIssue(list,severity,dataset,ref,message){list.push({severity,dataset,ref,message})}
+function v6SyncOperationalDocumentMasters(){
+ const documents=v6Array(db.documents),incompleteIds=new Set([
+   'DO/DEMO/2607/0116','STO/DEMO/2607/0117','DO/DEMO/2607/0118','DO/DEMO/2607/0119','STO/DEMO/2607/0120'
+ ]);
+ documents.forEach(d=>{d.forceMasterIncomplete=incompleteIds.has(d.id)});
+ documents.filter(d=>!d.forceMasterIncomplete).forEach(d=>{
+   if(d.origin&&!v6HubByName(d.origin)){
+     db.hubs.push({
+       id:'HUB-AUTO-'+String(db.hubs.length+1).padStart(3,'0'),
+       name:d.origin,type:'Operational Hub',location:d.origin,address:d.origin,
+       latitude:'',longitude:'',openTime:'08:00',closeTime:'20:00',
+       is24Hours:false,hours:'08:00 - 20:00',status:'Active',autoSynced:true
+     });
+   }
+   if(d.type==='STO'){
+     const hubName=d.destination||d.customer;
+     if(hubName&&!v6HubByName(hubName)){
+       db.hubs.push({
+         id:'HUB-AUTO-'+String(db.hubs.length+1).padStart(3,'0'),
+         name:hubName,type:'Transfer Destination',location:d.destination||hubName,address:d.destination||hubName,
+         latitude:'',longitude:'',openTime:'08:00',closeTime:'20:00',
+         is24Hours:false,hours:'08:00 - 20:00',status:'Active',autoSynced:true
+       });
+     }
+   }else if(d.customer&&!v6CustomerByName(d.customer)){
+     db.customers.push({
+       id:v6NextCustomerId(),name:d.customer,type:'End Customer',
+       location:d.destination||'',address:d.destination||'',latitude:'',longitude:'',
+       openTime:'08:00',closeTime:'17:00',window:'08:00 - 17:00',
+       contactName:'Receiving PIC',phone:'',geofenceRadius:150,
+       verificationStatus:'Verified',riskStatus:'Low',status:'Active',
+       deliveryInstruction:'Auto-synced from Shipment Planning document.',autoSynced:true
+     });
+   }
+ });
+}
 function v6ResolveReferences(){
  if(!db)return[];const issues=[];
  v6Array(db.contracts).forEach(x=>{x.carrierId=v6CarrierByName(x.carrier)?.id||'';x.laneId=v6Array(db.routes).find(r=>r.id===x.lane)?.id||'';if(!x.carrierId)v6AddIssue(issues,'Critical','Contract',x.id,'Carrier tidak ditemukan pada Carrier Master.');if(!x.laneId)v6AddIssue(issues,'High','Contract',x.id,'Lane tidak ditemukan pada Route & Lane Master.')});
@@ -1743,6 +1780,7 @@ function v6ResolveReferences(){
    else{x.customerId=v6CustomerByName(x.customer)?.id||'';x.recipientType='Customer';}
    const problems=[];if(!x.originHubId)problems.push('Origin Hub belum terdaftar');if(x.type==='STO'&&!x.destinationHubId)problems.push('Destination Hub belum terdaftar');if(x.type!=='STO'&&!x.customerId)problems.push('Customer belum terdaftar');
    const customer=x.customerId?v6Array(db.customers).find(c=>c.id===x.customerId):null;if(customer&&customer.status!=='Active')problems.push('Customer tidak aktif');
+   if(x.forceMasterIncomplete)problems.push('Menunggu sinkronisasi master data');
    x.masterDataIssues=problems;x.masterDataStatus=problems.length?'Incomplete':'Complete';if(problems.length)v6AddIssue(issues,'Critical','Document',x.id,problems.join('; '));
  });
  v6Array(db.plans).forEach(p=>{
@@ -2310,6 +2348,299 @@ const moduleName=v6Module();if(moduleName==='MASTER')v6InstallMasterUI();else if
   });
   window.addEventListener('hashchange', ()=>openPage(location.hash.replace('#',''), false));
   openPage(initial, false);
+})();
+</script>
+
+<script>
+/* ===== Shipment Planning Revision — 07 Jul 2026 ===== */
+window.refreshDocumentStatus=function(){
+  const activePlanDocs=new Set(
+    (db.plans||[])
+      .filter(p=>!['Completed','Cancelled'].includes(p.status))
+      .flatMap(p=>p.docs||[])
+  );
+  const closedPlanDocs=new Set(
+    (db.plans||[])
+      .filter(p=>['Completed','Cancelled'].includes(p.status))
+      .flatMap(p=>p.docs||[])
+  );
+  let changed=0;
+  (db.documents||[]).forEach(d=>{
+    const status=String(d.status||'');
+    const explicitlyComplete=['Complete','Completed'].includes(status);
+    const closedDonePlanning=status==='Done Planning'&&closedPlanDocs.has(d.id)&&!activePlanDocs.has(d.id);
+    if(explicitlyComplete||closedDonePlanning){
+      d.status='Need Planning';
+      changed++;
+    }
+  });
+  try{selectedDocs.clear()}catch(e){}
+  saveDB();
+  renderAll();
+  toast(changed?`${changed} document status refreshed to Need Planning`:'No completed document status found');
+};
+</script>
+
+<script>
+/* ===== Shipment Fee Auto Calculation & Fraud Threshold — 07 Jul 2026 ===== */
+(function shipmentFeeAndFraudRevision(){
+  'use strict';
+
+  const DEFAULT_FEE_THRESHOLD = 15;
+
+  function normalizeContractFeeConfig(contract){
+    if(!contract) return contract;
+    if(String(contract.rate||'').trim()==='Base + /kg') contract.rate='Per kg';
+    const threshold=Number(contract.feeVarianceThreshold);
+    contract.feeVarianceThreshold=Number.isFinite(threshold)&&threshold>=0?threshold:DEFAULT_FEE_THRESHOLD;
+    return contract;
+  }
+  (DEMO.contracts||[]).forEach(normalizeContractFeeConfig);
+  (db.contracts||[]).forEach(normalizeContractFeeConfig);
+  saveDB();
+
+  const feeBaseMasterFields=window.masterFields;
+  window.masterFields=masterFields=function(type,obj={},isNew=false){
+    let fields=feeBaseMasterFields(type,obj,isNew);
+    if(type!=='contracts') return fields;
+    fields=fields.map(field=>field.k==='rate'?{
+      ...field,
+      l:'Rate Type',
+      o:['Flat Trip','Per kg','Per km','Per drop']
+    }:field);
+    if(!fields.some(field=>field.k==='feeVarianceThreshold')){
+      const thresholdField={
+        k:'feeVarianceThreshold',
+        l:'Fee Variance Threshold (%)',
+        t:'number',
+        min:0,
+        step:'0.1',
+        help:'Jika Fee Delivery melebihi nilai kontrak di atas persentase ini, shipment otomatis masuk Fraud Detection.'
+      };
+      const statusIndex=fields.findIndex(field=>field.k==='status');
+      if(statusIndex>=0) fields.splice(statusIndex,0,thresholdField);
+      else fields.push(thresholdField);
+    }
+    return fields;
+  };
+
+  const feeBaseOpenMasterForm=window.openMasterForm;
+  window.openMasterForm=openMasterForm=function(type,index=null,view=false){
+    feeBaseOpenMasterForm(type,index,view);
+    if(type==='contracts'){
+      const input=document.getElementById('mf-feeVarianceThreshold');
+      if(input&&!input.value) input.value=String(index===null?DEFAULT_FEE_THRESHOLD:(db.contracts[index]?.feeVarianceThreshold??DEFAULT_FEE_THRESHOLD));
+    }
+  };
+
+  function selectedWizardDocuments(){
+    const ids=(document.getElementById('sw-docs')?.value||'').split('|').filter(Boolean);
+    return (db.documents||[]).filter(doc=>ids.includes(doc.id));
+  }
+  function selectedWizardContract(){
+    const id=document.getElementById('sw-contract')?.value||'';
+    return (db.contracts||[]).find(contract=>contract.id===id)||null;
+  }
+  function wizardRouteDistance(contract){
+    const selectedLane=document.getElementById('sw-route-select')?.value||'';
+    const laneId=selectedLane&&selectedLane!=='AUTO'?selectedLane:(contract?.lane||'');
+    const lane=(db.routes||[]).find(route=>route.id===laneId);
+    return Number(lane?.distance||0);
+  }
+  function contractRateUnit(contract){
+    const rate=String(contract?.rate||'').toLowerCase().replace(/\s+/g,' ').trim();
+    if(rate.includes('kg')&&rate.includes('km')) return 'kg-km';
+    if(rate.includes('kg')) return 'kg';
+    if(rate.includes('km')) return 'km';
+    if(rate.includes('drop')) return 'drop';
+    return 'trip';
+  }
+  function deliveryFeeReference(contract,docs=selectedWizardDocuments()){
+    if(!contract) return {reference:0,unit:'trip',quantity:0,label:'No active contract selected',weight:0,distance:0,drops:0,baseRate:0};
+    const baseRate=Number(contract.baseRate||0);
+    const weight=docs.reduce((total,doc)=>total+Number(doc.weight||0),0);
+    const distance=wizardRouteDistance(contract);
+    const drops=Math.max(1,new Set(docs.map(doc=>doc.destination||doc.id)).size);
+    const unit=contractRateUnit(contract);
+    let quantity=1,label='1 trip';
+    if(unit==='kg'){quantity=weight;label=`${weight.toLocaleString('id-ID')} kg`;}
+    else if(unit==='km'){quantity=distance;label=`${distance.toLocaleString('id-ID')} km`;}
+    else if(unit==='drop'){quantity=drops;label=`${drops} drop`;}
+    else if(unit==='kg-km'){quantity=weight*distance;label=`${weight.toLocaleString('id-ID')} kg × ${distance.toLocaleString('id-ID')} km`;}
+    const reference=Math.max(0,Math.round(baseRate*quantity));
+    return {reference,unit,quantity,label,weight,distance,drops,baseRate};
+  }
+  function feeThresholdElement(){return document.getElementById('sw-fee-threshold-status')}
+  function ensureFeeHelper(){
+    const cost=document.getElementById('sw-cost');
+    if(!cost) return null;
+    cost.step='1000';
+    cost.setAttribute('oninput','validateDeliveryFeeThreshold()');
+    let helper=feeThresholdElement();
+    if(!helper){
+      helper=document.createElement('div');
+      helper.id='sw-fee-threshold-status';
+      helper.style.marginTop='6px';
+      cost.insertAdjacentElement('afterend',helper);
+    }
+    return helper;
+  }
+  window.refreshDeliveryFeeFromContract=function(){
+    const contract=selectedWizardContract();
+    const cost=document.getElementById('sw-cost');
+    if(!cost) return;
+    const calc=deliveryFeeReference(contract);
+    const threshold=Number(contract?.feeVarianceThreshold??DEFAULT_FEE_THRESHOLD);
+    cost.value=String(calc.reference);
+    cost.dataset.referenceFee=String(calc.reference);
+    cost.dataset.feeThreshold=String(threshold);
+    cost.dataset.contractId=contract?.id||'';
+    ensureFeeHelper();
+    validateDeliveryFeeThreshold(true);
+    const pod=document.getElementById('sw-pod');
+    if(pod&&contract?.podRequirement&&[...pod.options].some(option=>option.value===contract.podRequirement)) pod.value=contract.podRequirement;
+  };
+  window.validateDeliveryFeeThreshold=function(silent=false){
+    const contract=selectedWizardContract();
+    const cost=document.getElementById('sw-cost');
+    const helper=ensureFeeHelper();
+    if(!cost||!helper) return {exceeded:false,reference:0,actual:0,threshold:DEFAULT_FEE_THRESHOLD,variancePct:0,maxAllowed:0};
+    const calc=deliveryFeeReference(contract);
+    const reference=Number(cost.dataset.referenceFee||calc.reference||0);
+    const actual=Number(cost.value||0);
+    const threshold=Number(cost.dataset.feeThreshold||contract?.feeVarianceThreshold||DEFAULT_FEE_THRESHOLD);
+    const maxAllowed=reference*(1+threshold/100);
+    const variancePct=reference?((actual-reference)/reference*100):0;
+    const exceeded=reference>0&&actual>maxAllowed;
+    if(!contract){
+      helper.className='notice warn';
+      helper.innerHTML='Pilih Active Contract untuk menghitung Fee Delivery otomatis.';
+    }else if(calc.unit==='km'&&calc.distance<=0||calc.unit==='kg-km'&&calc.distance<=0){
+      helper.className='notice warn';
+      helper.innerHTML=`Distance pada Lane kontrak belum tersedia. Fee Delivery tetap editable, tetapi referensi tarif per km belum dapat dihitung.`;
+    }else if(exceeded){
+      helper.className='notice danger';
+      helper.innerHTML=`<b>Fraud threshold exceeded.</b> Nilai kontrak ${fmtIDR(reference)}, batas ${threshold.toLocaleString('id-ID')}% = ${fmtIDR(Math.round(maxAllowed))}. Input ${fmtIDR(actual)} (${variancePct.toFixed(1)}% di atas referensi) akan masuk Fraud Detection saat plan dibuat.`;
+      if(!silent) toast('Fee Delivery melebihi fraud threshold kontrak');
+    }else{
+      helper.className='notice';
+      const varianceText=reference?`${variancePct>=0?'+':''}${variancePct.toFixed(1)}%`:'-';
+      helper.innerHTML=`Auto calculation: <b>${calc.label} × ${fmtIDR(calc.baseRate)} = ${fmtIDR(reference)}</b>. Threshold kontrak ${threshold.toLocaleString('id-ID')}% (maks. ${fmtIDR(Math.round(maxAllowed))}). Current variance: ${varianceText}. Fee tetap dapat diedit.`;
+    }
+    return {exceeded,reference,actual,threshold,variancePct,maxAllowed,calc,contract};
+  };
+
+  const feeBaseSyncContract=window.syncContract;
+  window.syncContract=syncContract=function(){
+    const supplier=document.getElementById('sw-supplier');
+    const contractSelect=document.getElementById('sw-contract');
+    if(!contractSelect) return;
+    const carrier=supplier?.value||'';
+    const previous=contractSelect.value;
+    if(!carrier){
+      contractSelect.innerHTML='<option value="">No expedition carrier available</option>';
+      contractSelect.disabled=true;
+      const cost=document.getElementById('sw-cost');
+      if(cost) cost.value='0';
+      ensureFeeHelper();
+      validateDeliveryFeeThreshold(true);
+      return;
+    }
+    const contracts=activeCarrierContracts(carrier).map(normalizeContractFeeConfig);
+    contractSelect.innerHTML=contracts.map(contract=>{
+      const unit=contractRateUnit(contract)==='trip'?'/ trip':contractRateUnit(contract)==='drop'?'/ drop':contractRateUnit(contract)==='kg'?'/ kg':contractRateUnit(contract)==='km'?'/ km':'/ kg/km';
+      return `<option value="${esc(contract.id)}">${esc(contract.id)} — ${esc(contract.rate||'Contract Rate')} — ${fmtIDR(contract.baseRate)} ${unit} — Threshold ${Number(contract.feeVarianceThreshold||DEFAULT_FEE_THRESHOLD).toLocaleString('id-ID')}%</option>`;
+    }).join('')||'<option value="">No active contract</option>';
+    contractSelect.disabled=!contracts.length;
+    if(contracts.some(contract=>contract.id===previous)) contractSelect.value=previous;
+    contractSelect.onchange=refreshDeliveryFeeFromContract;
+    refreshDeliveryFeeFromContract();
+  };
+
+  function emitDeliveryFeeFraud(plan,assessment){
+    if(!plan||!assessment?.exceeded||typeof rcEmit!=='function') return;
+    const exposure=Math.max(0,assessment.actual-assessment.reference);
+    rcEmit({
+      rule:'DELIVERY_FEE_VARIANCE',
+      sourceModule:'Shipment Planning',
+      sourceType:'Shipment Planning',
+      sourceRef:plan.id,
+      title:'Delivery fee exceeds active contract threshold',
+      negativeCase:`Fee Delivery ${fmtIDR(assessment.actual)} pada ${plan.id} melebihi nilai kontrak ${fmtIDR(assessment.reference)} sebesar ${assessment.variancePct.toFixed(1)}%.`,
+      expectedCondition:`Fee Delivery maksimal ${assessment.threshold}% di atas hasil kalkulasi Active Contract.`,
+      actualCondition:`Contract ${plan.contract}; Reference ${fmtIDR(assessment.reference)}; Input ${fmtIDR(assessment.actual)}; Variance ${assessment.variancePct.toFixed(1)}%.`,
+      threshold:`${assessment.threshold}% / maksimum ${fmtIDR(Math.round(assessment.maxAllowed))}`,
+      severity:assessment.variancePct>50?'Critical':'High',
+      confidence:99,
+      exposure,
+      recurrence:1,
+      evidence:[plan.contract,...(plan.docs||[])],
+      recommendedAction:'Review contract rate, supporting quotation, and fee approval before dispatch.',
+      blocking:false,
+      sourceRecord:`${plan.id} • ${plan.contract}`
+    });
+    plan.feeReference=assessment.reference;
+    plan.feeThresholdPct=assessment.threshold;
+    plan.feeVariancePct=Number(assessment.variancePct.toFixed(2));
+    plan.fraudStatus='Flagged';
+    plan.health=plan.health==='On Schedule'?'At Risk':plan.health;
+  }
+
+  const feeBaseCreateShipmentPlan=window.createShipmentPlan;
+  window.createShipmentPlan=createShipmentPlan=function(){
+    const isExpedition=document.getElementById('sw-source')?.value==='Expedition';
+    const assessment=isExpedition?validateDeliveryFeeThreshold(true):null;
+    const before=(db.plans||[]).length;
+    feeBaseCreateShipmentPlan();
+    if((db.plans||[]).length<=before) return;
+    const plan=db.plans[db.plans.length-1];
+    if(isExpedition&&assessment){
+      plan.feeReference=assessment.reference;
+      plan.feeThresholdPct=assessment.threshold;
+      plan.feeVariancePct=Number(assessment.variancePct.toFixed(2));
+      emitDeliveryFeeFraud(plan,assessment);
+      saveDB();
+      if(typeof installOperationalRiskBanners==='function') installOperationalRiskBanners();
+      renderAll();
+      if(assessment.exceeded) toast(`Plan ${plan.id} dibuat dan ditandai pada Fraud Detection`);
+    }
+  };
+
+  function scanExistingDeliveryFeeVariance(){
+    (db.plans||[]).filter(plan=>plan.source==='Expedition'&&plan.contract).forEach(plan=>{
+      const contract=(db.contracts||[]).find(item=>item.id===plan.contract);
+      if(!contract) return;
+      const reference=Number(plan.feeReference||0);
+      const actual=Number(plan.plannedCost||0);
+      const threshold=Number(plan.feeThresholdPct??contract.feeVarianceThreshold??DEFAULT_FEE_THRESHOLD);
+      if(!reference) return;
+      const variancePct=(actual-reference)/reference*100;
+      const assessment={reference,actual,threshold,variancePct,maxAllowed:reference*(1+threshold/100),exceeded:actual>reference*(1+threshold/100)};
+      emitDeliveryFeeFraud(plan,assessment);
+    });
+  }
+
+  const feeBaseRunOperationalRiskValidation=window.runOperationalRiskValidation;
+  if(typeof feeBaseRunOperationalRiskValidation==='function'){
+    window.runOperationalRiskValidation=function(scope='all',silent=false){
+      feeBaseRunOperationalRiskValidation(scope,true);
+      if(scope==='all'||scope==='Shipment Planning') scanExistingDeliveryFeeVariance();
+      saveDB();
+      if(typeof installOperationalRiskBanners==='function') installOperationalRiskBanners();
+      const scopes=scope==='all'?['Shipment Planning','Shipment Schedule','Loading & Dispatch','Monitoring Shipment','Driver Mobile']:[scope];
+      const total=scopes.reduce((sum,item)=>sum+(typeof rcEventsFor==='function'?rcEventsFor(item).length:0),0);
+      if(!silent) toast(`${total} open operational risk event(s) found`);
+      return total;
+    };
+  }
+
+  const feeBaseResetDemo=window.resetDemo;
+  window.resetDemo=resetDemo=function(){
+    feeBaseResetDemo();
+    (DEMO.contracts||[]).forEach(normalizeContractFeeConfig);
+    (db.contracts||[]).forEach(normalizeContractFeeConfig);
+    saveDB();
+  };
 })();
 </script>
 
