@@ -220,20 +220,12 @@ a.nav-item{text-decoration:none}
 /* ===== Report Center Interactive KPI & Search Revision V2 ===== */
 .kpi.kpi-clickable{cursor:pointer;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}.kpi.kpi-clickable:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(20,30,40,.10);border-color:#b9dfea}.kpi.kpi-clickable:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(40,169,224,.13)}.kpi-open-hint{margin-top:8px;padding-top:7px;border-top:1px solid #eef1f3;color:var(--cyan-dark);font-size:9.5px;font-weight:600}.report-filter-toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.report-filter-toolbar .input{min-width:230px;flex:1}.report-filter-toolbar .select{min-width:170px}.report-detail-table.compact{min-width:760px}.report-detail-status{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:11px;font-size:10px;font-weight:500}.report-detail-status.good{background:var(--green-bg);color:var(--green)}.report-detail-status.warn{background:var(--orange-bg);color:var(--orange)}.report-detail-status.bad{background:var(--red-bg);color:var(--red)}.report-detail-status.neutral{background:#eceef0;color:#6f7780}
 @media(max-width:760px){.report-filter-toolbar .input,.report-filter-toolbar .select,.report-filter-toolbar .btn{min-width:100%;width:100%}.kpi-open-hint{display:none}}
-
-
-/* ===== Overview Dashboard Calendar & Matrix Revision V3 ===== */
-.dashboard-filter-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 13px;margin-bottom:14px;box-shadow:0 1px 3px rgba(20,30,40,.04)}
-.dashboard-filter-title{display:flex;flex-direction:column;min-width:245px}.dashboard-filter-title b{font-size:11.5px}.dashboard-filter-title small{font-size:9.5px;color:var(--muted);margin-top:2px}
-.dashboard-filter-group{display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap}.dashboard-filter-group label{display:flex;flex-direction:column;gap:4px;font-size:9.5px;color:var(--muted);font-weight:500}.dashboard-filter-group .input{min-width:145px;padding:7px 9px}.dashboard-filter-separator{padding-bottom:8px;color:var(--muted);font-size:10px}
-.dashboard-period-chip{margin-left:auto;display:inline-flex;align-items:center;padding:5px 10px;border-radius:14px;background:#eaf6fa;color:var(--cyan-dark);font:500 10px 'Roboto Mono',monospace;white-space:nowrap}
-.dashboard-extra-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}.dashboard-extra-grid .card-body{min-height:235px;display:flex;flex-direction:column}.dashboard-extra-grid .report-card-action{margin-top:auto}
-.dashboard-live-note{font-size:9.5px;color:#6b747d;background:#f5f7f8;border:1px solid #e7eaed;border-radius:6px;padding:6px 8px;margin-bottom:8px}
-.dashboard-activity-meta{font-size:10px;color:var(--muted);margin-bottom:2px}.dashboard-bars{overflow-x:auto;overflow-y:hidden;padding-bottom:22px}.dashboard-bars .bar{min-width:34px}.dashboard-bars .bar b{position:absolute;left:50%;transform:translateX(-50%);top:-17px;font:600 9px 'Roboto Mono';color:#4e5963}.dashboard-bars .bar span{white-space:nowrap}
-.dashboard-report-period{display:flex;align-items:center;gap:7px;padding:8px 10px;margin-bottom:12px;border:1px solid #d5eaf2;background:#f4fbfd;color:#316f86;border-radius:7px;font-size:10.5px}.dashboard-report-period b{font-family:'Roboto Mono',monospace}
-.dashboard-report-section{font-size:12px;font-weight:600;margin:16px 0 8px;border-left:3px solid var(--blue);padding-left:8px}
-@media(max-width:1050px){.dashboard-extra-grid{grid-template-columns:1fr}.dashboard-period-chip{margin-left:0}}
-@media(max-width:760px){.dashboard-filter-bar,.dashboard-filter-group{align-items:stretch}.dashboard-filter-group,.dashboard-filter-group label,.dashboard-filter-group .input,.dashboard-filter-group .btn{width:100%}.dashboard-filter-separator{display:none}.dashboard-filter-title{min-width:0;width:100%}.dashboard-period-chip{width:100%;justify-content:center}.dashboard-extra-grid{grid-template-columns:1fr}}
+/* ===== Overview Dashboard Control Tower Revision ===== */
+#page-dashboard .v6-report-quality{display:none!important}
+.ov-row-label{display:flex;align-items:center;gap:8px;margin:16px 0 8px;font-size:11px;font-weight:700;color:#5f6670;text-transform:uppercase;letter-spacing:.6px}.ov-row-label span{display:inline-flex;width:22px;height:22px;align-items:center;justify-content:center;border-radius:50%;background:#e2f1f6;color:var(--cyan-dark);font:600 10px 'Roboto Mono',monospace}.ov-filter-card{margin-bottom:12px}.ov-filter-grid{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:11px}.ov-filter-grid .input,.ov-filter-grid .select{width:100%;min-width:0}.ov-search-field{grid-column:span 3}.ov-filter-actions{display:flex;align-items:flex-end;gap:8px}.ov-filter-actions .btn{min-height:35px}.ov-data-strip{margin-top:12px;padding:10px 12px;border:1px solid #cae8f4;background:#f1f9fc;border-radius:7px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:10.5px;color:#53717d}.ov-data-strip b{color:#2f6376}.ov-strip-item{display:inline-flex;gap:5px;align-items:center}.ov-strip-dot{width:7px;height:7px;border-radius:50%;background:var(--green)}.ov-strip-dot.warn{background:var(--orange)}.ov-strip-dot.bad{background:var(--red)}.ov-executive-grid{grid-template-columns:repeat(4,minmax(150px,1fr))}.ov-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:2px}.ov-card-foot{display:flex;justify-content:flex-end;padding:0 15px 14px}.ov-funnel{display:flex;align-items:stretch;gap:6px;overflow:auto;padding-bottom:4px}.ov-funnel-stage{min-width:108px;flex:1;border:1px solid var(--line);border-radius:8px;background:#f8fafb;padding:10px;position:relative}.ov-funnel-stage:not(:last-child):after{content:'›';position:absolute;right:-8px;top:50%;transform:translateY(-50%);z-index:2;color:#a0a7ad;font-size:18px}.ov-funnel-stage small{display:block;color:var(--muted);font-size:9.5px;min-height:28px}.ov-funnel-stage b{display:block;font:700 22px 'Roboto Mono',monospace;margin:5px 0 3px}.ov-funnel-stage em{font-style:normal;font-size:9.5px;color:#78818a}.ov-summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.ov-mini-stat{border:1px solid var(--line);border-radius:8px;padding:9px 10px;background:#fafbfc}.ov-mini-stat span{display:block;font-size:9.5px;color:var(--muted)}.ov-mini-stat b{display:block;font:600 16px 'Roboto Mono',monospace;margin-top:4px}.ov-mini-stat small{display:block;font-size:9px;color:#969ca3;margin-top:3px}.ov-metric-block{margin-top:10px}.ov-metric-row{display:grid;grid-template-columns:130px 1fr 52px;align-items:center;gap:9px;margin:8px 0;font-size:10.5px}.ov-metric-row b{text-align:right;font:500 10.5px 'Roboto Mono'}.ov-distribution{display:flex;height:12px;border-radius:7px;overflow:hidden;background:#edf0f2;margin-top:12px}.ov-distribution span{display:block;height:100%;min-width:1px}.ov-legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:7px;font-size:9.5px;color:#727a83}.ov-legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px}.ov-exception-list{display:flex;flex-direction:column;gap:7px}.ov-exception-item{display:grid;grid-template-columns:72px 1fr auto;gap:8px;align-items:start;padding:8px 9px;border:1px solid var(--line);border-radius:7px;background:#fff}.ov-exception-item b{font-size:10.5px}.ov-exception-item p{font-size:9.5px;color:var(--muted);margin-top:2px}.ov-severity{display:inline-flex;justify-content:center;border-radius:11px;padding:3px 7px;font-size:9px;font-weight:600}.ov-severity.critical{background:var(--red-bg);color:var(--red)}.ov-severity.high{background:var(--orange-bg);color:#a16c1c}.ov-severity.medium{background:#e2f1f6;color:var(--cyan-dark)}.ov-severity.low{background:#eceef0;color:#68717a}.ov-priority-window{margin-bottom:12px}.ov-priority-table{min-width:1380px}.ov-priority-chip{display:inline-flex;border-radius:12px;padding:3px 8px;font-size:9.5px;font-weight:600}.ov-priority-chip.critical{background:var(--red-bg);color:var(--red)}.ov-priority-chip.high{background:var(--orange-bg);color:#a16c1c}.ov-priority-chip.medium{background:#e2f1f6;color:var(--cyan-dark)}.ov-priority-chip.normal{background:var(--green-bg);color:var(--green)}.ov-readiness.ready{color:var(--green);font-weight:600}.ov-readiness.blocked{color:var(--red);font-weight:600}.ov-readiness.na{color:var(--muted)}.ov-link{border:0;background:none;color:var(--blue);font-weight:600;text-decoration:underline;cursor:pointer;padding:0}.ov-calc-note{margin-top:9px;padding:8px 9px;border-radius:6px;background:#f4f8fa;color:#65717a;font-size:9.5px}.ov-modal-wide{width:min(1180px,97vw)}.ov-modal-wide .modal-body{max-height:75vh}.ov-report-summary{display:grid;grid-template-columns:repeat(5,minmax(130px,1fr));gap:8px;margin-bottom:13px}.ov-report-table{min-width:1000px}.ov-report-table td .muted{margin-top:3px}.ov-action-cell{white-space:nowrap}.ov-empty{padding:24px;text-align:center;color:var(--muted)}
+@media(max-width:1200px){.ov-filter-grid{grid-template-columns:repeat(3,minmax(150px,1fr))}.ov-search-field{grid-column:span 2}.ov-executive-grid{grid-template-columns:repeat(4,1fr)}.ov-summary-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.ov-grid-2{grid-template-columns:1fr}.ov-filter-grid{grid-template-columns:repeat(2,minmax(140px,1fr))}.ov-search-field{grid-column:span 2}.ov-executive-grid{grid-template-columns:repeat(2,1fr)}.ov-report-summary{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.ov-filter-grid{grid-template-columns:1fr}.ov-search-field{grid-column:auto}.ov-filter-actions{align-items:stretch}.ov-filter-actions .btn{flex:1}.ov-executive-grid{grid-template-columns:1fr 1fr}.ov-funnel-stage{min-width:120px}.ov-summary-grid{grid-template-columns:1fr 1fr}}
 
 </style>
 </head>
@@ -253,37 +245,56 @@ a.nav-item{text-decoration:none}
 <div class="content">
 <nav class="file-nav" aria-label="Navigasi antar modul"><a class="home-link" href="index.html">⌂ Home / Index</a><a class="current" href="report-overview.html">Report & Overview</a><a class="" href="master.html">Master</a><a class="" href="operational.html">Operational</a><a class="" href="integration.html">Integration McEasy</a><a class="" href="risk-control.html">Risk & Control</a></nav>
 <section class="page active" id="page-dashboard">
-<div class="page-head"><div><h1>Overview Dashboard</h1><p>Ringkasan real-time dari Master Data, Shipment Planning, Loading, Driver Mobile, Integration, dan Report.</p></div><div class="head-actions"><button class="btn btn-outline" onclick="reloadSharedDB()">↻ Refresh Data</button></div></div>
-<div class="shared-banner"><span class="shared-dot"></span><span>Seluruh KPI menggunakan database yang sama. Perubahan pada Master dan Operational langsung tercermin pada dashboard ini.</span></div>
-<div class="dashboard-filter-bar">
-  <div class="dashboard-filter-title"><b>Calendar Date Filter</b><small>Memfilter shipment, document planning, activity, dan operational matrix berdasarkan tanggal.</small></div>
-  <div class="dashboard-filter-group">
-    <label>From<input class="input" id="dashboardDateFrom" type="date"></label>
-    <span class="dashboard-filter-separator">to</span>
-    <label>To<input class="input" id="dashboardDateTo" type="date"></label>
-    <button class="btn btn-primary" type="button" onclick="applyDashboardDateFilter()">Search</button>
-    <button class="btn btn-ghost" type="button" onclick="resetDashboardDateFilter()">Reset</button>
+<div class="page-head"><div><h1>Overview Dashboard</h1><p>Control tower operasional berbasis data Master dan Operational yang tersinkron melalui shared database.</p></div><div class="head-actions"><button class="btn btn-outline" type="button" onclick="reloadSharedDB()">↻ Refresh Data</button><button class="btn btn-ghost" type="button" onclick="ovExportOverview()">⇩ Export Overview</button></div></div>
+
+<div class="ov-row-label"><span>1</span> Global Control</div>
+<div class="card ov-filter-card">
+  <div class="card-head">Global Dashboard Filter <span>seluruh matrix mengikuti filter aktif</span></div>
+  <div class="card-body">
+    <div class="ov-filter-grid">
+      <div class="field"><label>Start Date</label><input class="input" id="ovDateFrom" type="date"></div>
+      <div class="field"><label>End Date</label><input class="input" id="ovDateTo" type="date"></div>
+      <div class="field"><label>Date Basis</label><select class="select" id="ovDateBasis"><option value="shipment">Shipment Date</option><option value="eta">ETA / Delivery Date</option><option value="cost">Cost Date</option></select></div>
+      <div class="field"><label>Hub / Origin</label><select class="select" id="ovHub"><option value="">All Hub / Origin</option></select></div>
+      <div class="field"><label>Carrier</label><select class="select" id="ovCarrier"><option value="">All Carrier</option></select></div>
+      <div class="field"><label>Fleet Source</label><select class="select" id="ovSource"><option value="">All Shipping Option</option><option>Fleet Company</option><option>Expedition</option></select></div>
+      <div class="field"><label>Route / Lane</label><select class="select" id="ovRoute"><option value="">All Route / Lane</option></select></div>
+      <div class="field"><label>Shipment Status</label><select class="select" id="ovStatus"><option value="">All Shipment Status</option></select></div>
+      <div class="field ov-search-field"><label>Search Plan / Document / Customer</label><input class="input" id="ovSearch" placeholder="PL/00001, DO, customer, vehicle..." onkeydown="if(event.key==='Enter')ovApplyFilters()"></div>
+      <div class="ov-filter-actions"><button class="btn btn-primary" type="button" onclick="ovApplyFilters()">Search</button><button class="btn btn-ghost" type="button" onclick="ovResetFilters()">Reset</button></div>
+    </div>
+    <div class="ov-data-strip" id="ovDataStrip"></div>
   </div>
-  <span class="dashboard-period-chip" id="dashboardPeriodLabel">All available dates</span>
 </div>
-<div class="kpi-grid" id="dashboardKpis"></div>
-<div class="dashboard-layout">
-<div class="dashboard-stack">
-<div class="card"><div class="card-head">Shipment Status Distribution <span>selected period</span></div><div class="card-body"><div id="statusMetrics"></div><div class="report-card-action"><button class="btn btn-outline" type="button" onclick="openDashboardReport('status')">View Report</button></div></div></div>
-<div class="card"><div class="card-head">Delivery Activity <span>selected period</span></div><div class="card-body"><div class="dashboard-activity-meta" id="deliveryActivityMeta"></div><div class="timeline-mini dashboard-bars" id="deliveryBars"></div><div class="report-card-action"><button class="btn btn-outline" type="button" onclick="openDashboardReport('activity')">View Report</button></div></div></div>
+
+<div class="ov-row-label"><span>2</span> Executive KPI</div>
+<div class="kpi-grid ov-executive-grid" id="dashboardKpis"></div>
+
+<div class="ov-row-label"><span>3</span> Core Operational View</div>
+<div class="ov-grid-2">
+  <div class="card"><div class="card-head">Shipment Funnel <span>end-to-end operational stage</span></div><div class="card-body" id="ovShipmentFunnel"></div><div class="ov-card-foot"><button class="btn btn-outline" type="button" onclick="ovOpenOverviewReport('funnel')">View Report</button></div></div>
+  <div class="card"><div class="card-head">Capacity Utilization <span>weight, volume, limiting factor</span></div><div class="card-body" id="ovCapacitySummary"></div><div class="ov-card-foot"><button class="btn btn-outline" type="button" onclick="ovOpenOverviewReport('capacity')">View Report</button></div></div>
 </div>
-<div class="dashboard-stack">
-<div class="card"><div class="card-head">Fleet Availability <span>live master data</span></div><div class="card-body"><div class="dashboard-live-note">Live data — tidak dipengaruhi calendar date filter.</div><div id="fleetMetrics"></div><div class="report-card-action"><button class="btn btn-outline" type="button" onclick="openDashboardReport('fleet')">View Report</button></div></div></div>
-<div class="card"><div class="card-head">Upcoming Shipments <span>planned &amp; loading</span></div><div class="card-body"><div class="ship-list" id="upcomingList"></div><div class="report-card-action"><button class="btn btn-outline" type="button" onclick="openDashboardReport('upcoming')">View Report</button></div></div></div>
+
+<div class="ov-row-label"><span>4</span> Execution Readiness</div>
+<div class="ov-grid-2">
+  <div class="card"><div class="card-head">Resource Assignment Gaps <span>shipment-level assignment blockers</span></div><div class="card-body" id="ovResourceGaps"></div><div class="ov-card-foot"><button class="btn btn-outline" type="button" onclick="ovOpenOverviewReport('resources')">View Action List</button></div></div>
+  <div class="card"><div class="card-head">Dispatch &amp; Execution Bottleneck <span>loading, gate-out, tracking, ETA</span></div><div class="card-body" id="ovExecutionBottleneck"></div><div class="ov-card-foot"><button class="btn btn-outline" type="button" onclick="ovOpenOverviewReport('execution')">View Bottlenecks</button></div></div>
 </div>
+
+<div class="ov-row-label"><span>5</span> Control &amp; Attention</div>
+<div class="ov-grid-2">
+  <div class="card"><div class="card-head">Approval &amp; Financial Exposure <span>open approvals and unresolved exposure</span></div><div class="card-body" id="ovFinancialExposure"></div><div class="ov-card-foot"><button class="btn btn-outline" type="button" onclick="ovOpenOverviewReport('financial')">View Approval Queue</button></div></div>
+  <div class="card"><div class="card-head">Exception &amp; Action Center <span>critical issues requiring action</span></div><div class="card-body" id="ovExceptionCenter"></div><div class="ov-card-foot"><button class="btn btn-outline" type="button" onclick="ovOpenOverviewReport('exceptions')">View All Exceptions</button></div></div>
 </div>
-<div class="dashboard-extra-grid">
-<div class="card"><div class="card-head">Master Data Readiness <span>live master data</span></div><div class="card-body"><div id="masterReadinessMetrics"></div><div class="report-card-action"><button class="btn btn-outline" type="button" onclick="openDashboardReport('masterReadiness')">View Report</button></div></div></div>
-<div class="card"><div class="card-head">Operational Readiness <span>selected period</span></div><div class="card-body"><div id="operationalReadinessMetrics"></div><div class="report-card-action"><button class="btn btn-outline" type="button" onclick="openDashboardReport('operationalReadiness')">View Report</button></div></div></div>
-<div class="card"><div class="card-head">Capacity Utilization <span>selected period</span></div><div class="card-body"><div id="capacityMetrics"></div><div class="report-card-action"><button class="btn btn-outline" type="button" onclick="openDashboardReport('capacity')">View Report</button></div></div></div>
-<div class="card"><div class="card-head">Maintenance &amp; Compliance <span>live master data</span></div><div class="card-body"><div class="dashboard-live-note">Live data — status task, STNK, dan KIR terbaru.</div><div id="maintenanceComplianceMetrics"></div><div class="report-card-action"><button class="btn btn-outline" type="button" onclick="openDashboardReport('maintenance')">View Report</button></div></div></div>
+
+<div class="ov-row-label"><span>6</span> Priority Shipment Queue</div>
+<div class="window ov-priority-window" style="min-height:0">
+  <div class="toolbar"><div><b>Priority Shipment Queue</b><div class="muted">Diurutkan berdasarkan blocking issue, overdue, risk, dan shipment date.</div></div><span class="spacer"></span><button class="btn btn-outline" type="button" onclick="ovOpenOverviewReport('priority')">View Full Queue</button></div>
+  <div class="table-wrap"><table class="tbl blue ov-priority-table"><thead><tr><th>Priority</th><th>Plan / Document</th><th>Shipment / Deadline</th><th>Customer / Route</th><th>Vehicle / Driver</th><th>Capacity</th><th>Loading</th><th>Fleet Readiness</th><th>Cost Variance</th><th>Exception</th><th>Next Action</th><th>Action</th></tr></thead><tbody id="ovPriorityTbody"></tbody></table></div>
 </div>
 </section>
+
 <section class="page" id="page-report">
 <div class="page-head">
 <div><h1>Report Center</h1><p>Laporan tabel dari histori Shipment, Driver Mobile, Fleet, Maintenance, ePOD, dan biaya pada satu database.</p></div>
@@ -2316,6 +2327,244 @@ const moduleName=v6Module();if(moduleName==='MASTER')v6InstallMasterUI();else if
 </script>
 
 <script>
+/* ===== Overview Dashboard Control Tower Runtime ===== */
+(function overviewControlTower(){
+  const OV={initialized:false};
+  const A=v=>Array.isArray(v)?v:[];
+  const N=v=>Number(v||0);
+  const D=v=>String(v||'').slice(0,10);
+  const pct=(a,b,d=0)=>b?Math.round((a/b*100)*Math.pow(10,d))/Math.pow(10,d):0;
+  const today=()=>new Date().toISOString().slice(0,10);
+  const dateValue=v=>{const s=D(v);return /^\d{4}-\d{2}-\d{2}$/.test(s)?s:''};
+  const daysBetween=(a,b)=>{if(!a||!b)return 0;return Math.floor((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/86400000)};
+  const severityRank={Critical:4,High:3,Medium:2,Low:1};
+  const priorityClass=x=>String(x||'Normal').toLowerCase();
+
+  function optionHTML(value,label,current){return `<option value="${esc(value)}" ${String(value)===String(current)?'selected':''}>${esc(label)}</option>`}
+  function fillSelect(id,items,allLabel){const el=document.getElementById(id);if(!el)return;const current=el.value;el.innerHTML=optionHTML('',allLabel,current)+items.map(x=>typeof x==='string'?optionHTML(x,x,current):optionHTML(x.value,x.label,current)).join('');}
+  function latestDates(){
+    const dates=[...A(db.plans).flatMap(p=>[p.shipmentDate,p.eta]),...A(db.documents).map(d=>D(d.dispatchDeadline||d.alert||d.createdDate)),...A(db.costRecords).map(c=>c.date)].map(D).filter(Boolean).sort();
+    return {min:dates[0]||today(),max:dates.at(-1)||today()};
+  }
+  function ensureFilters(forceDates=false){
+    fillSelect('ovHub',A(db.hubs).filter(x=>x.status!=='Inactive').map(x=>x.name).filter(Boolean),'All Hub / Origin');
+    fillSelect('ovCarrier',A(db.carriers).filter(x=>x.status!=='Inactive').map(x=>x.name).filter(Boolean),'All Carrier');
+    fillSelect('ovStatus',[...new Set(A(db.plans).map(x=>x.status).filter(Boolean))].sort(),'All Shipment Status');
+    const routes=A(db.routes).filter(x=>x.status!=='Inactive').map(r=>({value:r.id,label:`${r.id} • ${r.origin||'-'} → ${r.destination||'-'}`}));
+    fillSelect('ovRoute',routes,'All Route / Lane');
+    const range=latestDates(),from=document.getElementById('ovDateFrom'),to=document.getElementById('ovDateTo');
+    if(from&&(!from.value||forceDates))from.value=range.min;if(to&&(!to.value||forceDates))to.value=range.max;
+    OV.initialized=true;
+  }
+  function filters(){return {from:document.getElementById('ovDateFrom')?.value||'',to:document.getElementById('ovDateTo')?.value||'',basis:document.getElementById('ovDateBasis')?.value||'shipment',hub:document.getElementById('ovHub')?.value||'',carrier:document.getElementById('ovCarrier')?.value||'',source:document.getElementById('ovSource')?.value||'',route:document.getElementById('ovRoute')?.value||'',status:document.getElementById('ovStatus')?.value||'',search:(document.getElementById('ovSearch')?.value||'').trim().toLowerCase()}}
+  function inRange(date,f){const d=dateValue(date);if(!d)return !f.from&&!f.to;if(f.from&&d<f.from)return false;if(f.to&&d>f.to)return false;return true}
+  function routeRecord(p){return A(db.routes).find(r=>r.id===p.routeLane||r.id===p.route||((r.origin===p.origin||r.origin===p.dispatchHub)&&(r.destination===p.destination||String(p.destination||'').includes(r.destination))))||null}
+  function vehicleRecord(p){return A(db.vehicles).find(v=>v.plate===p.vehicle||v.id===p.vehicleId)||null}
+  function driverRecord(p){return A(db.drivers).find(d=>d.name===p.driver||d.id===p.driverId)||null}
+  function carrierName(p){const v=vehicleRecord(p);return p.source==='Fleet Company'?(p.supplier||v?.carrier||'Prieds Internal Fleet'):(p.supplier||'-')}
+  function planCostDate(p){const fo=A(db.fleetOrders).filter(x=>x.planId===p.id||x.plan===p.id).map(x=>x.id),dates=A(db.costRecords).filter(x=>fo.includes(x.fleetOrder)).map(x=>x.date).filter(Boolean).sort();return dates.at(-1)||p.shipmentDate}
+  function planFilterDate(p,f){if(f.basis==='eta')return p.actualCompletionDate||A(p.stops).map(s=>D(s.arrival)).filter(Boolean).sort().at(-1)||p.eta||p.shipmentDate;if(f.basis==='cost')return planCostDate(p);return p.shipmentDate}
+  function planMatches(p,f){
+    if(!inRange(planFilterDate(p,f),f))return false;
+    if(f.hub&&![p.origin,p.dispatchHub,p.destination].some(v=>String(v||'').includes(f.hub)))return false;
+    if(f.carrier&&carrierName(p)!==f.carrier)return false;
+    if(f.source&&p.source!==f.source)return false;
+    if(f.status&&p.status!==f.status)return false;
+    if(f.route){const r=routeRecord(p);if(!(p.routeLane===f.route||p.route===f.route||r?.id===f.route))return false;}
+    if(f.search&&!JSON.stringify(p).toLowerCase().includes(f.search))return false;
+    return true;
+  }
+  function filteredPlans(){const f=filters();return A(db.plans).filter(p=>planMatches(p,f))}
+  function documentDate(d){return D(d.dispatchDeadline||d.alert||d.createdDate||d.date)}
+  function filteredDocuments(){const f=filters();return A(db.documents).filter(d=>inRange(documentDate(d),f)&&(!f.hub||[d.origin,d.destination].some(v=>String(v||'').includes(f.hub)))&&(!f.search||JSON.stringify(d).toLowerCase().includes(f.search)))}
+  function backlogRows(){
+    const used=new Set(A(db.plans).filter(p=>!['Draft','Cancelled'].includes(p.status)).flatMap(p=>A(p.docs)));
+    return filteredDocuments().filter(d=>d.status==='Need Planning'&&!used.has(d.id)).map(d=>{const deadline=D(d.dispatchDeadline||d.alert),age=deadline?Math.max(0,daysBetween(deadline,today())):0,overdue=!!deadline&&deadline<today();return {...d,deadline,age,overdue,masterStatus:d.masterDataStatus||'Complete',masterIssues:A(d.masterDataIssues)}});
+  }
+  function capacityRows(plans=filteredPlans()){
+    return plans.filter(p=>!['Draft','Cancelled'].includes(p.status)).map(p=>{const v=vehicleRecord(p),internal=p.source==='Fleet Company',wc=N(v?.weight),vc=N(v?.volume),weight=N(p.weight),volume=N(p.volume),eligible=internal&&!!v&&wc>0&&vc>0&&weight>=0&&volume>=0;let wu=null,vu=null,overall=null,limiting='N/A',status='Not Calculated',reason='';if(eligible){wu=wc?weight/wc*100:0;vu=vc?volume/vc*100:0;overall=Math.max(wu,vu);limiting=Math.abs(wu-vu)<1?'Balanced':wu>vu?'Weight':'Volume';status=overall===0?'Empty Plan':overall<50?'Low':overall<80?'Moderate':overall<95?'Healthy':overall<=100?'Near Full':'Over Capacity';}else{reason=!internal?'Carrier capacity unavailable':!v?'Vehicle not assigned / not found':wc<=0||vc<=0?'Vehicle capacity incomplete':'Shipment load unavailable';}return {p,v,internal,eligible,wc,vc,weight,volume,wu,vu,overall,limiting,status,reason,remainingWeight:eligible?wc-weight:null,remainingVolume:eligible?vc-volume:null};});
+  }
+  function maintenanceForVehicle(v){const now=today();return A(db.maintenanceTasks).filter(t=>(t.vehicleId===v.id||t.vehicle===v.plate||t.plate===v.plate)&&!['Completed','Cancelled'].includes(t.status)&&((t.status==='In Progress')||(!t.startDate&&!t.endDate)||(D(t.startDate)<=now&&(!t.endDate||D(t.endDate)>=now))))}
+  function vehicleReadiness(v){const stnk=typeof expiryInfo==='function'?expiryInfo(v.stnkExpiry||v.expiry):{status:D(v.stnkExpiry)<today()?'Expired':'Valid'},kir=typeof expiryInfo==='function'?expiryInfo(v.kirExpiry||v.expiry):{status:D(v.kirExpiry)<today()?'Expired':'Valid'},maint=maintenanceForVehicle(v),issues=[];if(v.status!=='Available')issues.push(`Status ${v.status||'Unknown'}`);if(stnk.status!=='Valid')issues.push(`STNK ${stnk.status}`);if(kir.status!=='Valid')issues.push(`KIR ${kir.status}`);if(maint.length)issues.push('Active maintenance');if((v.identityVerification||'Verified')!=='Verified')issues.push(`Identity ${v.identityVerification}`);return {v,stnk,kir,maint,issues,ready:issues.length===0}}
+  function driverReadiness(d){const sim=typeof expiryInfo==='function'?expiryInfo(d.expiry):{status:D(d.expiry)<today()?'Expired':'Valid'},issues=[];if(d.status!=='Available')issues.push(`Status ${d.status||'Unknown'}`);if(sim.status!=='Valid')issues.push(`SIM ${sim.status}`);if((d.identityStatus||'Verified')!=='Verified')issues.push(`Identity ${d.identityStatus}`);if((d.employmentStatus||'Active')!=='Active')issues.push(`Employment ${d.employmentStatus}`);if((d.watchlistStatus||'Clear')!=='Clear')issues.push(`Watchlist ${d.watchlistStatus}`);return {d,sim,issues,ready:issues.length===0}}
+  function scheduleConflicts(plans=filteredPlans()){
+    const active=plans.filter(p=>!['Draft','Cancelled','Completed'].includes(p.status)),out=[];['vehicle','driver'].forEach(key=>{const map={};active.filter(p=>p[key]&&p[key]!=='-').forEach(p=>{const k=`${p.shipmentDate}|${p[key]}`;(map[k]??=[]).push(p)});Object.entries(map).filter(([,rows])=>rows.length>1).forEach(([k,rows])=>out.push({type:key,value:k.split('|')[1],date:k.split('|')[0],plans:rows.map(x=>x.id)}));});return out;
+  }
+  function costForPlan(p){
+    const planned=N(p.plannedCost),direct=N(p.actualCost),fo=A(db.fleetOrders).filter(x=>x.planId===p.id||x.plan===p.id),ids=fo.map(x=>x.id),records=A(db.costRecords).filter(x=>ids.includes(x.fleetOrder)),recorded=records.reduce((s,x)=>s+N(x.amount),0),completed=p.status==='Completed',actualForecast=completed?(direct||recorded||planned):Math.max(planned,direct,recorded),known=direct>0||recorded>0,variance=actualForecast-planned,variancePct=planned?variance/planned*100:0,contract=A(db.contracts).find(x=>x.id===p.contract),threshold=N(p.feeThresholdPct??contract?.feeVarianceThreshold??15)||15;return {p,planned,direct,recorded,actualForecast,known,variance,variancePct,threshold,breach:variancePct>threshold,contract,records};
+  }
+  function costRows(plans=filteredPlans()){return plans.filter(p=>!['Draft','Cancelled'].includes(p.status)).map(costForPlan)}
+  function missingResource(v){return !v||v==='-'||v==='Not Assigned'||v==='N/A'}
+  function resourceGapRows(plans=filteredPlans()){
+    const active=plans.filter(p=>!['Draft','Cancelled','Completed'].includes(p.status)),conflicts=scheduleConflicts(active),rows=[];
+    active.forEach(p=>{
+      if(p.source!=='Fleet Company')return;
+      const issues=[],v=vehicleRecord(p),d=driverRecord(p);
+      if(missingResource(p.vehicle))issues.push('Vehicle not assigned');
+      else if(!v)issues.push('Vehicle not found in Master');
+      else{const r=vehicleReadiness(v);issues.push(...r.issues.map(x=>'Vehicle: '+x));}
+      if(missingResource(p.driver))issues.push('Driver not assigned');
+      else if(!d)issues.push('Driver not found in Master');
+      else{const r=driverReadiness(d);issues.push(...r.issues.map(x=>'Driver: '+x));}
+      conflicts.filter(c=>c.plans.includes(p.id)).forEach(c=>issues.push(`${c.type==='vehicle'?'Vehicle':'Driver'} schedule conflict`));
+      const unique=[...new Set(issues)];
+      if(unique.length)rows.push({p,vehicle:v,driver:d,issues:unique,blocking:true,next:unique.some(x=>x.includes('not assigned'))?'Assign valid vehicle and driver':unique.some(x=>x.includes('conflict'))?'Reschedule resource':'Resolve resource eligibility'});
+    });
+    return rows.sort((a,b)=>String(a.p.shipmentDate||'').localeCompare(String(b.p.shipmentDate||'')));
+  }
+  function updateAgeMinutes(text){
+    const s=String(text||'').toLowerCase(),n=Number((s.match(/\d+/)||[])[0]||0);
+    if(!n)return 0;if(s.includes('day'))return n*1440;if(s.includes('hour'))return n*60;if(s.includes('min'))return n;return 0;
+  }
+  function executionBottleneckRows(plans=filteredPlans()){
+    const rows=[],now=today();
+    plans.filter(p=>!['Draft','Cancelled','Completed'].includes(p.status)).forEach(p=>{
+      const total=A(p.docs).length,loaded=A(p.loadedDocs).length,date=D(p.shipmentDate),eta=D(p.eta),age=updateAgeMinutes(p.lastUpdate);
+      if(p.status==='Planned'&&date&&date<=now)rows.push({p,type:'Waiting Loading',severity:date<now?'High':'Medium',detail:`Shipment date ${date}; loading has not started.`,next:'Start loading',blocking:date<now});
+      if(p.status==='Loading'&&loaded<total)rows.push({p,type:'Incomplete Loading',severity:date&&date<now?'Critical':'High',detail:`${loaded}/${total} document loaded.`,next:'Complete document loading',blocking:date&&date<now});
+      if(p.status==='Ready to Dispatch'&&date&&date<now)rows.push({p,type:'Delayed Gate-Out',severity:'Critical',detail:`Ready since shipment date ${date}, but gate-out is not recorded.`,next:'Record gate-out / dispatch',blocking:false});
+      if(p.status==='In Transit'&&['At Risk','Exception'].includes(p.health))rows.push({p,type:'Shipment '+p.health,severity:p.health==='Exception'?'Critical':'High',detail:p.lastUpdate||'Shipment requires control tower review.',next:'Review live tracking and ETA',blocking:false});
+      if(p.status==='In Transit'&&age>=60)rows.push({p,type:'Stale Tracking',severity:age>=180?'High':'Medium',detail:`No fresh update for approximately ${age} minutes.`,next:'Refresh GPS / contact driver',blocking:false});
+      if(p.status==='In Transit'&&eta&&eta<now)rows.push({p,type:'ETA Overdue',severity:'High',detail:`ETA ${eta} has passed while shipment remains In Transit.`,next:'Confirm arrival or revise ETA',blocking:false});
+    });
+    const rank={Critical:3,High:2,Medium:1};return rows.sort((a,b)=>(rank[b.severity]||0)-(rank[a.severity]||0)||String(a.p.shipmentDate||'').localeCompare(String(b.p.shipmentDate||'')));
+  }
+  function financialExposureRows(plans=filteredPlans()){
+    const rows=[];
+    costRows(plans).forEach(x=>{
+      const contract=x.contract,contractEligible=x.p.source!=='Expedition'||(contract&&contract.status==='Active'&&(contract.approvalStatus||'Approved')==='Approved');
+      if(!contractEligible)rows.push({type:'Contract Eligibility',ref:x.p.id,plan:x.p,amount:x.planned,severity:'High',blocking:true,detail:!contract?'Expedition plan has no linked contract.':`Contract ${contract.id} is ${contract.status||'-'} / ${contract.approvalStatus||'Approved'}.`,next:'Assign an active approved contract'});
+      if(x.breach)rows.push({type:'Threshold Breach',ref:x.p.id,plan:x.p,amount:Math.max(0,x.variance),severity:x.variancePct>x.threshold*2?'Critical':'High',blocking:true,detail:`Variance ${x.variancePct.toFixed(1)}% exceeds ${x.threshold}% threshold.`,next:'Review fee and request approval'});
+      else if(x.variance>0)rows.push({type:'Over Budget Watch',ref:x.p.id,plan:x.p,amount:x.variance,severity:'Medium',blocking:false,detail:`Forecast is ${x.variancePct.toFixed(1)}% above planned cost.`,next:'Monitor supporting cost records'});
+    });
+    A(db.costRecords).forEach(c=>{
+      if(c.status==='Failed')rows.push({type:'Failed Posting',ref:c.id,amount:N(c.amount),severity:'High',blocking:false,detail:`Cost posting failed for ${c.fleetOrder||'-'}.`,next:'Correct posting data and retry'});
+      else if(['Draft','Approved'].includes(c.status))rows.push({type:c.status==='Draft'?'Draft Cost Record':'Awaiting Posting',ref:c.id,amount:N(c.amount),severity:'Medium',blocking:false,detail:`${c.status} cost record for ${c.fleetOrder||'-'}.`,next:c.status==='Draft'?'Complete and approve record':'Post to finance system'});
+    });
+    A(db.approvalRequests).filter(a=>a.status==='Pending'&&/COST|FEE|MAINTENANCE/i.test(String(a.type||''))).forEach(a=>rows.push({type:'Pending Approval',ref:a.ref||a.id,amount:N(a.exposure),severity:a.severity||'High',blocking:false,detail:a.reason||a.type,next:'Complete required approval'}));
+    const rank={Critical:3,High:2,Medium:1};return rows.sort((a,b)=>(rank[b.severity]||0)-(rank[a.severity]||0)||N(b.amount)-N(a.amount));
+  }
+  function deliveryMetrics(plans=filteredPlans()){
+    const rows=plans.flatMap(p=>A(p.stops).map(s=>({p,s}))),attempted=rows.filter(x=>['Successfully Delivered','Unsuccessfully Delivered','Partially Delivered','Failed Delivery'].includes(x.s.status)),success=attempted.filter(x=>x.s.status==='Successfully Delivered'),failed=attempted.length-success.length,onTime=success.filter(x=>D(x.s.arrival)&&D(x.s.arrival)<=D(x.p.eta)).length,first=success.filter(x=>!x.s.deliveryReason&&!x.s.attemptNumber||N(x.s.attemptNumber)<=1).length,epod=success.filter(x=>x.s.pod&&x.s.receiver&&(x.s.signatureData||x.s.signatureRef)&&(x.s.podPhotoData||x.s.podPhotoName)).length;return {rows,attempted,success,failed,onTime,first,epod,pending:rows.length-attempted.length,missingReceiver:success.filter(x=>!x.s.receiver).length,missingPod:success.filter(x=>!x.s.pod).length,missingSignature:success.filter(x=>!(x.s.signatureData||x.s.signatureRef)).length}}
+  function exceptionRows(){
+    const f=filters(),plans=filteredPlans(),backlog=backlogRows(),caps=capacityRows(plans),costs=costRows(plans),exceptions=[],push=x=>exceptions.push({severity:'Medium',owner:'Transport Control',blocking:false,age:'Open',...x});
+    backlog.forEach(d=>{if(d.overdue)push({severity:d.age>1?'Critical':'High',category:'Planning',ref:d.id,title:'Planning backlog overdue',detail:`Dispatch deadline ${d.deadline} terlewati ${d.age} hari.`,owner:'Transport Planner',blocking:true,action:'Create shipment plan'});if(d.masterStatus!=='Complete')push({severity:'High',category:'Planning',ref:d.id,title:'Master data incomplete',detail:d.masterIssues.join('; ')||'Document references are incomplete.',owner:'Master Data Admin',blocking:true,action:'Complete master references'});});
+    caps.forEach(x=>{if(x.eligible&&x.overall>100)push({severity:'Critical',category:'Capacity',ref:x.p.id,title:`${x.limiting} over capacity ${x.overall.toFixed(1)}%`,detail:`Load ${x.weight.toLocaleString('id-ID')} kg / ${x.volume.toLocaleString('id-ID')} m³ melebihi kapasitas ${x.wc.toLocaleString('id-ID')} kg / ${x.vc.toLocaleString('id-ID')} m³.`,owner:'Transport Planner',blocking:true,action:'Split shipment or replace vehicle'});else if(x.internal&&!x.eligible)push({severity:'High',category:'Capacity',ref:x.p.id,title:'Capacity cannot be calculated',detail:x.reason,owner:'Fleet Admin',blocking:true,action:'Complete vehicle capacity'});});
+    A(db.vehicles).forEach(v=>{const r=vehicleReadiness(v);if(r.stnk.status==='Expired'||r.kir.status==='Expired')push({severity:'Critical',category:'Fleet',ref:v.plate,title:'Vehicle document expired',detail:`STNK ${v.stnkExpiry||'-'} • KIR ${v.kirExpiry||'-'}.`,owner:'Fleet Admin',blocking:true,action:'Renew document / replace vehicle'});else if(r.stnk.status==='Expiring Soon'||r.kir.status==='Expiring Soon')push({severity:'Medium',category:'Fleet',ref:v.plate,title:'Vehicle document expiring soon',detail:`STNK ${r.stnk.status} • KIR ${r.kir.status}.`,owner:'Fleet Admin',action:'Schedule document renewal'});if(r.maint.length&&v.status==='Available')push({severity:'High',category:'Fleet',ref:v.plate,title:'Available vehicle has active maintenance',detail:r.maint.map(x=>x.id).join(', '),owner:'Maintenance Supervisor',blocking:true,action:'Block assignment'});});
+    A(db.drivers).forEach(d=>{const r=driverReadiness(d);if(r.sim.status==='Expired')push({severity:'Critical',category:'Driver',ref:d.name,title:'Driver SIM expired',detail:`SIM expiry ${d.expiry||'-'}.`,owner:'Driver Supervisor',blocking:true,action:'Replace driver / renew SIM'});if((d.identityStatus||'Verified')!=='Verified'||(d.employmentStatus||'Active')!=='Active')push({severity:'High',category:'Driver',ref:d.name,title:'Driver not eligible',detail:`Identity ${d.identityStatus||'Verified'} • Employment ${d.employmentStatus||'Active'}.`,owner:'Driver Supervisor',blocking:true,action:'Resolve driver eligibility'});});
+    scheduleConflicts(plans).forEach(c=>push({severity:'High',category:'Schedule',ref:c.value,title:`${c.type==='vehicle'?'Vehicle':'Driver'} schedule conflict`,detail:`${c.date}: ${c.plans.join(', ')}.`,owner:'Transport Planner',blocking:true,action:'Reschedule resource'}));
+    plans.forEach(p=>{if(p.health==='Exception')push({severity:'Critical',category:'Monitoring',ref:p.id,title:'Shipment exception',detail:p.lastUpdate||'Shipment health is Exception.',owner:'Control Tower',blocking:false,action:'Investigate shipment'});else if(p.health==='At Risk')push({severity:'High',category:'Monitoring',ref:p.id,title:'Shipment at risk',detail:p.lastUpdate||'Shipment health is At Risk.',owner:'Control Tower',action:'Review ETA and route'});if(['Planned','Loading','Ready to Dispatch'].includes(p.status)&&D(p.shipmentDate)<today())push({severity:'High',category:'Dispatch',ref:p.id,title:'Delayed gate-out / dispatch',detail:`Shipment date ${p.shipmentDate}, current status ${p.status}.`,owner:'Dispatch Supervisor',blocking:false,action:'Complete loading and dispatch'});if(['Loading','Ready to Dispatch'].includes(p.status)&&A(p.loadedDocs).length<A(p.docs).length)push({severity:'High',category:'Loading',ref:p.id,title:'Incomplete loading verification',detail:`${A(p.loadedDocs).length}/${A(p.docs).length} document loaded.`,owner:'Loading Supervisor',blocking:p.status==='Ready to Dispatch',action:'Complete document scanning'});A(p.stops).forEach(s=>{if(s.status==='Successfully Delivered'&&(!s.pod||!s.receiver||!(s.signatureData||s.signatureRef)))push({severity:'Medium',category:'Delivery',ref:s.doc||p.id,title:'Incomplete ePOD',detail:`POD ${s.pod?'available':'missing'} • Receiver ${s.receiver||'missing'} • Signature ${(s.signatureData||s.signatureRef)?'available':'missing'}.`,owner:'Driver Supervisor',action:'Complete ePOD evidence'});});});
+    costs.filter(x=>x.breach).forEach(x=>push({severity:'High',category:'Cost',ref:x.p.id,title:`Fee variance ${x.variancePct.toFixed(1)}% exceeds threshold`,detail:`Variance ${fmtIDR(x.variance)} • threshold ${x.threshold}%.`,owner:'Transport Supervisor',action:'Review and approve variance'}));
+    A(db.costRecords).filter(x=>x.status==='Failed').forEach(x=>push({severity:'High',category:'Cost',ref:x.id,title:'Cost posting failed',detail:`Fleet Order ${x.fleetOrder||'-'} • ${fmtIDR(x.amount)}.`,owner:'Finance Integration',action:'Correct mapping and retry'}));
+    const settings=db.maintenanceSettings||{warningVariancePct:20,blockingVariancePct:50};A(db.maintenanceTasks).forEach(t=>{const est=N(t.cost||t.estimatedCost),act=N(t.actualCost),vp=est&&act?(act-est)/est*100:0;if(act&&vp>N(settings.blockingVariancePct||50))push({severity:'Critical',category:'Maintenance',ref:t.id,title:'Maintenance cost exceeds blocking threshold',detail:`Variance ${vp.toFixed(1)}% • ${fmtIDR(act-est)}.`,owner:'Maintenance Supervisor',blocking:true,action:'Request cost approval'});else if(act&&vp>N(settings.warningVariancePct||20))push({severity:'Medium',category:'Maintenance',ref:t.id,title:'Maintenance cost variance warning',detail:`Variance ${vp.toFixed(1)}%.`,owner:'Maintenance Supervisor',action:'Review actual cost'});});
+    const seen=new Set();return exceptions.filter(x=>{const k=[x.category,x.ref,x.title].join('|');if(seen.has(k))return false;seen.add(k);return true}).sort((a,b)=>severityRank[b.severity]-severityRank[a.severity]||String(a.ref).localeCompare(String(b.ref)));
+  }
+  function qualityScore(){if(typeof v6ResolveReferences==='function')try{v6ResolveReferences()}catch(e){}if(typeof v6QualityScore==='function')try{return v6QualityScore()}catch(e){}const rows=[...A(db.documents),...A(db.plans)],complete=rows.filter(x=>(x.masterDataStatus||'Complete')==='Complete').length;return rows.length?pct(complete,rows.length):100}
+  function loadingText(p){const total=A(p.docs).length,loaded=A(p.loadedDocs).length;if(!total)return '0/0';if(['In Transit','Completed','Returning'].includes(p.status))return `${total}/${total}`;return `${loaded}/${total}`}
+  function planPriorityRows(){
+    const ex=exceptionRows(),caps=capacityRows(),costs=costRows(),plans=filteredPlans().filter(p=>!['Completed','Cancelled','Draft'].includes(p.status)),capMap=Object.fromEntries(caps.map(x=>[x.p.id,x])),costMap=Object.fromEntries(costs.map(x=>[x.p.id,x])),rows=plans.map(p=>{const related=ex.filter(x=>x.ref===p.id||x.ref===p.vehicle||A(p.docs).includes(x.ref)),highest=related[0]?.severity||'Low',deadline=D(p.dispatchDeadline||p.shipmentDate),overdue=deadline&&deadline<today(),cap=capMap[p.id],cost=costMap[p.id],vr=p.source==='Fleet Company'&&vehicleRecord(p)?vehicleReadiness(vehicleRecord(p)):null;let priority=highest==='Critical'||cap?.overall>100?'Critical':highest==='High'||overdue||p.health==='At Risk'?'High':highest==='Medium'||p.status==='Loading'?'Medium':'Normal',score=(severityRank[priority]||1)*100+(overdue?50:0)+(p.health==='Exception'?40:p.health==='At Risk'?20:0);return {type:'plan',id:p.id,p,priority,score,date:deadline,customer:A(p.stops).map(s=>s.customer).filter(Boolean).join(', ')||p.destination,route:p.route||`${p.origin||'-'} → ${p.destination||'-'}`,resource:p.source==='Fleet Company'?`${p.vehicle||'-'} / ${p.driver||'-'}`:p.supplier||'-',capacity:cap?.eligible?`${cap.overall.toFixed(0)}% • ${cap.limiting}`:'N/A',loading:loadingText(p),readiness:p.source==='Expedition'?'Carrier Managed':vr?.ready?'Ready':vr?'Blocked':'Not Assigned',cost:cost?`${cost.variancePct>=0?'+':''}${cost.variancePct.toFixed(1)}%`:'-',exceptions:related.length,health:p.health||p.status,next:related[0]?.action||(['Planned','Loading'].includes(p.status)?'Complete loading':'Monitor shipment')};});
+    backlogRows().forEach(d=>{const related=ex.filter(x=>x.ref===d.id),priority=related[0]?.severity||d.priority==='High'?'High':'Medium';rows.push({type:'document',id:d.id,d,priority,score:(severityRank[priority]||2)*100+(d.overdue?50:0),date:d.deadline,customer:d.customer||d.destination,route:`${d.origin||'-'} → ${d.destination||'-'}`,resource:'Not Assigned',capacity:'N/A',loading:'0/1',readiness:'Not Assigned',cost:'-',exceptions:related.length,health:d.overdue?'Overdue':'Need Planning',next:related[0]?.action||'Create shipment plan'});});
+    return rows.sort((a,b)=>b.score-a.score||String(a.date||'9999').localeCompare(String(b.date||'9999'))||a.id.localeCompare(b.id));
+  }
+  function stat(label,value,foot=''){return `<div class="ov-mini-stat"><span>${esc(label)}</span><b>${esc(value)}</b>${foot?`<small>${esc(foot)}</small>`:''}</div>`}
+  function metric(label,value,max,color='var(--blue)'){const w=Math.max(0,Math.min(100,max?value/max*100:0));return `<div class="ov-metric-row"><span>${esc(label)}</span><div class="progress"><span style="width:${w}%;background:${color}"></span></div><b>${esc(value)}</b></div>`}
+  function summaryCards(items){return `<div class="ov-report-summary">${items.map(x=>stat(x[0],x[1],x[2]||'')).join('')}</div>`}
+  function openWide(title,body){openModal(title,body,'<button class="btn btn-ghost" type="button" onclick="closeModal()">Close</button>');document.getElementById('modalBox')?.classList.add('ov-modal-wide')}
+  function badgeText(status){return status==='Ready'?'<span class="ov-readiness ready">Ready</span>':status==='Blocked'?'<span class="ov-readiness blocked">Blocked</span>':`<span class="ov-readiness na">${esc(status||'N/A')}</span>`}
+
+  function renderKpis(){
+    const plans=filteredPlans(),backlog=backlogRows(),overdue=backlog.filter(x=>x.overdue).length,readyDispatch=plans.filter(p=>p.status==='Ready to Dispatch'&&A(p.loadedDocs).length>=A(p.docs).length).length,active=plans.filter(p=>!['Completed','Draft','Cancelled'].includes(p.status)).length,exceptions=exceptionRows(),criticalHigh=exceptions.filter(x=>['Critical','High'].includes(x.severity)).length,caps=capacityRows(plans),eligible=caps.filter(x=>x.eligible),avg=eligible.length?eligible.reduce((s,x)=>s+x.overall,0)/eligible.length:0,resourceGaps=resourceGapRows(plans),execution=executionBottleneckRows(plans),financial=financialExposureRows(plans),exposure=financial.reduce((sum,x)=>sum+Math.max(0,N(x.amount)),0);
+    document.getElementById('dashboardKpis').innerHTML=kpiCards([
+      {l:'Planning Backlog',v:backlog.length,f:`${overdue} overdue document`,a:overdue?'var(--red)':'var(--orange)',click:"ovOpenOverviewReport('planning')"},
+      {l:'Overdue Dispatch',v:overdue,f:'Ready document past deadline',a:overdue?'var(--red)':'var(--green)',click:"ovOpenOverviewReport('planning')"},
+      {l:'Ready to Dispatch',v:readyDispatch,f:'Fully loaded and ready gate-out',a:'var(--blue)',click:"ovOpenOverviewReport('priority')"},
+      {l:'Active Shipments',v:active,f:`${plans.filter(p=>p.status==='In Transit').length} in transit`,a:'var(--purple)',click:"ovOpenOverviewReport('funnel')"},
+      {l:'At Risk & Exception',v:criticalHigh,f:`${exceptions.filter(x=>x.severity==='Critical').length} critical`,a:criticalHigh?'var(--red)':'var(--green)',click:"ovOpenOverviewReport('exceptions')"},
+      {l:'Resource Assignment Gaps',v:resourceGaps.length,f:'shipment-level blockers, not fleet inventory',a:resourceGaps.length?'var(--red)':'var(--green)',click:"ovOpenOverviewReport('resources')"},
+      {l:'Avg Overall Utilization',v:eligible.length?avg.toFixed(0)+'%':'N/A',f:`${eligible.length}/${caps.length} eligible plans`,a:avg>=80&&avg<=100?'var(--green)':avg>100?'var(--red)':'var(--orange)',click:"ovOpenOverviewReport('capacity')"},
+      {l:'Open Financial Exposure',v:fmtIDR(exposure),f:`${financial.length} unresolved control item(s)`,a:financial.some(x=>x.severity==='Critical')?'var(--red)':financial.length?'var(--orange)':'var(--green)',click:"ovOpenOverviewReport('financial')"}
+    ]);
+  }
+  function renderFunnel(){const plans=filteredPlans(),backlog=backlogRows(),stages=[['Ready Documents',backlog.length,'awaiting plan'],['Planned',plans.filter(p=>p.status==='Planned').length,'shipment plan'],['Loading',plans.filter(p=>p.status==='Loading').length,'loading process'],['Ready Dispatch',plans.filter(p=>p.status==='Ready to Dispatch').length,'gate-out ready'],['In Transit',plans.filter(p=>p.status==='In Transit').length,'live monitored'],['Completed',plans.filter(p=>p.status==='Completed').length,'closed trips']],base=Math.max(1,...stages.map(x=>x[1]));document.getElementById('ovShipmentFunnel').innerHTML=`<div class="ov-funnel">${stages.map(x=>`<div class="ov-funnel-stage"><small>${esc(x[0])}</small><b>${x[1]}</b><em>${pct(x[1],base)}% of peak stage</em></div>`).join('')}</div><div class="ov-calc-note">Funnel menggunakan status live. Nilai menunjukkan workload pada tiap tahap, bukan cohort conversion historis.</div>`}
+  function renderCapacity(){const rows=capacityRows(),eligible=rows.filter(x=>x.eligible),avgW=eligible.length?eligible.reduce((s,x)=>s+x.wu,0)/eligible.length:0,avgV=eligible.length?eligible.reduce((s,x)=>s+x.vu,0)/eligible.length:0,avgO=eligible.length?eligible.reduce((s,x)=>s+x.overall,0)/eligible.length:0,counts={Low:0,Moderate:0,Healthy:0,'Near Full':0,'Over Capacity':0,'Not Calculated':0};rows.forEach(x=>counts[x.status]!==undefined?counts[x.status]++:counts['Not Calculated']++);const total=Math.max(1,rows.length);document.getElementById('ovCapacitySummary').innerHTML=`<div class="ov-summary-grid">${stat('Eligible Plans',eligible.length,`${rows.length-eligible.length} not calculated`)}${stat('Avg Weight',eligible.length?avgW.toFixed(0)+'%':'N/A')}${stat('Avg Volume',eligible.length?avgV.toFixed(0)+'%':'N/A')}${stat('Avg Overall',eligible.length?avgO.toFixed(0)+'%':'N/A')}</div><div class="ov-distribution"><span title="Low" style="width:${counts.Low/total*100}%;background:var(--orange)"></span><span title="Moderate" style="width:${counts.Moderate/total*100}%;background:var(--cyan)"></span><span title="Healthy" style="width:${counts.Healthy/total*100}%;background:var(--green)"></span><span title="Near Full" style="width:${counts['Near Full']/total*100}%;background:var(--purple)"></span><span title="Over Capacity" style="width:${counts['Over Capacity']/total*100}%;background:var(--red)"></span><span title="Not Calculated" style="width:${counts['Not Calculated']/total*100}%;background:#a4aab0"></span></div><div class="ov-legend"><span><i style="background:var(--orange)"></i>Low ${counts.Low}</span><span><i style="background:var(--cyan)"></i>Moderate ${counts.Moderate}</span><span><i style="background:var(--green)"></i>Healthy ${counts.Healthy}</span><span><i style="background:var(--purple)"></i>Near Full ${counts['Near Full']}</span><span><i style="background:var(--red)"></i>Over ${counts['Over Capacity']}</span><span><i style="background:#a4aab0"></i>N/A ${counts['Not Calculated']}</span></div><div class="ov-calc-note">Overall Utilization = nilai tertinggi antara Weight Utilization dan Volume Utilization. Average hanya menghitung eligible plan.</div>`}
+  function renderResourceGaps(){
+    const rows=resourceGapRows(),plans=filteredPlans().filter(p=>p.source==='Fleet Company'&&!['Draft','Cancelled','Completed'].includes(p.status)),unassignedVehicle=rows.filter(x=>x.issues.some(i=>i.includes('Vehicle not assigned'))).length,unassignedDriver=rows.filter(x=>x.issues.some(i=>i.includes('Driver not assigned'))).length,conflict=rows.filter(x=>x.issues.some(i=>i.includes('conflict'))).length,blocked=rows.length;
+    document.getElementById('ovResourceGaps').innerHTML=`<div class="ov-summary-grid">${stat('Internal Plans Checked',plans.length)}${stat('Blocked Assignments',blocked)}${stat('Vehicle Unassigned',unassignedVehicle)}${stat('Driver Unassigned',unassignedDriver)}</div><div class="ov-metric-block">${metric('Assignment Complete',Math.max(0,plans.length-blocked),Math.max(1,plans.length),'var(--green)')}${metric('Eligibility / Document Block',rows.filter(x=>x.issues.some(i=>/Expired|maintenance|Identity|Employment|Watchlist/.test(i))).length,Math.max(1,plans.length),'var(--red)')}${metric('Schedule Conflict',conflict,Math.max(1,plans.length),'var(--orange)')}</div><div class="ov-calc-note">Berbeda dari Fleet & Maintenance Report: matrix ini hanya menampilkan resource gap yang menghambat shipment aktif.</div>`;
+  }
+  function renderExecution(){
+    const rows=executionBottleneckRows(),waiting=rows.filter(x=>x.type==='Waiting Loading').length,incomplete=rows.filter(x=>x.type==='Incomplete Loading').length,gate=rows.filter(x=>x.type==='Delayed Gate-Out').length,tracking=rows.filter(x=>['Stale Tracking','Shipment At Risk','Shipment Exception','ETA Overdue'].includes(x.type)).length,total=Math.max(1,rows.length);
+    document.getElementById('ovExecutionBottleneck').innerHTML=`<div class="ov-summary-grid">${stat('Waiting Loading',waiting)}${stat('Incomplete Loading',incomplete)}${stat('Delayed Gate-Out',gate)}${stat('Tracking / ETA Risk',tracking)}</div><div class="ov-metric-block">${metric('Critical',rows.filter(x=>x.severity==='Critical').length,total,'var(--red)')}${metric('High',rows.filter(x=>x.severity==='High').length,total,'var(--orange)')}${metric('Medium',rows.filter(x=>x.severity==='Medium').length,total,'var(--cyan-dark)')}</div><div class="ov-calc-note">Delivery result dan ePOD dipindahkan sepenuhnya ke Report Center. Overview hanya menampilkan bottleneck eksekusi yang masih membutuhkan tindakan.</div>`;
+  }
+  function renderFinancial(){
+    const rows=financialExposureRows(),exposure=rows.reduce((s,x)=>s+Math.max(0,N(x.amount)),0),breach=rows.filter(x=>x.type==='Threshold Breach').length,pending=rows.filter(x=>['Pending Approval','Draft Cost Record','Awaiting Posting'].includes(x.type)).length,failed=rows.filter(x=>x.type==='Failed Posting').length,contract=rows.filter(x=>x.type==='Contract Eligibility').length,total=Math.max(1,rows.length);
+    document.getElementById('ovFinancialExposure').innerHTML=`<div class="ov-summary-grid">${stat('Open Exposure',fmtIDR(exposure))}${stat('Threshold Breach',breach)}${stat('Pending Approval / Posting',pending)}${stat('Missing / Ineligible Contract',contract)}</div><div class="ov-metric-block">${metric('Critical / High',rows.filter(x=>['Critical','High'].includes(x.severity)).length,total,'var(--red)')}${metric('Failed Posting',failed,total,'var(--orange)')}${metric('Open Control Items',rows.length,total,'var(--cyan-dark)')}</div><div class="ov-calc-note">Berbeda dari Cost Detail Report: matrix ini hanya menampilkan exposure, approval, contract eligibility, dan posting yang belum selesai.</div>`;
+  }
+  function renderExceptions(){const rows=exceptionRows(),critical=rows.filter(x=>x.severity==='Critical').length,high=rows.filter(x=>x.severity==='High').length,medium=rows.filter(x=>x.severity==='Medium').length,blocking=rows.filter(x=>x.blocking).length;document.getElementById('ovExceptionCenter').innerHTML=`<div class="ov-summary-grid" style="margin-bottom:10px">${stat('Critical',critical)}${stat('High',high)}${stat('Medium',medium)}${stat('Blocking',blocking)}</div><div class="ov-exception-list">${rows.slice(0,5).map(x=>`<div class="ov-exception-item"><span class="ov-severity ${x.severity.toLowerCase()}">${esc(x.severity)}</span><div><b>${esc(x.title)}</b><p>${esc(x.ref)} • ${esc(x.detail)}</p></div><button class="icon-btn" type="button" onclick="ovOpenReference('${encodeURIComponent(x.ref)}')">Open</button></div>`).join('')||'<div class="ov-empty">No operational exception found.</div>'}</div>`}
+  function renderPriority(){const rows=planPriorityRows().slice(0,10),tb=document.getElementById('ovPriorityTbody');tb.innerHTML=rows.map(x=>{const p=x.p;return `<tr><td><span class="ov-priority-chip ${priorityClass(x.priority)}">${esc(x.priority)}</span><div class="muted">${esc(x.health)}</div></td><td><button class="ov-link" onclick="ovOpenQueueItem('${x.type}','${encodeURIComponent(x.id)}')">${esc(x.id)}</button><div class="muted">${x.type==='plan'?esc(p?.status||'-'):'Need Planning'}</div></td><td>${esc(x.date||'-')}<div class="muted">${x.date&&x.date<today()?'Overdue':'Scheduled'}</div></td><td>${esc(x.customer||'-')}<div class="muted">${esc(x.route||'-')}</div></td><td>${esc(x.resource||'-')}</td><td>${esc(x.capacity)}</td><td>${esc(x.loading)}</td><td>${badgeText(x.readiness)}</td><td class="${String(x.cost).startsWith('+')?'variance-up':'variance-down'}">${esc(x.cost)}</td><td>${x.exceptions?`<span class="badge b-red">${x.exceptions}</span>`:'<span class="badge b-green">0</span>'}</td><td>${esc(x.next)}</td><td><button class="icon-btn" onclick="ovOpenQueueItem('${x.type}','${encodeURIComponent(x.id)}')">Detail</button></td></tr>`}).join('')||'<tr><td colspan="12" class="empty">No priority shipment or planning backlog for the selected filter.</td></tr>'}
+  function renderStrip(){const f=filters(),q=qualityScore(),issues=exceptionRows(),completePlans=A(db.plans).filter(x=>(x.masterDataStatus||'Complete')==='Complete').length,last=db.mceasyConfig?.lastSync||new Date().toLocaleString('sv-SE').slice(0,16);document.getElementById('ovDataStrip').innerHTML=`<span class="ov-strip-item"><i class="ov-strip-dot ${q<80?'bad':q<95?'warn':''}"></i><b>Data Quality ${q}%</b></span><span class="ov-strip-item">Complete Plans ${completePlans}/${A(db.plans).length}</span><span class="ov-strip-item">${issues.filter(x=>x.severity==='Critical').length} Critical Issues</span><span class="ov-strip-item">Period ${esc(f.from||'-')} — ${esc(f.to||'-')}</span><span class="ov-strip-item">Date Basis ${esc(document.getElementById('ovDateBasis')?.selectedOptions?.[0]?.textContent||'-')}</span><span class="ov-strip-item">Last Sync ${esc(last)}</span>`}
+  function ovRenderDashboard(){if(!document.getElementById('page-dashboard'))return;if(!OV.initialized)ensureFilters();renderStrip();renderKpis();renderFunnel();renderCapacity();renderResourceGaps();renderExecution();renderFinancial();renderExceptions();renderPriority();}
+
+  window.ovApplyFilters=function(){ovRenderDashboard();toast('Overview filter applied')};
+  window.ovResetFilters=function(){['ovHub','ovCarrier','ovSource','ovRoute','ovStatus'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});const q=document.getElementById('ovSearch');if(q)q.value='';const b=document.getElementById('ovDateBasis');if(b)b.value='shipment';ensureFilters(true);ovRenderDashboard();toast('Overview filter reset')};
+  window.ovOpenReference=function(encoded){const ref=decodeURIComponent(encoded),p=A(db.plans).find(x=>x.id===ref);if(p)return planDetail(ref);const d=A(db.documents).find(x=>x.id===ref);if(d)return ovOpenDocumentDetail(ref);const v=A(db.vehicles).find(x=>x.plate===ref||x.id===ref);if(v)return ovOpenOverviewReport('resources');const c=A(db.costRecords).find(x=>x.id===ref);if(c)return ovOpenOverviewReport('financial');ovOpenOverviewReport('exceptions')};
+  window.ovOpenQueueItem=function(type,encoded){const id=decodeURIComponent(encoded);if(type==='plan')return planDetail(id);return ovOpenDocumentDetail(id)};
+  window.ovOpenDocumentDetail=function(id){const d=A(db.documents).find(x=>x.id===id);if(!d)return;openWide('Planning Document • '+id,`<div class="form-grid"><div class="field"><label>Document</label><b class="mono">${esc(d.id)}</b></div><div class="field"><label>Status</label><div>${statusBadge(d.status||'-')}</div></div><div class="field"><label>Customer</label><div>${esc(d.customer||'-')}</div></div><div class="field"><label>Priority</label><div>${statusBadge(d.priority||'Normal')}</div></div><div class="field"><label>Origin</label><div>${esc(d.origin||'-')}</div></div><div class="field"><label>Destination</label><div>${esc(d.destination||'-')}</div></div><div class="field"><label>Load</label><div>${N(d.weight).toLocaleString('id-ID')} kg • ${N(d.volume).toLocaleString('id-ID')} m³</div></div><div class="field"><label>Dispatch Deadline</label><div>${esc(D(d.dispatchDeadline||d.alert)||'-')}</div></div><div class="field full"><label>Master Data Status</label><div>${statusBadge(d.masterDataStatus||'Complete')} ${esc(A(d.masterDataIssues).join('; '))}</div></div></div>`)};
+
+  function table(headers,rows,empty='No data found.'){return `<div class="table-wrap"><table class="tbl blue ov-report-table"><thead><tr>${headers.map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.length?rows.join(''):`<tr><td colspan="${headers.length}" class="empty">${esc(empty)}</td></tr>`}</tbody></table></div>`}
+  window.ovOpenOverviewReport=function(type){
+    const plans=filteredPlans();
+    if(type==='planning'){
+      const rows=backlogRows(),overdue=rows.filter(x=>x.overdue).length,high=rows.filter(x=>x.priority==='High').length,incomplete=rows.filter(x=>x.masterStatus!=='Complete').length,avg=rows.length?rows.reduce((s,x)=>s+x.age,0)/rows.length:0;
+      return openWide('Planning Backlog Report',summaryCards([['Planning Backlog',rows.length],['Overdue',overdue],['High Priority',high],['Master Incomplete',incomplete],['Avg Backlog Age',avg.toFixed(1)+' days']])+table(['Document','Customer','Origin → Destination','Weight / Volume','Priority','Deadline','Backlog Age','Master Data','Recommended Action'],rows.map(x=>`<tr><td><button class="ov-link" onclick="ovOpenDocumentDetail('${esc(x.id)}')">${esc(x.id)}</button></td><td>${esc(x.customer||'-')}</td><td>${esc(x.origin||'-')} → ${esc(x.destination||'-')}</td><td>${N(x.weight).toLocaleString('id-ID')} kg<div class="muted">${N(x.volume).toLocaleString('id-ID')} m³</div></td><td>${statusBadge(x.priority||'Normal')}</td><td>${esc(x.deadline||'-')}</td><td>${x.age} day(s)</td><td>${statusBadge(x.masterStatus)}</td><td>${x.masterStatus!=='Complete'?'Complete master data':'Create shipment plan'}</td></tr>`),'No planning backlog for the selected filter.'));
+    }
+    if(type==='capacity'){
+      const rows=capacityRows(plans),eligible=rows.filter(x=>x.eligible),avg=eligible.length?eligible.reduce((s,x)=>s+x.overall,0)/eligible.length:0,over=eligible.filter(x=>x.overall>100).length,low=eligible.filter(x=>x.overall<50).length,remainW=eligible.reduce((s,x)=>s+Math.max(0,x.remainingWeight),0),remainV=eligible.reduce((s,x)=>s+Math.max(0,x.remainingVolume),0);
+      return openWide('Capacity Utilization Report',summaryCards([['Shipment Plans',rows.length],['Eligible Plans',eligible.length],['Avg Overall Util.',eligible.length?avg.toFixed(1)+'%':'N/A'],['Low / Over',`${low} / ${over}`],['Remaining Capacity',`${remainW.toLocaleString('id-ID')} kg • ${remainV.toFixed(1)} m³`]])+`<div class="notice">Overall Utilization = max(Weight Utilization, Volume Utilization). Plan tanpa vehicle capacity ditampilkan sebagai N/A dan tidak masuk average.</div>`+table(['Plan','Shipment Date','Vehicle / Type','Load Weight','Load Volume','Vehicle Capacity','Weight Util.','Volume Util.','Overall Util.','Limiting Factor','Remaining','Status'],rows.map(x=>`<tr><td><button class="ov-link" onclick="planDetail('${esc(x.p.id)}')">${esc(x.p.id)}</button><div class="muted">${esc(x.p.source||'-')}</div></td><td>${esc(x.p.shipmentDate||'-')}</td><td>${esc(x.v?.plate||x.p.supplier||'-')}<div class="muted">${esc(x.v?.type||'-')}</div></td><td>${x.weight.toLocaleString('id-ID')} kg</td><td>${x.volume.toLocaleString('id-ID')} m³</td><td>${x.eligible?`${x.wc.toLocaleString('id-ID')} kg / ${x.vc.toLocaleString('id-ID')} m³`:'N/A'}</td><td>${x.eligible?x.wu.toFixed(1)+'%':'N/A'}</td><td>${x.eligible?x.vu.toFixed(1)+'%':'N/A'}</td><td><b>${x.eligible?x.overall.toFixed(1)+'%':'N/A'}</b></td><td>${esc(x.limiting)}</td><td>${x.eligible?`${x.remainingWeight.toLocaleString('id-ID')} kg / ${x.remainingVolume.toFixed(1)} m³`:esc(x.reason)}</td><td>${statusBadge(x.status)}</td></tr>`),'No shipment plan for the selected filter.'));
+    }
+    if(type==='resources'){
+      const rows=resourceGapRows(plans);return openWide('Resource Assignment Gap Action List',summaryCards([['Internal Active Plans',plans.filter(p=>p.source==='Fleet Company'&&!['Draft','Cancelled','Completed'].includes(p.status)).length],['Blocked Assignments',rows.length],['Vehicle Unassigned',rows.filter(x=>x.issues.some(i=>i.includes('Vehicle not assigned'))).length],['Driver Unassigned',rows.filter(x=>x.issues.some(i=>i.includes('Driver not assigned'))).length],['Schedule Conflict',rows.filter(x=>x.issues.some(i=>i.includes('conflict'))).length]])+`<div class="notice">Matrix ini tidak mengulang Fleet & Maintenance Report. Fokusnya adalah plan aktif yang tidak dapat dieksekusi karena assignment atau eligibility resource.</div>`+table(['Plan','Shipment Date','Vehicle','Driver','Assignment / Eligibility Issue','Blocking','Recommended Action'],rows.map(x=>`<tr><td><button class="ov-link" onclick="planDetail('${esc(x.p.id)}')">${esc(x.p.id)}</button><div class="muted">${esc(x.p.status||'-')}</div></td><td>${esc(x.p.shipmentDate||'-')}</td><td>${esc(x.p.vehicle||'-')}</td><td>${esc(x.p.driver||'-')}</td><td>${x.issues.map(i=>`<div>• ${esc(i)}</div>`).join('')}</td><td><span class="badge b-red">Blocking</span></td><td>${esc(x.next)}</td></tr>`),'No shipment-level resource assignment gap.'));
+    }
+    if(type==='execution'){
+      const rows=executionBottleneckRows(plans);return openWide('Dispatch & Execution Bottleneck',summaryCards([['Open Bottlenecks',rows.length],['Waiting Loading',rows.filter(x=>x.type==='Waiting Loading').length],['Incomplete Loading',rows.filter(x=>x.type==='Incomplete Loading').length],['Delayed Gate-Out',rows.filter(x=>x.type==='Delayed Gate-Out').length],['Tracking / ETA Risk',rows.filter(x=>['Stale Tracking','Shipment At Risk','Shipment Exception','ETA Overdue'].includes(x.type)).length]])+`<div class="notice">Delivery success dan ePOD history tetap berada di Report Center. Tabel ini hanya berisi hambatan proses yang masih aktif.</div>`+table(['Severity','Plan','Status','Shipment / ETA','Bottleneck','Detail','Blocking','Next Action'],rows.map(x=>`<tr><td><span class="ov-severity ${x.severity.toLowerCase()}">${esc(x.severity)}</span></td><td><button class="ov-link" onclick="planDetail('${esc(x.p.id)}')">${esc(x.p.id)}</button></td><td>${statusBadge(x.p.status||'-')}</td><td>${esc(x.p.shipmentDate||'-')}<div class="muted">ETA ${esc(x.p.eta||'-')}</div></td><td><b>${esc(x.type)}</b></td><td>${esc(x.detail)}</td><td>${x.blocking?'<span class="badge b-red">Blocking</span>':'<span class="badge b-gray">Attention</span>'}</td><td>${esc(x.next)}</td></tr>`),'No active dispatch or execution bottleneck.'));
+    }
+    if(type==='financial'){
+      const rows=financialExposureRows(plans),exposure=rows.reduce((s,x)=>s+Math.max(0,N(x.amount)),0);return openWide('Approval & Financial Exposure Queue',summaryCards([['Open Control Items',rows.length],['Total Exposure',fmtIDR(exposure)],['Threshold Breach',rows.filter(x=>x.type==='Threshold Breach').length],['Pending Approval / Posting',rows.filter(x=>['Pending Approval','Draft Cost Record','Awaiting Posting'].includes(x.type)).length],['Failed Posting',rows.filter(x=>x.type==='Failed Posting').length]])+`<div class="notice">Cost Detail di Report Center tetap menjadi histori transaksi. Queue ini hanya menampilkan item yang belum selesai atau membutuhkan approval.</div>`+table(['Severity','Type','Reference','Financial Exposure','Detail','Blocking','Required Action'],rows.map(x=>`<tr><td><span class="ov-severity ${String(x.severity||'Medium').toLowerCase()}">${esc(x.severity||'Medium')}</span></td><td><b>${esc(x.type)}</b></td><td><button class="ov-link" onclick="ovOpenReference('${encodeURIComponent(x.ref)}')">${esc(x.ref)}</button></td><td>${fmtIDR(x.amount||0)}</td><td>${esc(x.detail)}</td><td>${x.blocking?'<span class="badge b-red">Blocking</span>':'<span class="badge b-gray">Attention</span>'}</td><td>${esc(x.next)}</td></tr>`),'No unresolved financial exposure or approval item.'));
+    }
+    if(type==='fleet'){
+      const vr=A(db.vehicles).map(vehicleReadiness),dr=A(db.drivers).map(driverReadiness),conf=scheduleConflicts(plans);
+      const vehicleTable=table(['Vehicle','Type / Carrier','Status','STNK','KIR','Maintenance','Identity','Readiness / Issue'],vr.map(x=>`<tr><td><b>${esc(x.v.plate)}</b><div class="muted">${esc(x.v.id||'-')}</div></td><td>${esc(x.v.type||'-')}<div class="muted">${esc(x.v.carrier||'-')}</div></td><td>${statusBadge(x.v.status||'-')}</td><td>${statusBadge(x.stnk.status)}<div class="muted">${esc(x.v.stnkExpiry||'-')}</div></td><td>${statusBadge(x.kir.status)}<div class="muted">${esc(x.v.kirExpiry||'-')}</div></td><td>${x.maint.length?statusBadge('In Progress'):'-'}</td><td>${statusBadge(x.v.identityVerification||'Verified')}</td><td>${x.ready?'<span class="badge b-green">Operationally Ready</span>':`<span class="badge b-red">Blocked</span><div class="muted">${esc(x.issues.join('; '))}</div>`}</td></tr>`));
+      const driverTable=table(['Driver','SIM / Expiry','Carrier / Pool','Status','Identity','Employment','Watchlist','Readiness / Issue'],dr.map(x=>`<tr><td><b>${esc(x.d.name)}</b><div class="muted">${esc(x.d.id||'-')}</div></td><td>${esc(x.d.sim||'-')}<div class="muted">${esc(x.d.expiry||'-')} • ${esc(x.sim.status)}</div></td><td>${esc(x.d.carrier||'-')}<div class="muted">${esc(x.d.pool||'-')}</div></td><td>${statusBadge(x.d.status||'-')}</td><td>${statusBadge(x.d.identityStatus||'Verified')}</td><td>${statusBadge(x.d.employmentStatus||'Active')}</td><td>${statusBadge(x.d.watchlistStatus||'Clear')}</td><td>${x.ready?'<span class="badge b-green">Operationally Ready</span>':`<span class="badge b-red">Blocked</span><div class="muted">${esc(x.issues.join('; '))}</div>`}</td></tr>`));
+      return openWide('Fleet & Driver Readiness Report',summaryCards([['Registered Fleet',vr.length],['Ready Fleet',vr.filter(x=>x.ready).length],['Registered Drivers',dr.length],['Ready Drivers',dr.filter(x=>x.ready).length],['Schedule Conflicts',conf.length]])+`<div class="section-title">Vehicle Readiness</div>${vehicleTable}<div class="section-title">Driver Readiness</div>${driverTable}`);
+    }
+    if(type==='delivery'){
+      const m=deliveryMetrics(plans);return openWide('Delivery & ePOD Performance Report',summaryCards([['Total Stops',m.rows.length],['Attempted',m.attempted.length],['Successful',m.success.length],['On-Time by Date',m.success.length?pct(m.onTime,m.success.length)+'%':'N/A'],['Complete ePOD',m.success.length?pct(m.epod,m.success.length)+'%':'N/A']])+table(['Plan / Document','Customer / Destination','ETA','Arrival','Delivery Result','Receiver','POD Photo','Signature','ePOD Status'],m.rows.map(x=>{const complete=x.s.status==='Successfully Delivered'&&x.s.pod&&x.s.receiver&&(x.s.signatureData||x.s.signatureRef)&&(x.s.podPhotoData||x.s.podPhotoName);return `<tr><td><button class="ov-link" onclick="planDetail('${esc(x.p.id)}')">${esc(x.p.id)}</button><div class="muted">${esc(x.s.doc||'-')}</div></td><td>${esc(x.s.customer||x.p.destination||'-')}</td><td>${esc(x.p.eta||'-')}</td><td>${esc(x.s.arrival||'-')}</td><td>${statusBadge(x.s.status||'Pending')}</td><td>${esc(x.s.receiver||'-')}</td><td>${x.s.pod?'<span class="badge b-green">Available</span>':'<span class="badge b-orange">Missing</span>'}</td><td>${(x.s.signatureData||x.s.signatureRef)?'<span class="badge b-green">Available</span>':'<span class="badge b-orange">Missing</span>'}</td><td>${complete?'<span class="badge b-green">Complete</span>':'<span class="badge b-orange">Incomplete</span>'}</td></tr>`}),'No delivery stop for the selected filter.'));
+    }
+    if(type==='cost'){
+      const rows=costRows(plans),planned=rows.reduce((s,x)=>s+x.planned,0),actual=rows.reduce((s,x)=>s+x.actualForecast,0),variance=actual-planned;return openWide('Cost & Contract Control Report',summaryCards([['Planned Cost',fmtIDR(planned)],['Actual / Forecast',fmtIDR(actual)],['Total Variance',(variance>=0?'+':'')+fmtIDR(variance)],['Over Budget',rows.filter(x=>x.variance>0).length],['Threshold Breach',rows.filter(x=>x.breach).length]])+table(['Plan','Source / Carrier','Contract / Rate','Planned Cost','Recorded Cost','Actual / Forecast','Variance','Variance %','Threshold','Posting','Status'],rows.map(x=>`<tr><td><button class="ov-link" onclick="planDetail('${esc(x.p.id)}')">${esc(x.p.id)}</button></td><td>${esc(x.p.source||'-')}<div class="muted">${esc(carrierName(x.p))}</div></td><td>${esc(x.contract?.id||x.p.contract||'-')}<div class="muted">${esc(x.contract?.rate||'-')}</div></td><td>${fmtIDR(x.planned)}</td><td>${fmtIDR(x.recorded)}</td><td>${fmtIDR(x.actualForecast)}</td><td class="${x.variance>0?'variance-up':'variance-down'}">${x.variance>=0?'+':''}${fmtIDR(x.variance)}</td><td class="${x.variancePct>0?'variance-up':'variance-down'}">${x.variancePct>=0?'+':''}${x.variancePct.toFixed(1)}%</td><td>${x.threshold}%</td><td>${x.records.length} record(s)</td><td>${x.breach?'<span class="badge b-red">Threshold Breach</span>':'<span class="badge b-green">Within Threshold</span>'}</td></tr>`),'No cost data for the selected filter.'));
+    }
+    if(type==='exceptions'){
+      const rows=exceptionRows();return openWide('Exception & Action Center',summaryCards([['Open Exceptions',rows.length],['Critical',rows.filter(x=>x.severity==='Critical').length],['High',rows.filter(x=>x.severity==='High').length],['Blocking',rows.filter(x=>x.blocking).length],['Unassigned',rows.filter(x=>!x.owner).length]])+table(['Severity','Category','Reference','Exception','Detail','Owner','Blocking','Recommended Action','Source Action'],rows.map(x=>`<tr><td><span class="ov-severity ${x.severity.toLowerCase()}">${esc(x.severity)}</span></td><td>${esc(x.category)}</td><td><button class="ov-link" onclick="ovOpenReference('${encodeURIComponent(x.ref)}')">${esc(x.ref)}</button></td><td><b>${esc(x.title)}</b></td><td>${esc(x.detail)}</td><td>${esc(x.owner||'Unassigned')}</td><td>${x.blocking?'<span class="badge b-red">Blocking</span>':'<span class="badge b-gray">Warning</span>'}</td><td>${esc(x.action)}</td><td><button class="icon-btn" onclick="ovOpenReference('${encodeURIComponent(x.ref)}')">Open</button></td></tr>`),'No exception found.'));
+    }
+    if(type==='funnel'){
+      const backlog=backlogRows(),stages=[['Ready Documents',backlog.length],['Planned',plans.filter(p=>p.status==='Planned').length],['Loading',plans.filter(p=>p.status==='Loading').length],['Ready to Dispatch',plans.filter(p=>p.status==='Ready to Dispatch').length],['In Transit',plans.filter(p=>p.status==='In Transit').length],['Completed',plans.filter(p=>p.status==='Completed').length]];return openWide('Shipment Funnel Report',summaryCards(stages.map(x=>[x[0],x[1]]))+`<div class="notice">Stage count menggambarkan posisi live pada periode terpilih. Untuk conversion cohort historis diperlukan timestamp masuk dan keluar pada setiap status.</div>`+table(['Plan / Document','Current Stage','Shipment Date / Deadline','Source','Route / Destination','Health / Priority'],[...backlog.map(d=>`<tr><td><button class="ov-link" onclick="ovOpenDocumentDetail('${esc(d.id)}')">${esc(d.id)}</button></td><td>${statusBadge('Need Planning')}</td><td>${esc(d.deadline||'-')}</td><td>Document</td><td>${esc(d.origin||'-')} → ${esc(d.destination||'-')}</td><td>${statusBadge(d.priority||'Normal')}</td></tr>`),...plans.map(p=>`<tr><td><button class="ov-link" onclick="planDetail('${esc(p.id)}')">${esc(p.id)}</button></td><td>${statusBadge(p.status||'-')}</td><td>${esc(p.shipmentDate||'-')}</td><td>${esc(p.source||'-')}</td><td>${esc(p.route||p.destination||'-')}</td><td>${statusBadge(p.health||p.status||'-')}</td></tr>`)]));
+    }
+    if(type==='priority'){
+      const rows=planPriorityRows();return openWide('Priority Shipment Queue',summaryCards([['Queue Items',rows.length],['Critical',rows.filter(x=>x.priority==='Critical').length],['High',rows.filter(x=>x.priority==='High').length],['Planning Documents',rows.filter(x=>x.type==='document').length],['Active Plans',rows.filter(x=>x.type==='plan').length]])+table(['Priority','Reference','Date / Deadline','Customer / Route','Resource','Capacity','Loading','Readiness','Cost Variance','Exceptions','Next Action'],rows.map(x=>`<tr><td><span class="ov-priority-chip ${priorityClass(x.priority)}">${esc(x.priority)}</span></td><td><button class="ov-link" onclick="ovOpenQueueItem('${x.type}','${encodeURIComponent(x.id)}')">${esc(x.id)}</button></td><td>${esc(x.date||'-')}</td><td>${esc(x.customer||'-')}<div class="muted">${esc(x.route||'-')}</div></td><td>${esc(x.resource||'-')}</td><td>${esc(x.capacity)}</td><td>${esc(x.loading)}</td><td>${badgeText(x.readiness)}</td><td>${esc(x.cost)}</td><td>${x.exceptions}</td><td>${esc(x.next)}</td></tr>`),'No priority queue item.'));
+    }
+  };
+  window.ovExportOverview=function(){
+    const queue=planPriorityRows(),caps=capacityRows(),resources=resourceGapRows(),execution=executionBottleneckRows(),financial=financialExposureRows();
+    const csv=[['Overview Dashboard Control Tower Export'],['Period',filters().from,filters().to],[],['Priority Queue'],['Priority','Reference','Type','Date','Customer / Route','Resource','Capacity','Loading','Readiness','Financial Indicator','Exceptions','Next Action'],...queue.map(x=>[x.priority,x.id,x.type,x.date,x.customer+' / '+x.route,x.resource,x.capacity,x.loading,x.readiness,x.cost,x.exceptions,x.next]),[],['Capacity Utilization'],['Plan','Vehicle','Weight Util %','Volume Util %','Overall Util %','Limiting Factor','Status'],...caps.map(x=>[x.p.id,x.v?.plate||x.p.supplier||'-',x.eligible?x.wu.toFixed(1):'N/A',x.eligible?x.vu.toFixed(1):'N/A',x.eligible?x.overall.toFixed(1):'N/A',x.limiting,x.status]),[],['Resource Assignment Gaps'],['Plan','Date','Vehicle','Driver','Issues','Next Action'],...resources.map(x=>[x.p.id,x.p.shipmentDate,x.p.vehicle,x.p.driver,x.issues.join('; '),x.next]),[],['Execution Bottlenecks'],['Severity','Plan','Status','Type','Detail','Next Action'],...execution.map(x=>[x.severity,x.p.id,x.p.status,x.type,x.detail,x.next]),[],['Financial Exposure Queue'],['Severity','Type','Reference','Amount','Detail','Next Action'],...financial.map(x=>[x.severity,x.type,x.ref,x.amount,x.detail,x.next])];
+    if(typeof downloadCSV==='function')downloadCSV(csv,'TMS-Overview-Control-Tower.csv');else toast('CSV export function is unavailable');
+  };
+
+  renderDashboard=ovRenderDashboard;window.renderDashboard=ovRenderDashboard;
+  ensureFilters();ovRenderDashboard();
+})();
+</script>
+
+
+<script>
 (function modularNavigation(){
   const initial = (location.hash || '').replace('#','') || document.body.dataset.initialPage;
   function openPage(page, updateHash){
@@ -2330,225 +2579,6 @@ const moduleName=v6Module();if(moduleName==='MASTER')v6InstallMasterUI();else if
   });
   window.addEventListener('hashchange', ()=>openPage(location.hash.replace('#',''), false));
   openPage(initial, false);
-})();
-</script>
-
-
-<script>
-/* ===== Overview Dashboard Calendar & Matrix Revision V3 ===== */
-(function dashboardRevisionV3(){
-  const previousDashboardRender = typeof window.renderDashboard === 'function' ? window.renderDashboard : null;
-
-  function dashboardAvailableDates(){
-    const dates=(db.plans||[]).map(x=>x.shipmentDate).filter(Boolean)
-      .concat((db.documents||[]).map(x=>String(x.alert||x.date||'').slice(0,10)).filter(Boolean))
-      .sort();
-    return {from:dates[0]||todayISO(),to:dates.at(-1)||todayISO()};
-  }
-  function ensureDashboardDateDefaults(force){
-    const from=document.getElementById('dashboardDateFrom'),to=document.getElementById('dashboardDateTo');
-    if(!from||!to)return dashboardAvailableDates();
-    const defaults=dashboardAvailableDates();
-    if(force||!from.value)from.value=defaults.from;
-    if(force||!to.value)to.value=defaults.to;
-    return {from:from.value||defaults.from,to:to.value||defaults.to};
-  }
-  function dashboardRange(){
-    const r=ensureDashboardDateDefaults(false);
-    return r.from<=r.to?r:{from:r.to,to:r.from};
-  }
-  function dashboardDateMatch(date,range){
-    const value=String(date||'').slice(0,10);
-    return !value||(value>=range.from&&value<=range.to);
-  }
-  function dashboardDocumentDate(doc){return String(doc.alert||doc.date||doc.createdAt||'').slice(0,10)}
-  function dashboardData(){
-    const range=dashboardRange();
-    const plans=(db.plans||[]).filter(p=>dashboardDateMatch(p.shipmentDate,range));
-    const documents=(db.documents||[]).filter(d=>dashboardDateMatch(dashboardDocumentDate(d),range));
-    return {range,plans,documents};
-  }
-  function dashboardPeriodText(range){
-    const fmt=d=>new Date(d+'T00:00:00').toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
-    return `${fmt(range.from)} — ${fmt(range.to)}`;
-  }
-  function metricRows(items,total){
-    const denominator=Math.max(1,total);
-    return items.map(x=>`<div class="metric-row"><span class="name">${esc(x.label)}</span><div class="progress"><span style="width:${Math.max(0,Math.min(100,(x.value/denominator)*100))}%;background:${x.color||'var(--cyan-dark)'}"></span></div><b>${esc(x.display??x.value)}</b></div>`).join('');
-  }
-  function pctMetricRows(items){
-    return items.map(x=>`<div class="metric-row"><span class="name">${esc(x.label)}</span><div class="progress"><span style="width:${Math.max(0,Math.min(100,x.value))}%;background:${x.color||'var(--cyan-dark)'}"></span></div><b>${esc(x.display??(Math.round(x.value)+'%'))}</b></div>`).join('');
-  }
-  function activityPoints(plans,range){
-    const start=isoDate(range.from),end=isoDate(range.to),days=Math.max(1,Math.round((end-start)/86400000)+1),points=[];
-    if(days<=14){
-      for(let i=0;i<days;i++){
-        const date=addDays(range.from,i),count=plans.filter(p=>p.shipmentDate===date).length;
-        points.push({from:date,to:date,count,label:new Date(date+'T00:00:00').toLocaleDateString('en-US',{weekday:'short'})});
-      }
-    }else{
-      for(let i=0;i<days;i+=7){
-        const from=addDays(range.from,i),to=addDays(range.from,Math.min(days-1,i+6));
-        const count=plans.filter(p=>p.shipmentDate>=from&&p.shipmentDate<=to).length;
-        points.push({from,to,count,label:new Date(from+'T00:00:00').toLocaleDateString('id-ID',{day:'2-digit',month:'short'})});
-      }
-    }
-    return points;
-  }
-  function vehicleDocumentStatus(v){
-    const stnk=expiryInfo(v.stnkExpiry),kir=expiryInfo(v.kirExpiry);
-    return stnk.status==='Expired'||kir.status==='Expired'?'Expired':stnk.status==='Expiring Soon'||kir.status==='Expiring Soon'?'Expiring Soon':'Valid';
-  }
-  function renderDashboardEnhanced(){
-    if(previousDashboardRender)previousDashboardRender();
-    const k=document.getElementById('dashboardKpis');if(!k)return;
-    const {range,plans,documents}=dashboardData(),vehicles=db.vehicles||[],tasks=db.maintenanceTasks||[];
-    const active=plans.filter(p=>!['Completed','Draft','Cancelled'].includes(p.status)).length;
-    const needPlanning=documents.filter(d=>d.status==='Need Planning').length;
-    const inTransit=plans.filter(p=>p.status==='In Transit').length;
-    const available=vehicles.filter(v=>v.status==='Available').length;
-    const completed=plans.filter(p=>p.status==='Completed').length;
-    const periodLabel=document.getElementById('dashboardPeriodLabel');if(periodLabel)periodLabel.textContent=dashboardPeriodText(range);
-
-    k.innerHTML=kpiCards([
-      {l:'Active Shipments',v:active,f:'Selected shipment date period',a:'var(--blue)',click:"openDashboardReport('active')"},
-      {l:'Need Planning',v:needPlanning,f:'DO / STO in selected period',a:'var(--orange)',click:"openDashboardReport('needPlanning')"},
-      {l:'In Transit',v:inTransit,f:'Selected period • live status',a:'var(--purple)',click:"openDashboardReport('inTransit')"},
-      {l:'Available Vehicles',v:available,f:`Live • ${vehicles.length} registered vehicles`,a:'var(--green)',click:"openDashboardReport('fleet')"},
-      {l:'Completed Trips',v:completed,f:'Closed shipment plans in period',a:'var(--cyan-dark)',click:"openDashboardReport('completed')"}
-    ]);
-
-    const statusItems=[
-      {label:'Planned',value:plans.filter(p=>p.status==='Planned').length,color:'var(--blue)'},
-      {label:'Loading',value:plans.filter(p=>['Loading','Ready to Dispatch'].includes(p.status)).length,color:'var(--orange)'},
-      {label:'In Transit',value:inTransit,color:'var(--purple)'},
-      {label:'Completed',value:completed,color:'var(--green)'}
-    ];
-    const statusEl=document.getElementById('statusMetrics');if(statusEl)statusEl.innerHTML=metricRows(statusItems,Math.max(1,plans.length));
-
-    const points=activityPoints(plans,range),max=Math.max(1,...points.map(x=>x.count)),bars=document.getElementById('deliveryBars');
-    if(bars)bars.innerHTML=points.map(x=>`<div class="bar" title="${x.from}${x.to!==x.from?' to '+x.to:''}: ${x.count} shipment" style="height:${Math.max(8,x.count/max*100)}px"><b>${x.count}</b><span>${esc(x.label)}</span></div>`).join('');
-    const activityMeta=document.getElementById('deliveryActivityMeta');if(activityMeta)activityMeta.textContent=`${plans.length} shipment plan(s) • ${points.length} calendar bucket(s)`;
-
-    const fleetItems=['Available','Reserved','Loading','In Transit','Maintenance'].map(status=>({label:status,value:vehicles.filter(v=>v.status===status).length,color:status==='Available'?'var(--green)':status==='Maintenance'?'var(--red)':'var(--cyan-dark)'}));
-    const fleetEl=document.getElementById('fleetMetrics');if(fleetEl)fleetEl.innerHTML=metricRows(fleetItems,vehicles.length);
-
-    const upcoming=plans.filter(p=>['Planned','Loading','Ready to Dispatch'].includes(p.status)).sort((a,b)=>(a.shipmentDate||'').localeCompare(b.shipmentDate||''));
-    const upcomingEl=document.getElementById('upcomingList');if(upcomingEl)upcomingEl.innerHTML=upcoming.slice(0,5).map(p=>`<div class="ship-item" onclick="planDetail('${esc(p.id)}')"><div class="top"><b>${esc(p.id)}</b>${statusBadge(p.status)}<span class="age">${esc(p.shipmentDate||'-')}</span></div><div class="meta">${esc(p.destination||'-')} • ${esc(p.source==='Fleet Company'?(p.vehicle||p.driver):(p.supplier||'-'))}</div></div>`).join('')||'<div class="empty">No upcoming shipment in selected period.</div>';
-
-    const hubs=db.hubs||[],carriers=db.carriers||[],contracts=db.contracts||[],drivers=db.drivers||[],routes=db.routes||[];
-    const masterItems=[
-      {label:'Active Hubs',value:hubs.filter(x=>x.status==='Active').length,display:`${hubs.filter(x=>x.status==='Active').length}/${hubs.length}`,color:'var(--green)'},
-      {label:'Active Carriers',value:carriers.filter(x=>x.status==='Active').length,display:`${carriers.filter(x=>x.status==='Active').length}/${carriers.length}`,color:'var(--blue)'},
-      {label:'Active Contracts',value:contracts.filter(x=>x.status==='Active').length,display:`${contracts.filter(x=>x.status==='Active').length}/${contracts.length}`,color:'var(--cyan-dark)'},
-      {label:'Ready Drivers',value:drivers.filter(x=>x.status==='Available').length,display:`${drivers.filter(x=>x.status==='Available').length}/${drivers.length}`,color:'var(--purple)'},
-      {label:'Active Routes',value:routes.filter(x=>x.status==='Active').length,display:`${routes.filter(x=>x.status==='Active').length}/${routes.length}`,color:'var(--orange)'}
-    ];
-    const masterDenominator=Math.max(1,hubs.length,carriers.length,contracts.length,drivers.length,routes.length);
-    const masterEl=document.getElementById('masterReadinessMetrics');if(masterEl)masterEl.innerHTML=metricRows(masterItems,masterDenominator);
-
-    const operationalItems=[
-      {label:'Need Planning',value:needPlanning,color:'var(--orange)'},
-      {label:'Planned',value:statusItems[0].value,color:'var(--blue)'},
-      {label:'Loading / Ready',value:statusItems[1].value,color:'var(--cyan-dark)'},
-      {label:'In Transit',value:inTransit,color:'var(--purple)'},
-      {label:'Completed',value:completed,color:'var(--green)'}
-    ];
-    const operationalEl=document.getElementById('operationalReadinessMetrics');if(operationalEl)operationalEl.innerHTML=metricRows(operationalItems,Math.max(1,needPlanning+plans.length));
-
-    const capacityPlans=plans.filter(p=>Number(p.weightUtil||p.volumeUtil||p.util||0)>0);
-    const avgWeight=capacityPlans.length?capacityPlans.reduce((a,p)=>a+Number(p.weightUtil||0),0)/capacityPlans.length:0;
-    const avgVolume=capacityPlans.length?capacityPlans.reduce((a,p)=>a+Number(p.volumeUtil||0),0)/capacityPlans.length:0;
-    const avgOverall=capacityPlans.length?capacityPlans.reduce((a,p)=>a+Number(p.util||Math.max(Number(p.weightUtil||0),Number(p.volumeUtil||0))),0)/capacityPlans.length:0;
-    const healthy=capacityPlans.filter(p=>{const u=Number(p.util||Math.max(Number(p.weightUtil||0),Number(p.volumeUtil||0)));return u>=50&&u<=90}).length;
-    const over=capacityPlans.filter(p=>Number(p.util||Math.max(Number(p.weightUtil||0),Number(p.volumeUtil||0)))>100).length;
-    const capacityEl=document.getElementById('capacityMetrics');if(capacityEl)capacityEl.innerHTML=pctMetricRows([
-      {label:'Avg Weight Util.',value:avgWeight,color:'var(--blue)'},
-      {label:'Avg Volume Util.',value:avgVolume,color:'var(--cyan-dark)'},
-      {label:'Avg Overall Util.',value:avgOverall,color:'var(--purple)'},
-      {label:'Healthy Utilization',value:capacityPlans.length?healthy/capacityPlans.length*100:0,display:`${healthy}/${capacityPlans.length}`,color:'var(--green)'},
-      {label:'Over Capacity',value:capacityPlans.length?over/capacityPlans.length*100:0,display:String(over),color:'var(--red)'}
-    ]);
-
-    const docStatuses=vehicles.map(vehicleDocumentStatus),expired=docStatuses.filter(x=>x==='Expired').length,expiring=docStatuses.filter(x=>x==='Expiring Soon').length,valid=docStatuses.filter(x=>x==='Valid').length;
-    const maintenanceItems=[
-      {label:'In Progress Tasks',value:tasks.filter(x=>x.status==='In Progress').length,color:'var(--orange)'},
-      {label:'Scheduled Tasks',value:tasks.filter(x=>['Scheduled','Open','Pending'].includes(x.status)).length,color:'var(--blue)'},
-      {label:'Expired Documents',value:expired,color:'var(--red)'},
-      {label:'Expiring ≤30 Days',value:expiring,color:'var(--orange)'},
-      {label:'Valid Vehicle Docs',value:valid,color:'var(--green)'}
-    ];
-    const maintenanceEl=document.getElementById('maintenanceComplianceMetrics');if(maintenanceEl)maintenanceEl.innerHTML=metricRows(maintenanceItems,Math.max(1,vehicles.length,tasks.length));
-  }
-
-  function reportSummary(items){return `<div class="report-detail-summary">${items.map(x=>`<div class="report-detail-stat"><span>${esc(x[0])}</span><b>${esc(x[1])}</b></div>`).join('')}</div>`}
-  function reportTable(headers,rows,empty){return `<div class="table-wrap"><table class="tbl blue report-detail-table"><thead><tr>${headers.map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.length?rows.map(row=>`<tr>${row.map(cell=>`<td>${cell}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="${headers.length}" class="empty">${esc(empty||'No data found.')}</td></tr>`}</tbody></table></div>`}
-  function showDashboardReport(title,summary,headers,rows,live){
-    const range=dashboardRange(),period=live?'Live Master Data':dashboardPeriodText(range);
-    openModal(title,`<div class="dashboard-report-period"><span>${live?'●':'▣'}</span><span>${live?'Current database state':'Calendar period'}: <b>${esc(period)}</b></span></div>${reportSummary(summary)}${reportTable(headers,rows)}`,'<button class="btn btn-ghost" type="button" onclick="closeModal()">Close</button>');
-  }
-
-  window.openDashboardReport=function(metric){
-    const {plans,documents}=dashboardData(),vehicles=db.vehicles||[],tasks=db.maintenanceTasks||[];
-    const basePlanRows=list=>list.map(p=>[`<button class="link-cell" onclick="closeModal();planDetail('${esc(p.id)}')">${esc(p.id)}</button>`,esc(p.shipmentDate||'-'),esc(p.source||'-'),esc(p.source==='Fleet Company'?[p.vehicle,p.driver].filter(Boolean).join(' / '):(p.supplier||'-')),esc(p.destination||'-'),statusBadge(p.status||'-'),fmtIDR(Number(p.plannedCost||0))]);
-    if(metric==='active'){
-      const rows=plans.filter(p=>!['Completed','Draft','Cancelled'].includes(p.status));
-      return showDashboardReport('Active Shipments Report',[['Active Shipments',rows.length],['Planned',rows.filter(x=>x.status==='Planned').length],['Loading / Ready',rows.filter(x=>['Loading','Ready to Dispatch'].includes(x.status)).length],['In Transit',rows.filter(x=>x.status==='In Transit').length]],['Plan','Shipment Date','Shipping Option','Vehicle / Carrier','Destination','Status','Planned Cost'],basePlanRows(rows));
-    }
-    if(metric==='needPlanning'){
-      const rows=documents.filter(d=>d.status==='Need Planning');
-      return showDashboardReport('Need Planning Documents Report',[['Need Planning',rows.length],['High Priority',rows.filter(x=>x.priority==='High').length],['Total Weight',rows.reduce((a,x)=>a+Number(x.weight||0),0).toLocaleString('id-ID')+' kg'],['Total Volume',rows.reduce((a,x)=>a+Number(x.volume||0),0).toLocaleString('id-ID')+' m³']],['Document','Type','Calendar Date','Customer','Origin','Destination','Weight / Volume','Priority','Status'],rows.map(d=>[`<span class="mono">${esc(d.id)}</span>`,esc(d.type||'-'),esc(dashboardDocumentDate(d)||'-'),esc(d.customer||'-'),esc(d.origin||'-'),esc(d.destination||'-'),`${Number(d.weight||0).toLocaleString('id-ID')} kg / ${Number(d.volume||0).toLocaleString('id-ID')} m³`,statusBadge(d.priority||'Normal'),statusBadge(d.status||'-')]));
-    }
-    if(metric==='inTransit'||metric==='completed'||metric==='status'||metric==='activity'||metric==='upcoming'){
-      let rows=plans,title='Shipment Status Distribution Report';
-      if(metric==='inTransit'){rows=plans.filter(p=>p.status==='In Transit');title='In Transit Shipments Report'}
-      if(metric==='completed'){rows=plans.filter(p=>p.status==='Completed');title='Completed Trips Report'}
-      if(metric==='upcoming'){rows=plans.filter(p=>['Planned','Loading','Ready to Dispatch'].includes(p.status)).sort((a,b)=>(a.shipmentDate||'').localeCompare(b.shipmentDate||''));title='Upcoming Shipments Report'}
-      if(metric==='activity')title='Delivery Activity Report';
-      return showDashboardReport(title,[['Shipment Plans',rows.length],['Planned',rows.filter(x=>x.status==='Planned').length],['In Transit',rows.filter(x=>x.status==='In Transit').length],['Completed',rows.filter(x=>x.status==='Completed').length]],['Plan','Shipment Date','Shipping Option','Vehicle / Carrier','Destination','Status','Planned Cost'],basePlanRows(rows));
-    }
-    if(metric==='fleet'){
-      const rows=vehicles.map(v=>[`<b>${esc(v.plate||'-')}</b><div class="muted">${esc(v.id||'-')}</div>`,esc(v.type||'-'),esc(v.carrier||'-'),esc(v.pool||'-'),statusBadge(v.status||'-'),Number(v.weight||0).toLocaleString('id-ID')+' kg',Number(v.volume||0).toLocaleString('id-ID')+' m³',statusBadge(vehicleDocumentStatus(v))]);
-      return showDashboardReport('Fleet Availability Report',[['Registered Vehicles',vehicles.length],['Available',vehicles.filter(x=>x.status==='Available').length],['Reserved / Assigned',vehicles.filter(x=>['Reserved','Assigned'].includes(x.status)).length],['Maintenance',vehicles.filter(x=>x.status==='Maintenance').length]],['Vehicle','Type','Carrier','Pool','Status','Weight Capacity','Volume Capacity','Document Status'],rows,true);
-    }
-    if(metric==='masterReadiness'){
-      const rows=[];
-      (db.hubs||[]).forEach(x=>rows.push(['Hub',`<span class="mono">${esc(x.id)}</span>`,esc(x.name||'-'),esc(x.location||'-'),statusBadge(x.status||'-')]));
-      (db.carriers||[]).forEach(x=>rows.push(['Carrier',`<span class="mono">${esc(x.id)}</span>`,esc(x.name||'-'),esc(x.location||'-'),statusBadge(x.status||'-')]));
-      (db.contracts||[]).forEach(x=>rows.push(['Contract',`<span class="mono">${esc(x.id)}</span>`,esc(x.carrier||'-'),`${esc(x.startDate||'-')} — ${esc(x.endDate||'-')}`,statusBadge(x.status||'-')]));
-      (db.drivers||[]).forEach(x=>rows.push(['Driver',`<span class="mono">${esc(x.id)}</span>`,esc(x.name||'-'),esc(x.pool||'-'),statusBadge(x.status||'-')]));
-      (db.routes||[]).forEach(x=>rows.push(['Route',`<span class="mono">${esc(x.id)}</span>`,`${esc(x.origin||'-')} → ${esc(x.destination||'-')}`,Number(x.distance||0).toLocaleString('id-ID')+' km',statusBadge(x.status||'-')]));
-      return showDashboardReport('Master Data Readiness Report',[['Hubs',(db.hubs||[]).length],['Carriers',(db.carriers||[]).length],['Contracts',(db.contracts||[]).length],['Drivers / Routes',(db.drivers||[]).length+' / '+(db.routes||[]).length]],['Master Data','Reference','Name / Route','Location / Period','Status'],rows,true);
-    }
-    if(metric==='operationalReadiness'){
-      const rows=[];
-      documents.filter(d=>d.status==='Need Planning').forEach(d=>rows.push(['Document',`<span class="mono">${esc(d.id)}</span>`,esc(dashboardDocumentDate(d)||'-'),esc(d.origin||'-'),esc(d.destination||'-'),'-',statusBadge(d.status||'-')]));
-      plans.forEach(p=>rows.push(['Shipment Plan',`<button class="link-cell" onclick="closeModal();planDetail('${esc(p.id)}')">${esc(p.id)}</button>`,esc(p.shipmentDate||'-'),esc(p.origin||'-'),esc(p.destination||'-'),esc(p.source==='Fleet Company'?[p.vehicle,p.driver].filter(Boolean).join(' / '):(p.supplier||'-')),statusBadge(p.status||'-')]));
-      return showDashboardReport('Operational Readiness Report',[['Need Planning',documents.filter(d=>d.status==='Need Planning').length],['Shipment Plans',plans.length],['Ready / Loading',plans.filter(p=>['Planned','Loading','Ready to Dispatch'].includes(p.status)).length],['In Transit / Completed',plans.filter(p=>['In Transit','Completed'].includes(p.status)).length]],['Source','Reference','Calendar Date','Origin','Destination','Resource','Status'],rows);
-    }
-    if(metric==='capacity'){
-      const rows=plans.map(p=>{const overall=Number(p.util||Math.max(Number(p.weightUtil||0),Number(p.volumeUtil||0))),health=overall>100?'Over Capacity':overall>=50?'Healthy':'Low Utilization';return [`<button class="link-cell" onclick="closeModal();planDetail('${esc(p.id)}')">${esc(p.id)}</button>`,esc(p.shipmentDate||'-'),Number(p.weight||0).toLocaleString('id-ID')+' kg',Number(p.volume||0).toLocaleString('id-ID')+' m³',Math.round(Number(p.weightUtil||0))+'%',Math.round(Number(p.volumeUtil||0))+'%',Math.round(overall)+'%',`<span class="report-detail-status ${overall>100?'bad':overall>=50?'good':'warn'}">${health}</span>`]});
-      const avg=key=>plans.length?Math.round(plans.reduce((a,p)=>a+Number(p[key]||0),0)/plans.length):0;
-      return showDashboardReport('Capacity Utilization Report',[['Shipment Plans',plans.length],['Avg Weight Util.',avg('weightUtil')+'%'],['Avg Volume Util.',avg('volumeUtil')+'%'],['Over Capacity',plans.filter(p=>Number(p.util||0)>100).length]],['Plan','Shipment Date','Weight','Volume','Weight Util.','Volume Util.','Overall Util.','Utilization Health'],rows);
-    }
-    if(metric==='maintenance'){
-      const rows=[];
-      vehicles.forEach(v=>rows.push(['Vehicle Document',`<span class="mono">${esc(v.id||'-')}</span>`,esc(v.plate||'-'),`STNK ${esc(v.stnkExpiry||'-')} • KIR ${esc(v.kirExpiry||'-')}`,statusBadge(vehicleDocumentStatus(v)),esc(v.pool||'-')]));
-      tasks.forEach(t=>rows.push(['Maintenance Task',`<span class="mono">${esc(t.id||'-')}</span>`,esc(t.plate||t.vehicleId||t.vehicle||'-'),`${esc(t.startDate||t.schedule||'-')} — ${esc(t.endDate||'-')}`,statusBadge(t.status||'-'),esc(t.category||'-')]));
-      return showDashboardReport('Maintenance & Compliance Report',[['Vehicles',vehicles.length],['Maintenance Tasks',tasks.length],['In Progress',tasks.filter(x=>x.status==='In Progress').length],['Expired / Expiring',vehicles.filter(v=>vehicleDocumentStatus(v)!=='Valid').length]],['Record Type','Reference','Vehicle','Date / Validity','Status','Pool / Category'],rows,true);
-    }
-  };
-
-  window.applyDashboardDateFilter=function(){
-    const from=document.getElementById('dashboardDateFrom')?.value,to=document.getElementById('dashboardDateTo')?.value;
-    if(!from||!to)return toast('From dan To date wajib diisi');
-    if(from>to)return toast('From date tidak boleh melebihi To date');
-    renderDashboardEnhanced();toast('Overview Dashboard date filter applied');
-  };
-  window.resetDashboardDateFilter=function(){ensureDashboardDateDefaults(true);renderDashboardEnhanced();toast('Dashboard date filter reset')};
-  window.renderDashboard=renderDashboardEnhanced;
-  ensureDashboardDateDefaults(false);
-  renderDashboardEnhanced();
 })();
 </script>
 
