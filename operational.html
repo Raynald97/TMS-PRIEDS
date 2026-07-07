@@ -233,17 +233,17 @@ a.nav-item{text-decoration:none}
 <div class="content">
 <nav class="file-nav" aria-label="Navigasi antar modul"><a class="home-link" href="index.html">⌂ Home / Index</a><a class="" href="report-overview.html">Report & Overview</a><a class="" href="master.html">Master</a><a class="current" href="operational.html">Operational</a><a class="" href="integration.html">Integration McEasy</a><a class="" href="risk-control.html">Risk & Control</a></nav>
 <section class="page active" id="page-planning">
-<div class="page-head"><div><h1>Shipment Planning</h1><p>Kelola dokumen siap kirim, pembentukan Plan Number, assignment fleet, rute, kapasitas, jadwal, dan biaya.</p></div><div class="head-actions"><button class="btn btn-outline" onclick="openDocumentImport()">Import Excel</button><button class="btn btn-primary" onclick="openShipmentWizard()">Create Plan</button></div></div>
+<div class="page-head"><div><h1>Shipment Planning</h1><p>Kelola dokumen siap kirim, pembentukan Plan Number, assignment fleet, rute, kapasitas, jadwal, dan biaya.</p></div></div>
 <div class="window">
 <div class="tabs"><button class="tab active" onclick="planningTab(this,'candidatePanel')">Ready Documents</button><button class="tab" onclick="planningTab(this,'planPanel')">Shipment Plans</button><button class="tab" onclick="planningTab(this,'recommendPanel');generateRecommendations()">Auto Group Recommendation</button></div>
 <div id="candidatePanel">
-<div class="toolbar"><input class="input" id="docSearch" onkeydown="if(event.key==='Enter')renderDocuments()" placeholder="Document / recipient / destination"/><select class="select" id="docTypeFilter" onchange="renderDocuments()"><option value="">All Document Types</option><option value="DO">Delivery Order</option><option value="STO">Stock Transfer Out</option></select><select class="select" id="readyHubFilter" onchange="renderDocuments()"><option value="">All Origin Hubs</option></select><button class="btn btn-outline" onclick="renderDocuments()">Search</button><button class="btn btn-ghost" onclick="refreshDocumentStatus()">Refresh Document Status</button></div>
+<div class="toolbar"><input class="input" id="docSearch" onkeydown="if(event.key==='Enter')renderDocuments()" placeholder="Document / recipient / destination"/><select class="select" id="docTypeFilter" onchange="renderDocuments()"><option value="">All Document Types</option><option value="DO">Delivery Order</option><option value="STO">Stock Transfer Out</option></select><select class="select" id="readyHubFilter" onchange="renderDocuments()"><option value="">All Origin Hubs</option></select><button class="btn btn-outline" onclick="renderDocuments()">Search</button><span class="spacer"></span><button class="btn btn-outline" onclick="openDocumentImport()">Import Excel</button><button class="btn btn-primary" onclick="openShipmentWizard()">Create Plan</button></div>
 <div class="notice" id="selectedDocInfo" style="margin:12px 14px">No document selected.</div>
 <div class="table-wrap"><table class="tbl"><thead><tr><th style="width:38px">Select</th><th>Dispatch Deadline</th><th>Document</th><th>Customer / Recipient</th><th>Origin Hub</th><th>Destination</th><th>Weight</th><th>Volume</th><th>Priority</th><th>Status</th><th>Action</th></tr></thead><tbody id="documentTbody"></tbody></table></div>
 <div class="pager">Demo import contains 120+ documents for testing.</div>
 </div>
 <div class="hidden" id="planPanel">
-<div class="toolbar"><input class="input" id="planSearch" onkeydown="if(event.key==='Enter')renderPlans()" placeholder="Plan / route / vehicle / carrier"/><select class="select" id="planStatusFilter" onchange="renderPlans()"><option value="">All Status</option><option>Draft</option><option>Planned</option><option>Loading</option><option>Ready to Dispatch</option><option>In Transit</option><option>Returning</option><option>Completed</option></select><button class="btn btn-outline" onclick="renderPlans()">Search</button><span class="spacer"></span><button class="btn btn-primary" onclick="planningTab(document.querySelector('#page-planning .tab:first-child'),'candidatePanel')">Select Documents</button></div>
+<div class="toolbar"><input class="input" id="planSearch" onkeydown="if(event.key==='Enter')renderPlans()" placeholder="Plan / route / vehicle / carrier"/><select class="select" id="planStatusFilter" onchange="renderPlans()"><option value="">All Status</option><option>Draft</option><option>Planned</option><option>Loading</option><option>Ready to Dispatch</option><option>In Transit</option><option>Returning</option><option>Completed</option></select><button class="btn btn-outline" onclick="renderPlans()">Search</button><button class="btn btn-ghost" onclick="refreshPlanDocumentStatus()">Refresh Document Status</button><span class="spacer"></span><button class="btn btn-primary" onclick="planningTab(document.querySelector('#page-planning .tab:first-child'),'candidatePanel')">Select Documents</button></div>
 <div class="table-wrap"><table class="tbl"><thead><tr><th>Plan Number</th><th>Document Type</th><th>Shipping Option</th><th>Shipment Date</th><th>ETA</th><th>Route / Lane</th><th>Resource</th><th>Capacity</th><th>Status</th><th>Action</th></tr></thead><tbody id="planTbody"></tbody></table></div>
 </div>
 <div class="hidden" id="recommendPanel">
@@ -2640,6 +2640,183 @@ window.refreshDocumentStatus=function(){
     (DEMO.contracts||[]).forEach(normalizeContractFeeConfig);
     (db.contracts||[]).forEach(normalizeContractFeeConfig);
     saveDB();
+  };
+})();
+</script>
+
+
+<script>
+/* ===== Shipment Planning Revision V9: status refresh, full edit wizard, toolbar alignment ===== */
+(function shipmentPlanningRevisionV9(){
+  'use strict';
+
+  function normalizeText(value){return String(value||'').trim().toLowerCase().replace(/\s+/g,' ')}
+  function activeHubRows(){return (db.hubs||[]).filter(h=>h.status==='Active')}
+  function optionExists(select,value){return !!select&&[...select.options].some(option=>option.value===value)}
+  function setValueIfAvailable(select,value){if(select&&optionExists(select,value))select.value=value}
+
+  /* Dispatch / Consolidation Hub is derived from the selected Ready Documents rows.
+     Unrelated Master hubs are not offered unless no table-derived hub can be found. */
+  window.detectedHubOptions=detectedHubOptions=function(docs){
+    const active=activeHubRows(),activeByName=new Map(active.map(h=>[normalizeText(h.name),h.name])),result=[];
+    const add=value=>{const raw=String(value||'').trim();if(!raw)return;const masterName=activeByName.get(normalizeText(raw));const candidate=masterName||(/\bhub\b/i.test(raw)?raw:'');if(candidate&&!result.some(x=>normalizeText(x)===normalizeText(candidate)))result.push(candidate)};
+    (docs||[]).forEach(doc=>{add(doc.origin);add(doc.destination)});
+    if(!result.length)active.forEach(h=>add(h.name));
+    return result;
+  };
+
+  function wizardDocumentRows(docs){
+    return docs.map(d=>`<tr><td class="mono">${esc(d.id)}</td><td>${esc(d.type)}</td><td>${esc(d.customer)}</td><td>${esc(d.origin)}</td><td>${esc(d.destination)}</td></tr>`).join('');
+  }
+
+  function buildPlanWizard(prefillDocs=null,editId=''){
+    const plan=editId?(db.plans||[]).find(p=>p.id===editId):null;
+    if(editId&&!plan){toast('Shipment Plan tidak ditemukan');return}
+    if(plan&&plan.status!=='Planned'){toast('Edit Plan hanya tersedia untuk status Planned');return}
+    const ids=prefillDocs||(plan?.docs||[...selectedDocs]),docs=(db.documents||[]).filter(x=>ids.includes(x.id));
+    if(!docs.length){toast('Pilih minimal satu DO/STO terlebih dahulu');return}
+
+    const tableHubs=detectedHubOptions(docs),currentHub=plan?.transitHub||plan?.dispatchHub||'';
+    if(plan&&currentHub&&!tableHubs.some(h=>normalizeText(h)===normalizeText(currentHub)))tableHubs.unshift(currentHub);
+    const commonOrigin=docs.every(d=>d.origin===docs[0].origin)?docs[0].origin:'',destinations=uniqueValues(docs.map(d=>d.destination));
+    const defaultHub=plan?currentHub:(tableHubs.find(h=>normalizeText(h)!==normalizeText(commonOrigin))||tableHubs[0]||commonOrigin);
+    const defaultSource=plan?.source||document.getElementById('readyShippingOption')?.value||'Fleet Company';
+    const defaultFleet=plan?(plan.source==='Fleet Company'?((db.vehicles||[]).find(v=>v.plate===plan.vehicle)?.id||''):plan.supplier):(document.getElementById('readyFleetSelect')?.value||'');
+    const defaultStop=plan?.stopCategory||(plan?.transitHub?'Hub':'End Customer');
+    const title=plan?`Edit ${esc(plan.id)}`:'Create Shipment Plan';
+    const info=plan?'Edit menggunakan field dan validasi yang sama seperti Create Plan. Hanya plan berstatus Planned yang dapat diubah.':'Tentukan jenis stop terlebih dahulu. Field Hub hanya muncul untuk perjalanan melalui titik transit atau konsolidasi.';
+    const body=`<div class="notice">${info}</div><div class="doc-selection-table"><table class="tbl"><thead><tr><th>Document</th><th>Type</th><th>Customer / Recipient</th><th>Origin</th><th>Destination</th></tr></thead><tbody>${wizardDocumentRows(docs)}</tbody></table></div><div class="wizard-context">${plan?`<div>Plan Number<b>${esc(plan.id)}</b></div>`:''}<div>Total Load<b>${docs.reduce((a,b)=>a+Number(b.weight),0).toLocaleString()} kg / ${docs.reduce((a,b)=>a+Number(b.volume),0).toFixed(1)} m³</b></div><div>Origin<b>${esc(commonOrigin||uniqueValues(docs.map(d=>d.origin)).join(' + '))}</b></div><div>Destination<b>${esc(destinations.join(' / '))}</b></div></div><div class="form-grid"><div class="field"><label>Shipping Option</label><select class="select" id="sw-source" onchange="wizardDynamic()"><option ${defaultSource==='Fleet Company'?'selected':''}>Fleet Company</option><option ${defaultSource==='Expedition'?'selected':''}>Expedition</option></select></div><div class="field"><label>Stop Category</label><select class="select" id="sw-stop" onchange="wizardStopChanged()"><option ${defaultStop==='End Customer'?'selected':''}>End Customer</option><option ${defaultStop==='Hub'?'selected':''}>Hub</option></select><small>Hub dipakai sebagai transit/consolidation stop.</small></div><div class="field ${defaultStop==='Hub'?'':'hidden'}" id="sw-hub-wrap"><label>Dispatch / Consolidation Hub</label><select class="select" id="sw-hub" onchange="wizardDynamic();refreshWizardRoute(true)">${tableHubs.map(h=>`<option value="${esc(h)}" ${normalizeText(h)===normalizeText(defaultHub)?'selected':''}>${esc(h)}</option>`).join('')}</select><small>Option mengikuti Origin/Destination pada document yang dipilih.</small></div><div class="field"><label>Shipment Date</label><input class="input" type="date" id="sw-date" value="${esc(plan?.shipmentDate||todayISO())}" onchange="syncContract()"></div><div class="field"><label>Estimate Date to Arrival</label><input class="input" type="date" id="sw-eta" value="${esc(plan?.eta||addDays(todayISO(),1))}"></div><div id="sw-dynamic" class="field full"></div><div class="field full"><div class="route-builder"><div class="route-builder-head"><b>Route / Lane</b><span id="sw-route-summary"></span></div><div class="form-grid"><div class="field"><label>Lane Source</label><select class="select" id="sw-route-select" onchange="applyWizardLane()"></select></div><div class="field"><label>Generated Route</label><div style="display:flex;gap:7px"><input class="input" id="sw-route-text" disabled style="flex:1;min-width:0"><button class="btn btn-outline" type="button" id="sw-route-edit" onclick="toggleRouteEdit()">Edit Route</button></div></div></div><div class="route-preview"><span class="route-icon">⌁</span><div><b>Auto routing follows selected destinations</b><p>Master Lane ditampilkan jika origin/destination cocok. User tetap dapat mengubah route secara manual.</p></div></div><div class="route-warning" id="sw-route-warning"></div></div></div><div class="field full"><label>Remark</label><textarea class="textarea" id="sw-remark" placeholder="Transport notes, special handling, temperature, seal, etc.">${esc(plan?.remark||'')}</textarea></div></div><input type="hidden" id="sw-docs" value="${ids.join('|')}"><input type="hidden" id="sw-readyFleet" value="${esc(defaultFleet)}"><input type="hidden" id="sw-edit-plan" value="${esc(editId)}">`;
+    const footer=plan?`<button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveShipmentPlanEdit('${esc(plan.id)}')">Save Changes</button>`:`<button class="btn btn-ghost" onclick="closeModal()">Close</button><button class="btn btn-primary" onclick="createShipmentPlan()">Create Plan</button>`;
+    openModal(title,body,footer);
+    wizardStopChanged();
+
+    if(!plan)return;
+    document.getElementById('sw-source').value=plan.source||'Fleet Company';
+    document.getElementById('sw-stop').value=defaultStop;
+    setValueIfAvailable(document.getElementById('sw-hub'),defaultHub);
+    wizardStopChanged();
+    document.getElementById('sw-date').value=plan.shipmentDate||todayISO();
+    document.getElementById('sw-eta').value=plan.eta||addDays(todayISO(),1);
+    document.getElementById('sw-remark').value=plan.remark||'';
+
+    if(plan.source==='Fleet Company'){
+      const vehicle=(db.vehicles||[]).find(v=>v.plate===plan.vehicle),driver=(db.drivers||[]).find(d=>d.name===plan.driver);
+      setValueIfAvailable(document.getElementById('sw-vehicle'),vehicle?.id||'');
+      setValueIfAvailable(document.getElementById('sw-driver'),driver?.id||'');
+      const cost=document.getElementById('sw-cost');if(cost)cost.value=Number(plan.plannedCost||0);
+      if(typeof calculateWizardUtil==='function')calculateWizardUtil();
+    }else{
+      setValueIfAvailable(document.getElementById('sw-supplier'),plan.supplier||'');
+      if(typeof syncContract==='function')syncContract();
+      setValueIfAvailable(document.getElementById('sw-contract'),plan.contract||'');
+      const cost=document.getElementById('sw-cost');if(cost)cost.value=Number(plan.plannedCost||0);
+    }
+
+    if(typeof refreshWizardRoute==='function')refreshWizardRoute(true);
+    const lane=document.getElementById('sw-route-select'),routeInput=document.getElementById('sw-route-text');
+    if(lane&&plan.routeLane&&optionExists(lane,plan.routeLane)){lane.value=plan.routeLane;if(typeof applyWizardLane==='function')applyWizardLane()}
+    if(routeInput&&plan.route){routeInput.value=plan.route;routeInput.disabled=true;routeInput.dataset.manual='1'}
+  }
+
+  window.openShipmentWizard=openShipmentWizard=function(prefillDocs=null,editId=''){return buildPlanWizard(prefillDocs,editId)};
+  window.editPlan=editPlan=function(id){
+    const plan=(db.plans||[]).find(p=>p.id===id);if(!plan)return;
+    if(plan.status!=='Planned'){toast('Edit Plan hanya tersedia untuk status Planned');return}
+    buildPlanWizard(plan.docs||[],id);
+  };
+
+  function releaseResourceIfUnused(source,vehiclePlate,driverName,excludePlanId){
+    if(source!=='Fleet Company')return;
+    const activePlans=(db.plans||[]).filter(p=>p.id!==excludePlanId&&p.source==='Fleet Company'&&!['Completed','Cancelled'].includes(p.status));
+    const vehicleStillUsed=activePlans.some(p=>p.vehicle===vehiclePlate),driverStillUsed=activePlans.some(p=>p.driver===driverName);
+    const vehicle=(db.vehicles||[]).find(v=>v.plate===vehiclePlate),driver=(db.drivers||[]).find(d=>d.name===driverName);
+    if(!vehicleStillUsed&&vehicle&&vehicle.status==='Reserved')vehicle.status='Available';
+    if(!driverStillUsed&&driver&&driver.status==='Assigned')driver.status='Available';
+  }
+
+  window.saveShipmentPlanEdit=function(id){
+    const plan=(db.plans||[]).find(p=>p.id===id);if(!plan)return;
+    if(plan.status!=='Planned'){toast('Perubahan ditolak. Status plan bukan Planned');return}
+    const ids=(document.getElementById('sw-docs')?.value||'').split('|').filter(Boolean),docs=(db.documents||[]).filter(x=>ids.includes(x.id));
+    const source=document.getElementById('sw-source')?.value||'Fleet Company',stopCategory=document.getElementById('sw-stop')?.value||'End Customer',origins=uniqueValues(docs.map(d=>d.origin)),hub=stopCategory==='Hub'?(document.getElementById('sw-hub')?.value||''):'';
+    if(stopCategory==='Hub'&&!hub){toast('Dispatch / Consolidation Hub wajib dipilih');return}
+    if(stopCategory==='End Customer'&&origins.length>1){toast('Origin dokumen berbeda. Gunakan Stop Category Hub untuk konsolidasi.');return}
+
+    let vehicle='-',driver='-',supplier='-',contract='-',weightUtil=0,volumeUtil=0,overallUtil=0;
+    if(source==='Fleet Company'){
+      const vehicleRow=(db.vehicles||[]).find(v=>v.id===document.getElementById('sw-vehicle')?.value),driverRow=(db.drivers||[]).find(d=>d.id===document.getElementById('sw-driver')?.value);
+      if(!vehicleRow||!driverRow){toast('Fleet dan Driver wajib dipilih');return}
+      const weight=docs.reduce((a,b)=>a+Number(b.weight),0),volume=docs.reduce((a,b)=>a+Number(b.volume),0);
+      weightUtil=Math.round(weight/Number(vehicleRow.weight||1)*100);volumeUtil=Math.round(volume/Number(vehicleRow.volume||1)*100);overallUtil=Math.max(weightUtil,volumeUtil);
+      if(overallUtil>100){toast('Shipment melebihi kapasitas kendaraan');return}
+      vehicle=vehicleRow.plate;driver=driverRow.name;supplier=vehicleRow.carrier;
+    }else{
+      supplier=document.getElementById('sw-supplier')?.value||'';contract=document.getElementById('sw-contract')?.value||'';
+      if(!supplier||!contract||contract==='No active contract'){toast('Carrier wajib memiliki kontrak aktif');return}
+    }
+
+    const route=(document.getElementById('sw-route-text')?.value||'').trim();if(!route){toast('Route / Lane wajib tersedia');return}
+    const oldSource=plan.source,oldVehicle=plan.vehicle,oldDriver=plan.driver;
+    Object.assign(plan,{
+      docs:ids,
+      docType:uniqueValues(docs.map(x=>x.type)).map(x=>x==='DO'?'Delivery Order':'Stock Transfer Out').join(' + '),
+      source,supplier,contract,vehicle,driver,
+      shipmentDate:document.getElementById('sw-date')?.value||plan.shipmentDate,
+      eta:document.getElementById('sw-eta')?.value||plan.eta,
+      origin:origins.length===1?origins[0]:origins.join(' / '),
+      dispatchHub:hub||(origins.length===1?origins[0]:origins.join(' / ')),
+      transitHub:hub,
+      stopCategory,
+      destination:uniqueValues(docs.map(x=>x.destination)).join(' / '),
+      route,
+      routeLane:document.getElementById('sw-route-select')?.value||'AUTO',
+      weight:docs.reduce((a,b)=>a+Number(b.weight),0),
+      volume:Number(docs.reduce((a,b)=>a+Number(b.volume),0).toFixed(1)),
+      weightUtil,volumeUtil,util:overallUtil,
+      plannedCost:Number(document.getElementById('sw-cost')?.value||0),
+      remark:document.getElementById('sw-remark')?.value.trim()||'',
+      health:'On Schedule',
+      lastUpdate:'Plan edited just now',
+      loadedDocs:[],
+      stops:docs.map(x=>({doc:x.id,customer:x.customer,category:'End Customer',viaHub:hub||'',destination:x.destination,status:'On Going',arrival:'-',pod:false}))
+    });
+    releaseResourceIfUnused(oldSource,oldVehicle,oldDriver,id);
+    if(source==='Fleet Company'){
+      const newVehicle=(db.vehicles||[]).find(v=>v.plate===vehicle),newDriver=(db.drivers||[]).find(d=>d.name===driver);
+      if(newVehicle)newVehicle.status='Reserved';if(newDriver)newDriver.status='Assigned';
+    }
+    docs.forEach(doc=>doc.status='Done Planning');
+    saveDB();closeModal();renderAll();planningTab(document.querySelector('#page-planning .tab:nth-child(2)'),'planPanel');toast(id+' updated');
+  };
+
+  /* Re-open completed demo plans as Planned so the plan can be corrected through the edit wizard. */
+  window.refreshPlanDocumentStatus=function(){
+    const eligible=(db.plans||[]).filter(plan=>['Complete','Completed'].includes(plan.status));
+    if(!eligible.length){toast('Tidak ada plan berstatus Complete / Completed');return}
+    if(!window.confirm(`Ubah ${eligible.length} plan Complete / Completed menjadi Planned? Loading, POD, dan execution progress pada plan tersebut akan di-reset.`))return;
+    eligible.forEach(plan=>{
+      plan.status='Planned';plan.health='On Schedule';plan.loadedDocs=[];plan.lastUpdate='Document status refreshed to Planned';
+      plan.stops=(plan.stops||[]).map(stop=>Object.assign({},stop,{status:'On Going',arrival:'-',pod:false,signature:false,receiver:''}));
+      (plan.docs||[]).forEach(id=>{const doc=(db.documents||[]).find(d=>d.id===id);if(doc)doc.status='Done Planning'});
+      const state=(db.driverStates||{})[plan.id];if(state){state.step=0;state.currentStop=0;state.loadConfirmed=false;state.startOdo=null;state.endOdo=null}
+      const order=(db.fleetOrders||[]).find(item=>item.planId===plan.id);if(order){order.status='Dijadwalkan';order.updated='Status refreshed to Planned'}
+      if(plan.source==='Fleet Company'){
+        const vehicle=(db.vehicles||[]).find(v=>v.plate===plan.vehicle),driver=(db.drivers||[]).find(d=>d.name===plan.driver);
+        if(vehicle)vehicle.status='Reserved';if(driver)driver.status='Assigned';
+      }
+    });
+    saveDB();renderAll();renderPlans();toast(`${eligible.length} plan berhasil diubah menjadi Planned`);
+  };
+
+  const baseActionList=window.actionList;
+  window.actionList=actionList=function(kind,id){
+    if(kind!=='plan')return typeof baseActionList==='function'?baseActionList(kind,id):[];
+    const plan=(db.plans||[]).find(p=>p.id===id),items=[{label:'View Detail',run:()=>planDetail(id)}];
+    if(plan?.status==='Planned')items.push({label:'Edit Plan',run:()=>editPlan(id)});
+    items.push({label:'Open Schedule',run:()=>goSchedulePlan(id)});
+    if(plan?.status==='Planned')items.push({label:'Start Loading',run:()=>setLoadingPlan(id)});
+    items.push({label:'Delete Plan',danger:true,run:()=>deletePlan(id)});
+    return items;
   };
 })();
 </script>
