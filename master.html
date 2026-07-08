@@ -2193,7 +2193,167 @@ saveMaster=function(type,index){
 const rcBaseOpenMaintenance=openMaintenanceForm;
 openMaintenanceForm=function(index=null,view=false,vehicleId=''){rcBaseOpenMaintenance(index,view,vehicleId);const obj=index===null?{}:db.maintenanceTasks[index]||{},grid=document.querySelector('#modalBody .form-grid');if(!grid)return;const dis=view?'disabled':'';grid.insertAdjacentHTML('beforeend',`<div class="field"><label>Maintenance Vendor</label><input class="input" id="mt-vendor" value="${esc(obj.vendor||'Authorized Workshop')}" ${dis}></div><div class="field"><label>Work Order Number</label><input class="input" id="mt-workorder" value="${esc(obj.workOrderNo||'')}" ${dis}></div><div class="field"><label>Vendor Invoice Number</label><input class="input" id="mt-invoice" value="${esc(obj.invoiceNo||'')}" ${dis}></div><div class="field"><label>Warranty Status</label><select class="select" id="mt-warranty" ${dis}><option ${obj.warrantyStatus==='Checked'?'selected':''}>Checked</option><option ${obj.warrantyStatus==='Not Checked'?'selected':''}>Not Checked</option><option ${obj.warrantyStatus==='Covered'?'selected':''}>Covered</option></select></div><div class="field"><label>Odometer Before</label><input class="input" id="mt-odo-before" type="number" min="0" value="${esc(obj.odometerBefore||0)}" ${dis}></div><div class="field"><label>Odometer After</label><input class="input" id="mt-odo-after" type="number" min="0" value="${esc(obj.odometerAfter||0)}" ${dis}></div><div class="field"><label>Evidence Status</label><select class="select" id="mt-evidence" ${dis}><option ${obj.evidenceStatus==='Complete'?'selected':''}>Complete</option><option ${obj.evidenceStatus==='Pending'?'selected':''}>Pending</option><option ${obj.evidenceStatus==='Missing'?'selected':''}>Missing</option></select></div><div class="field"><label>Approval Status</label><select class="select" id="mt-approval" ${dis}><option ${obj.approvalStatus==='Approved'?'selected':''}>Approved</option><option ${obj.approvalStatus==='Pending Review'?'selected':''}>Pending Review</option><option ${obj.approvalStatus==='Rejected'?'selected':''}>Rejected</option></select></div>`)}
 const rcBaseSaveMaintenance=saveMaintenance;
-saveMaintenance=function(index){const before=db.maintenanceTasks.length,extras={vendor:document.getElementById('mt-vendor')?.value.trim(),workOrderNo:document.getElementById('mt-workorder')?.value.trim(),invoiceNo:document.getElementById('mt-invoice')?.value.trim(),warrantyStatus:document.getElementById('mt-warranty')?.value,odometerBefore:Number(document.getElementById('mt-odo-before')?.value||0),odometerAfter:Number(document.getElementById('mt-odo-after')?.value||0),evidenceStatus:document.getElementById('mt-evidence')?.value,approvalStatus:document.getElementById('mt-approval')?.value};if(extras.odometerAfter&&extras.odometerAfter<extras.odometerBefore){toast('Odometer After tidak boleh lebih kecil dari Odometer Before');return}if(extras.invoiceNo&&db.maintenanceTasks.some((x,i)=>i!==index&&x.invoiceNo===extras.invoiceNo)){toast('Vendor Invoice Number sudah digunakan maintenance task lain');return}rcBaseSaveMaintenance(index);if(!document.getElementById('modalMask')?.classList.contains('open')){const obj=index===null&&db.maintenanceTasks.length>before?db.maintenanceTasks.at(-1):db.maintenanceTasks[index];if(obj)Object.assign(obj,extras);runMasterRiskValidation('maintenanceTasks');saveDB();renderAll()}}
+saveMaintenance=function(index){
+  const isNew=index===null;
+
+  const previous=
+    isNew
+      ? null
+      : db.maintenanceTasks[index];
+
+  const beforeCount=
+    db.maintenanceTasks.length;
+
+  const requestedStatus=
+    document.getElementById('mt-status')
+      ?.value ||
+    'Scheduled';
+
+  if(
+    isNew &&
+    ['In Progress','Completed'].includes(requestedStatus)
+  ){
+    toast(
+      'Task baru harus dibuat sebagai Scheduled. '+
+      'Gunakan action Start Task untuk memulai maintenance.'
+    );
+    return;
+  }
+
+  if(
+    previous &&
+    requestedStatus!==previous.status &&
+    !(
+      previous.status==='Scheduled' &&
+      requestedStatus==='Cancelled'
+    )
+  ){
+    toast(
+      'Perubahan status harus melalui action '+
+      'Start Task atau Complete Task'
+    );
+    return;
+  }
+
+  const existingNumbers=
+    (db.maintenanceTasks||[])
+      .map(task=>
+        Number(
+          String(task.workOrderNo||'')
+            .match(/\d+/)?.[0] ||
+          0
+        )
+      );
+
+  const nextWorkOrderNumber=
+    Math.max(0,...existingNumbers)+1;
+
+  const generatedWorkOrder=
+    'WO-'+
+    String(nextWorkOrderNumber).padStart(5,'0');
+
+  const extras={
+    vendor:
+      document.getElementById('mt-vendor')
+        ?.value.trim() ||
+      previous?.vendor ||
+      'Authorized Workshop',
+
+    workOrderNo:
+      document.getElementById('mt-workorder')
+        ?.value.trim() ||
+      previous?.workOrderNo ||
+      generatedWorkOrder,
+
+    invoiceNo:
+      document.getElementById('mt-invoice')
+        ?.value.trim() ??
+      previous?.invoiceNo ??
+      '',
+
+    warrantyStatus:
+      document.getElementById('mt-warranty')
+        ?.value ||
+      previous?.warrantyStatus ||
+      'Checked',
+
+    odometerBefore:Number(
+      document.getElementById('mt-odo-before')
+        ?.value ??
+      previous?.odometerBefore ??
+      0
+    ),
+
+    odometerAfter:Number(
+      document.getElementById('mt-odo-after')
+        ?.value ??
+      previous?.odometerAfter ??
+      0
+    ),
+
+    evidenceStatus:
+      document.getElementById('mt-evidence')
+        ?.value ||
+      previous?.evidenceStatus ||
+      'Pending',
+
+    approvalStatus:
+      document.getElementById('mt-approval')
+        ?.value ||
+      previous?.approvalStatus ||
+      'Approved'
+  };
+
+  if(
+    extras.odometerAfter <
+    extras.odometerBefore
+  ){
+    toast(
+      'Odometer After tidak boleh lebih kecil '+
+      'dari Odometer Before'
+    );
+    return;
+  }
+
+  if(
+    extras.invoiceNo &&
+    db.maintenanceTasks.some((task,taskIndex)=>
+      taskIndex!==index &&
+      task.invoiceNo===extras.invoiceNo
+    )
+  ){
+    toast(
+      'Vendor Invoice Number sudah digunakan '+
+      'maintenance task lain'
+    );
+    return;
+  }
+
+  rcBaseSaveMaintenance(index);
+
+  const modalStillOpen=
+    document.getElementById('modalMask')
+      ?.classList.contains('open');
+
+  if(!modalStillOpen){
+    const savedTask=
+      isNew &&
+      db.maintenanceTasks.length>beforeCount
+        ? db.maintenanceTasks.at(-1)
+        : db.maintenanceTasks[index];
+
+    if(savedTask){
+      Object.assign(savedTask,extras);
+    }
+
+    runMasterRiskValidation(
+      'maintenanceTasks'
+    );
+
+    saveDB();
+    renderAll();
+  }
+};
 const rcBaseConfirmStartMaintenance=confirmStartMaintenance;
 confirmStartMaintenance=function(){
  const p=pendingMaintenanceStart,task=p&&db.maintenanceTasks.find(x=>x.id===p.id);if(!p||!task)return;
