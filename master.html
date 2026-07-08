@@ -2954,7 +2954,30 @@ const moduleName=v6Module();if(moduleName==='MASTER')v6InstallMasterUI();else if
   function ensureMasterAlignedData(){
     try{if(typeof rcEnsureData==='function')rcEnsureData();}catch(e){}
     (db.drivers||[]).forEach((d,i)=>Object.assign(d,{identityStatus:d.identityStatus||'Verified',deviceId:d.deviceId||('DEVICE-'+String(i+1).padStart(4,'0')),employmentStatus:d.employmentStatus||'Active',watchlistStatus:d.watchlistStatus||'Clear',maxWorkingHours:Number(d.maxWorkingHours||12),riskStatus:d.riskStatus||'Low'}));
-    (db.vehicles||[]).forEach((v,i)=>Object.assign(v,{tankCapacity:Number(v.tankCapacity||([80,120,200][i%3])),odometer:Number(v.odometer||40000+i*12500),identityVerification:v.identityVerification||'Verified',fuelType:v.fuelType||'Diesel',riskStatus:v.riskStatus||'Low'}));
+    (db.vehicles||[]).forEach((v,i)=>
+  Object.assign(v,{
+    tankCapacity:Number(
+      v.tankCapacity||([80,120,200][i%3])
+    ),
+
+    /*
+     * Nilai 0 adalah angka valid dan tidak boleh
+     * dianggap sebagai nilai kosong.
+     */
+    odometer:Number(
+      v.odometer ?? (40000+i*12500)
+    ),
+
+    identityVerification:
+      v.identityVerification||'Verified',
+
+    fuelType:
+      v.fuelType||'Diesel',
+
+    riskStatus:
+      v.riskStatus||'Low'
+  })
+);
     (db.contracts||[]).forEach(c=>{if(String(c.podRequirement||'').includes('OTP'))c.podRequirement='Photo + Signature';});
     db.driverStates=db.driverStates||{};
     const rows=operationalDemoRows();rows.forEach(x=>{if(!(db.documents||[]).some(d=>d.id===x.id))db.documents.push(x)});db.operationalDemoVersion=DEMO_VERSION;saveDB();
