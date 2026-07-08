@@ -997,7 +997,26 @@ function exportSpec(type){return {
 function excelEscape(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function downloadExcelTable(headers,rows,name){const table=`<table border="1"><thead><tr>${headers.map(h=>`<th>${excelEscape(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(v=>`<td>${excelEscape(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>`,html=`<html><head><meta charset="UTF-8"></head><body>${table}</body></html>`,a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff',html],{type:'application/vnd.ms-excel'}));a.download=name.endsWith('.xls')?name:name+'.xls';a.click();URL.revokeObjectURL(a.href)}
 function downloadMasterExcel(type){const spec=exportSpec(type),records=filteredMasterRecords(type).map(o=>o.x);downloadExcelTable(spec.headers,records.map(spec.rows),`TMS-${type}-${todayISO()}.xls`);toast(records.length+' row downloaded')}
-function syncVehicleMaintenanceStatus(vehicleId){const v=db.vehicles.find(x=>x.id===vehicleId);if(!v)return;const active=db.maintenanceTasks.some(t=>t.vehicleId===vehicleId&&(t.status==='In Progress'||(t.status==='Scheduled'&&t.startDate<=todayISO()&&t.endDate>=todayISO())));if(active)v.status='Maintenance';else if(v.status==='Maintenance')v.status='Available'}
+function syncVehicleMaintenanceStatus(vehicleId){
+  const vehicle=
+    db.vehicles.find(item=>item.id===vehicleId);
+
+  if(!vehicle){
+    return;
+  }
+
+  const activeMaintenance=
+    (db.maintenanceTasks||[]).some(task=>
+      task.vehicleId===vehicleId &&
+      task.status==='In Progress'
+    );
+
+  if(activeMaintenance){
+    vehicle.status='Maintenance';
+  }else if(vehicle.status==='Maintenance'){
+    vehicle.status='Available';
+  }
+}
 function openMaintenanceForm(index=null,view=false,vehicleId=''){
  const isNew=index===null,obj=isNew?{vehicleId:vehicleId||db.vehicles[0]?.id||'',category:'Preventive Service',startDate:todayISO(),endDate:addDays(todayISO(),1),description:'',estimateCost:0,cost:0,status:'Scheduled'}:{...db.maintenanceTasks[index]},ro=view?'disabled':'',estimateCost=Number(obj.estimateCost??obj.cost??0);
  const idField=isNew?'':`<div class="field"><label>Task ID</label><input class="input" value="${esc(obj.id)}" disabled></div>`;
