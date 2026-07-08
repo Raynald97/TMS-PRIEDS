@@ -2084,9 +2084,78 @@ function rcScore(severity='Medium',confidence=70,exposure=0,recurrence=1){const 
 function rcEnsureData(){
  db.riskEvents=Array.isArray(db.riskEvents)?db.riskEvents:[];db.approvalRequests=Array.isArray(db.approvalRequests)?db.approvalRequests:[];db.controlAudit=Array.isArray(db.controlAudit)?db.controlAudit:[];db.dispatchControls=db.dispatchControls||{};
  (db.hubs||[]).forEach((x,i)=>Object.assign(x,{geofenceRadius:Number(x.geofenceRadius||150),verificationStatus:x.verificationStatus||'Verified',highRiskLocation:x.highRiskLocation||'No',authorizedGate:x.authorizedGate||'Gate '+(i+1)}));
- (db.carriers||[]).forEach((x,i)=>Object.assign(x,{kycStatus:x.kycStatus||(String(x.name).includes('Trans Kargo')?'Pending Review':'Verified'),permitExpiry:x.permitExpiry||(i===2?'2026-06-20':'2027-12-31'),insuranceExpiry:x.insuranceExpiry||(i===2?'2026-07-10':'2027-12-31'),insuranceCoverage:Number(x.insuranceCoverage||1000000000),bankVerificationStatus:x.bankVerificationStatus||(i===2?'Pending Approval':'Verified'),riskStatus:x.riskStatus||(i===2?'High':'Low'),officialEmail:x.officialEmail||('ops@'+String(x.name||'carrier').toLowerCase().replace(/[^a-z0-9]+/g,'')+'.co.id')}));
- (db.contracts||[]).forEach((x,i)=>Object.assign(x,{approvalStatus:x.approvalStatus||'Approved',subcontractingAllowed:x.subcontractingAllowed||'No',liabilityLimit:Number(x.liabilityLimit||1000000000),podRequirement:x.podRequirement||'Photo + Signature + OTP',contractVersion:x.contractVersion||'v1.'+(i+1),maxThresholdPct:Number.isFinite(Number(x.maxThresholdPct))&&Number(x.maxThresholdPct)>=0?Number(x.maxThresholdPct):15}));
- (db.vehicles||[]).forEach((x,i)=>Object.assign(x,{vin:x.vin||('VIN-'+String(i+1).padStart(6,'0')),engineNumber:x.engineNumber||('ENG-'+String(i+1).padStart(6,'0')),gpsDeviceId:x.gpsDeviceId||('GPS-'+String(i+1).padStart(4,'0')),fuelType:x.fuelType||'Diesel',tankCapacity:Number(x.tankCapacity||80),odometer:Number(x.odometer||40000+i*12000),identityVerification:x.identityVerification||'Verified',riskStatus:x.riskStatus||'Low'}));
+(db.carriers||[]).forEach((x,i)=>Object.assign(x,{
+  kycStatus:x.kycStatus||
+    (String(x.name).includes('Trans Kargo')
+      ?'Pending Review'
+      :'Verified'),
+
+  permitExpiry:x.permitExpiry||
+    (i===2?'2026-06-20':'2027-12-31'),
+
+  insuranceExpiry:x.insuranceExpiry||
+    (i===2?'2026-07-10':'2027-12-31'),
+
+  insuranceCoverage:Number(
+    x.insuranceCoverage ?? 1000000000
+  ),
+
+  bankVerificationStatus:x.bankVerificationStatus||
+    (i===2?'Pending Approval':'Verified'),
+
+  riskStatus:x.riskStatus||
+    (i===2?'High':'Low'),
+
+  officialEmail:x.officialEmail||
+    (
+      'ops@'+
+      String(x.name||'carrier')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g,'')+
+      '.co.id'
+    )
+}));
+
+(db.contracts||[]).forEach((x,i)=>Object.assign(x,{
+  approvalStatus:x.approvalStatus||'Approved',
+  subcontractingAllowed:x.subcontractingAllowed||'No',
+
+  liabilityLimit:Number(
+    x.liabilityLimit ?? 1000000000
+  ),
+
+  podRequirement:x.podRequirement||
+    'Photo + Signature + OTP',
+
+  contractVersion:x.contractVersion||
+    'v1.'+(i+1)
+}));
+
+(db.vehicles||[]).forEach((x,i)=>Object.assign(x,{
+  vin:x.vin||
+    ('VIN-'+String(i+1).padStart(6,'0')),
+
+  engineNumber:x.engineNumber||
+    ('ENG-'+String(i+1).padStart(6,'0')),
+
+  gpsDeviceId:x.gpsDeviceId||
+    ('GPS-'+String(i+1).padStart(4,'0')),
+
+  fuelType:x.fuelType||'Diesel',
+
+  tankCapacity:Number(
+    x.tankCapacity||80
+  ),
+
+  odometer:Number(
+    x.odometer ?? (40000+i*12000)
+  ),
+
+  identityVerification:
+    x.identityVerification||'Verified',
+
+  riskStatus:x.riskStatus||'Low'
+}));
  (db.maintenanceTasks||[]).forEach((x,i)=>Object.assign(x,{vendor:x.vendor||'Authorized Workshop',workOrderNo:x.workOrderNo||('WO-'+String(i+1).padStart(5,'0')),invoiceNo:x.invoiceNo||'',odometerBefore:Number(x.odometerBefore||0),odometerAfter:Number(x.odometerAfter||0),warrantyStatus:x.warrantyStatus||'Checked',evidenceStatus:x.evidenceStatus||'Complete',approvalStatus:x.approvalStatus||'Approved'}));
  (db.drivers||[]).forEach((x,i)=>Object.assign(x,{identityStatus:x.identityStatus||'Verified',deviceId:x.deviceId||('DEVICE-'+String(i+1).padStart(4,'0')),employmentStatus:x.employmentStatus||'Active',watchlistStatus:x.watchlistStatus||'Clear',maxWorkingHours:Number(x.maxWorkingHours||12),riskStatus:x.riskStatus||'Low'}));
  (db.routes||[]).forEach((x,i)=>Object.assign(x,{deviationToleranceKm:Number(x.deviationToleranceKm||10),highRiskZone:x.highRiskZone||'No',secureParkingRequired:x.secureParkingRequired||'No',approvalStatus:x.approvalStatus||'Approved',routeVersion:x.routeVersion||'v1.'+(i+1)}));
