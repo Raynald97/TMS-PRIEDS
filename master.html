@@ -450,15 +450,305 @@ function durationText(distance,speed){const mins=Math.max(1,Math.round(Number(di
 function refreshRouteCalculation(){const origin=document.getElementById('mf-origin')?.value,destination=document.getElementById('mf-destination')?.value,a=db.hubs.find(x=>x.name===origin),b=db.hubs.find(x=>x.name===destination),distance=a&&b&&origin!==destination?haversineKm(a,b):0,speed=Number(document.getElementById('mf-averageSpeed')?.value||40),duration=distance?durationText(distance,speed):'';const distEl=document.getElementById('mf-distance'),durEl=document.getElementById('mf-duration');if(distEl)distEl.value=distance||'';if(durEl)durEl.value=duration;const total=['tollCost','fuelCost','parkingCost','otherCost'].reduce((s,k)=>s+Number(document.getElementById('mf-'+k)?.value||0),0),totalEl=document.getElementById('mf-totalCost');if(totalEl)totalEl.value=fmtIDR(total)}
 function openMasterForm(type,index=null,view=false){const cfg=masterCfg[type],isNew=index===null,obj=isNew?{}:{...db[type][index]};if(type==='contracts'&&isNew){obj.startDate=todayISO();obj.endDate=addDays(todayISO(),365);obj.maxThresholdPct=15;obj.status=contractAutoStatus(obj)}if(type==='routes'&&isNew){obj.averageSpeed=40;obj.openTime='08:00';obj.closeTime='17:00';obj.tollCost=0;obj.fuelCost=0;obj.parkingCost=0;obj.otherCost=0;obj.totalCost=0}if(type==='hubs'&&isNew){obj.openTime='08:00';obj.closeTime='17:00';obj.is24Hours=false}if(type==='vehicles'&&isNew){obj.type='CDD';obj.requiredSim=[]}const fields=masterFields(type,obj,isNew),body=`<div class="form-grid">${fields.map(f=>fieldHTML(f,obj[f.k],obj,view)).join('')}</div>`;let foot=`<button class="btn btn-ghost" onclick="closeModal()">Close</button>`;if(!view)foot+=`<button class="btn btn-primary" onclick="saveMaster('${type}',${isNew?'null':index})">${isNew?'Create':'Save Changes'}</button>`;openModal((view?'Detail ':'')+cfg.title,body,foot);if(type==='routes')setTimeout(refreshRouteCalculation,0);if(type==='hubs')setTimeout(toggleHubHours,0);if(type==='vehicles')setTimeout(refreshVehicleSimOptions,0)}
 function readField(f){if(['computed','operatingHours','serviceWindow','plate'].includes(f.t)){return undefined;}const el=document.getElementById('mf-'+f.k);if(!el){return undefined;}if(f.t==='checkboxgroup'){return [...el.querySelectorAll('input:checked')].map(option=>option.value);}if(f.t==='number'){const rawValue=el.value.trim();return rawValue===''? null: Number(rawValue);}return el.value.trim();}
-function saveMaster(type,index){const isNew=index===null,fields=masterFields(type,isNew?{}:db[type][index],isNew),obj=isNew?{}:{...db[type][index]};for(const f of fields){const val=readField(f);if(val!==undefined)obj[f.k]=val;if(!['computed','operatingHours','serviceWindow','plate','checkboxgroup'].includes(f.t)&&!f.readonly&&!f.disabled&&(val===''||val===null||val===undefined)){toast(f.l+' wajib diisi');return}if(f.t==='checkboxgroup'&&(!val||!val.length)){toast('Pilih minimal satu tipe SIM');return}}
- if(isNew)obj.id=nextMasterId(type,masterCfg[type].prefix);
- if(type==='hubs'){obj.is24Hours=!!document.getElementById('mf-is24Hours')?.checked;obj.openTime=document.getElementById('mf-openTime')?.value||'00:00';obj.closeTime=document.getElementById('mf-closeTime')?.value||'23:59';obj.hours=obj.is24Hours?'24 Hours':`${obj.openTime} - ${obj.closeTime}`;if(Number.isNaN(obj.latitude)||Number.isNaN(obj.longitude)){toast('Latitude dan Longitude tidak valid');return}}
- if(type==='carriers')obj.sla=`${obj.slaHours} Hours`;
- if(type==='contracts'){if(obj.endDate<obj.startDate){toast('Effective End tidak boleh sebelum Effective Start');return}if(!Number.isFinite(Number(obj.maxThresholdPct))||Number(obj.maxThresholdPct)<0){toast('Max Threshold harus berupa angka 0 atau lebih');return}obj.maxThresholdPct=Number(obj.maxThresholdPct);obj.period=`${obj.startDate} to ${obj.endDate}`;obj.status=contractAutoStatus(obj)}
- if(type==='vehicles'){const prefix=document.getElementById('mf-platePrefix')?.value.trim().toUpperCase(),number=document.getElementById('mf-plateNumber')?.value.trim(),suffix=document.getElementById('mf-plateSuffix')?.value.trim().toUpperCase();if(!prefix||!number||!suffix){toast('Lengkapi huruf depan, angka, dan huruf belakang Plate Number');return}if(!/^[A-Z]{1,2}$/.test(prefix)||!/^\d{1,4}$/.test(number)||!/^[A-Z]{1,3}$/.test(suffix)){toast('Format Plate Number tidak valid');return}obj.plate=`${prefix} ${number} ${suffix}`;obj.expiry=[obj.stnkExpiry,obj.kirExpiry].sort()[0];if(db.vehicles.some((x,i)=>i!==index&&x.plate.toLowerCase()===obj.plate.toLowerCase())){toast('Plate Number harus unik');return}}
- if(type==='drivers'){if(db.drivers.some((x,i)=>i!==index&&String(x.username).toLowerCase()===String(obj.username).toLowerCase())){toast('Mobile Username sudah digunakan driver lain');return}}
- if(type==='routes'){obj.openTime=document.getElementById('mf-openTime')?.value||'08:00';obj.closeTime=document.getElementById('mf-closeTime')?.value||'17:00';obj.window=`${obj.openTime} - ${obj.closeTime}`;if(obj.origin===obj.destination){toast('Origin dan Destination harus berbeda');return}const a=db.hubs.find(x=>x.name===obj.origin),b=db.hubs.find(x=>x.name===obj.destination);obj.distance=haversineKm(a,b);if(!obj.distance){toast('Koordinat Hub belum lengkap, distance tidak dapat dihitung');return}obj.duration=durationText(obj.distance,obj.averageSpeed);obj.totalCost=['tollCost','fuelCost','parkingCost','otherCost'].reduce((s,k)=>s+Number(obj[k]||0),0)}
- const cfg=masterCfg[type];if(isNew){if(db[type].some(x=>x[cfg.id]===obj[cfg.id])){toast(cfg.title+' ID harus unik');return}db[type].push(obj)}else db[type][index]=obj;normalizeMasterData(db);refreshComputedStatuses();saveDB();closeModal();renderAll();toast(cfg.title+' berhasil disimpan dengan ID '+obj.id)}
+function saveMaster(type,index){
+  const isNew=index===null;
+
+  const fields=masterFields(
+    type,
+    isNew ? {} : db[type][index],
+    isNew
+  );
+
+  const obj=isNew
+    ? {}
+    : {...db[type][index]};
+
+  for(const field of fields){
+    const value=readField(field);
+
+    if(value!==undefined){
+      obj[field.k]=value;
+    }
+
+    if(
+      field.t==='number' &&
+      value!==null &&
+      (
+        !Number.isFinite(value) ||
+        (
+          field.min!==undefined &&
+          value<Number(field.min)
+        )
+      )
+    ){
+      toast(
+        `${field.l} harus berupa angka valid${
+          field.min!==undefined
+            ? ` minimal ${field.min}`
+            : ''
+        }`
+      );
+
+      document.getElementById('mf-'+field.k)?.focus();
+      return;
+    }
+
+    const ignoredTypes=[
+      'computed',
+      'operatingHours',
+      'serviceWindow',
+      'plate',
+      'checkboxgroup'
+    ];
+
+    if(
+      !ignoredTypes.includes(field.t) &&
+      !field.readonly &&
+      !field.disabled &&
+      (
+        value==='' ||
+        value===null ||
+        value===undefined
+      )
+    ){
+      toast(field.l+' wajib diisi');
+      document.getElementById('mf-'+field.k)?.focus();
+      return;
+    }
+
+    if(
+      field.t==='checkboxgroup' &&
+      (!value || !value.length)
+    ){
+      toast('Pilih minimal satu tipe SIM');
+      return;
+    }
+  }
+
+  if(isNew){
+    obj.id=nextMasterId(
+      type,
+      masterCfg[type].prefix
+    );
+  }
+
+  const sameValue=(value1,value2)=>{
+    return String(value1||'')
+      .trim()
+      .toLowerCase()===
+      String(value2||'')
+        .trim()
+        .toLowerCase();
+  };
+
+  if(
+    type==='hubs' &&
+    db.hubs.some((item,itemIndex)=>
+      itemIndex!==index &&
+      sameValue(item.name,obj.name)
+    )
+  ){
+    toast('Hub Name harus unik');
+    return;
+  }
+
+  if(
+    type==='carriers' &&
+    db.carriers.some((item,itemIndex)=>
+      itemIndex!==index &&
+      sameValue(item.name,obj.name)
+    )
+  ){
+    toast('Carrier Name harus unik');
+    return;
+  }
+
+  if(
+    type==='routes' &&
+    db.routes.some((item,itemIndex)=>
+      itemIndex!==index &&
+      sameValue(item.origin,obj.origin) &&
+      sameValue(item.destination,obj.destination)
+    )
+  ){
+    toast('Kombinasi Origin dan Destination sudah terdaftar');
+    return;
+  }
+
+  if(type==='hubs'){
+    obj.is24Hours=
+      !!document.getElementById('mf-is24Hours')?.checked;
+
+    obj.openTime=
+      document.getElementById('mf-openTime')?.value ||
+      '00:00';
+
+    obj.closeTime=
+      document.getElementById('mf-closeTime')?.value ||
+      '23:59';
+
+    obj.hours=obj.is24Hours
+      ? '24 Hours'
+      : `${obj.openTime} - ${obj.closeTime}`;
+
+    if(
+      !Number.isFinite(obj.latitude) ||
+      !Number.isFinite(obj.longitude)
+    ){
+      toast('Latitude dan Longitude tidak valid');
+      return;
+    }
+  }
+
+  if(type==='carriers'){
+    obj.sla=`${obj.slaHours} Hours`;
+  }
+
+  if(type==='contracts'){
+    if(obj.endDate<obj.startDate){
+      toast('Effective End tidak boleh sebelum Effective Start');
+      return;
+    }
+
+    obj.period=`${obj.startDate} to ${obj.endDate}`;
+    obj.status=contractAutoStatus(obj);
+  }
+
+  if(type==='vehicles'){
+    const prefix=
+      document.getElementById('mf-platePrefix')
+        ?.value.trim()
+        .toUpperCase();
+
+    const plateNumber=
+      document.getElementById('mf-plateNumber')
+        ?.value.trim();
+
+    const suffix=
+      document.getElementById('mf-plateSuffix')
+        ?.value.trim()
+        .toUpperCase();
+
+    if(!prefix || !plateNumber || !suffix){
+      toast(
+        'Lengkapi huruf depan, angka, dan huruf belakang Plate Number'
+      );
+      return;
+    }
+
+    if(
+      !/^[A-Z]{1,2}$/.test(prefix) ||
+      !/^\d{1,4}$/.test(plateNumber) ||
+      !/^[A-Z]{1,3}$/.test(suffix)
+    ){
+      toast('Format Plate Number tidak valid');
+      return;
+    }
+
+    obj.plate=`${prefix} ${plateNumber} ${suffix}`;
+    obj.expiry=[obj.stnkExpiry,obj.kirExpiry].sort()[0];
+
+    if(
+      db.vehicles.some((item,itemIndex)=>
+        itemIndex!==index &&
+        sameValue(item.plate,obj.plate)
+      )
+    ){
+      toast('Plate Number harus unik');
+      return;
+    }
+  }
+
+  if(
+    type==='drivers' &&
+    db.drivers.some((item,itemIndex)=>
+      itemIndex!==index &&
+      sameValue(item.username,obj.username)
+    )
+  ){
+    toast('Mobile Username sudah digunakan driver lain');
+    return;
+  }
+
+  if(type==='routes'){
+    obj.openTime=
+      document.getElementById('mf-openTime')?.value ||
+      '08:00';
+
+    obj.closeTime=
+      document.getElementById('mf-closeTime')?.value ||
+      '17:00';
+
+    obj.window=`${obj.openTime} - ${obj.closeTime}`;
+
+    if(obj.origin===obj.destination){
+      toast('Origin dan Destination harus berbeda');
+      return;
+    }
+
+    const originHub=
+      db.hubs.find(item=>item.name===obj.origin);
+
+    const destinationHub=
+      db.hubs.find(item=>item.name===obj.destination);
+
+    obj.distance=haversineKm(
+      originHub,
+      destinationHub
+    );
+
+    if(!obj.distance){
+      toast(
+        'Koordinat Hub belum lengkap, distance tidak dapat dihitung'
+      );
+      return;
+    }
+
+    obj.duration=durationText(
+      obj.distance,
+      obj.averageSpeed
+    );
+
+    obj.totalCost=[
+      'tollCost',
+      'fuelCost',
+      'parkingCost',
+      'otherCost'
+    ].reduce(
+      (total,key)=>total+Number(obj[key]||0),
+      0
+    );
+  }
+
+  const config=masterCfg[type];
+
+  if(isNew){
+    if(
+      db[type].some(item=>
+        item[config.id]===obj[config.id]
+      )
+    ){
+      toast(config.title+' ID harus unik');
+      return;
+    }
+
+    db[type].push(obj);
+  }else{
+    db[type][index]=obj;
+  }
+
+  normalizeMasterData(db);
+  refreshComputedStatuses();
+  saveDB();
+  closeModal();
+  renderAll();
+
+  toast(
+    config.title+
+    ' berhasil disimpan dengan ID '+
+    obj.id
+  );
+}
 function isMasterReferenced(type,obj){if(type==='hubs')return db.vehicles.some(x=>x.pool===obj.name)||db.drivers.some(x=>x.pool===obj.name)||db.routes.some(x=>x.origin===obj.name||x.destination===obj.name)||db.carriers.some(x=>x.location===obj.location)||db.contracts.some(x=>x.location===obj.location);if(type==='carriers')return db.vehicles.some(x=>x.carrier===obj.name)||db.drivers.some(x=>x.carrier===obj.name)||db.contracts.some(x=>x.carrier===obj.name);if(type==='vehicles')return db.maintenanceTasks.some(x=>x.vehicleId===obj.id)||db.plans.some(x=>x.vehicle===obj.plate);if(type==='routes')return db.contracts.some(x=>x.lane===obj.id);return false}
 function deleteMaster(type,index){const obj=db[type][index];if(isMasterReferenced(type,obj)){toast('Data masih digunakan oleh master atau transaksi lain');return}if(!confirm('Delete data ini?'))return;db[type].splice(index,1);saveDB();renderAll();toast('Data berhasil dihapus')}
 const IMPORT_SPECS={
