@@ -749,7 +749,168 @@ function saveMaster(type,index){
     obj.id
   );
 }
-function isMasterReferenced(type,obj){if(type==='hubs')return db.vehicles.some(x=>x.pool===obj.name)||db.drivers.some(x=>x.pool===obj.name)||db.routes.some(x=>x.origin===obj.name||x.destination===obj.name)||db.carriers.some(x=>x.location===obj.location)||db.contracts.some(x=>x.location===obj.location);if(type==='carriers')return db.vehicles.some(x=>x.carrier===obj.name)||db.drivers.some(x=>x.carrier===obj.name)||db.contracts.some(x=>x.carrier===obj.name);if(type==='vehicles')return db.maintenanceTasks.some(x=>x.vehicleId===obj.id)||db.plans.some(x=>x.vehicle===obj.plate);if(type==='routes')return db.contracts.some(x=>x.lane===obj.id);return false}
+function isMasterReferenced(type,obj){
+  const plans=db.plans||[];
+  const fleetOrders=db.fleetOrders||[];
+  const fleetMappings=db.fleetMappings||[];
+  const documents=db.documents||[];
+  const costRecords=db.costRecords||[];
+  const carrierInvoices=db.carrierInvoices||[];
+
+  if(type==='hubs'){
+    const lastHubForLocation=
+      !(db.hubs||[]).some(hub=>
+        hub.id!==obj.id &&
+        hub.location===obj.location
+      );
+
+    return (
+      (db.vehicles||[]).some(vehicle=>
+        vehicle.pool===obj.name
+      ) ||
+
+      (db.drivers||[]).some(driver=>
+        driver.pool===obj.name
+      ) ||
+
+      (db.routes||[]).some(route=>
+        route.origin===obj.name ||
+        route.destination===obj.name
+      ) ||
+
+      documents.some(document=>
+        document.origin===obj.name ||
+        document.destination===obj.name ||
+        document.customer===obj.name
+      ) ||
+
+      plans.some(plan=>
+        plan.origin===obj.name ||
+        plan.destination===obj.name ||
+        (plan.stops||[]).some(stop=>
+          stop.customer===obj.name
+        )
+      ) ||
+
+      fleetOrders.some(order=>
+        order.origin===obj.name ||
+        order.destination===obj.name
+      ) ||
+
+      (
+        lastHubForLocation &&
+        (
+          (db.carriers||[]).some(carrier=>
+            carrier.location===obj.location
+          ) ||
+
+          (db.contracts||[]).some(contract=>
+            contract.location===obj.location
+          )
+        )
+      )
+    );
+  }
+
+  if(type==='carriers'){
+    return (
+      (db.vehicles||[]).some(vehicle=>
+        vehicle.carrier===obj.name
+      ) ||
+
+      (db.drivers||[]).some(driver=>
+        driver.carrier===obj.name
+      ) ||
+
+      (db.contracts||[]).some(contract=>
+        contract.carrier===obj.name
+      ) ||
+
+      plans.some(plan=>
+        plan.supplier===obj.name ||
+        plan.carrierId===obj.id
+      ) ||
+
+      carrierInvoices.some(invoice=>
+        invoice.carrier===obj.name
+      )
+    );
+  }
+
+  if(type==='contracts'){
+    return plans.some(plan=>
+      plan.contract===obj.id ||
+      plan.contractId===obj.id
+    );
+  }
+
+  if(type==='vehicles'){
+    return (
+      (db.maintenanceTasks||[]).some(task=>
+        task.vehicleId===obj.id
+      ) ||
+
+      plans.some(plan=>
+        plan.vehicle===obj.plate ||
+        plan.vehicleId===obj.id
+      ) ||
+
+      fleetOrders.some(order=>
+        order.vehicle===obj.plate ||
+        order.plate===obj.plate
+      ) ||
+
+      fleetMappings.some(mapping=>
+        mapping.id===obj.plate ||
+        mapping.vehicle===obj.plate
+      ) ||
+
+      costRecords.some(cost=>
+        cost.plate===obj.plate
+      )
+    );
+  }
+
+  if(type==='drivers'){
+    return (
+      plans.some(plan=>
+        plan.driver===obj.name ||
+        plan.driverId===obj.id ||
+        (plan.stops||[]).some(stop=>
+          stop.driver===obj.name
+        )
+      ) ||
+
+      fleetOrders.some(order=>
+        order.driver===obj.name
+      ) ||
+
+      fleetMappings.some(mapping=>
+        mapping.driver===obj.name ||
+        mapping.backup===obj.name
+      ) ||
+
+      costRecords.some(cost=>
+        cost.driver===obj.name
+      )
+    );
+  }
+
+  if(type==='routes'){
+    return (
+      (db.contracts||[]).some(contract=>
+        contract.lane===obj.id
+      ) ||
+
+      plans.some(plan=>
+        plan.routeId===obj.id ||
+        plan.route===obj.id
+      )
+    );
+  }
+
+  return false;
+}
 function deleteMaster(type,index){const obj=db[type][index];if(isMasterReferenced(type,obj)){toast('Data masih digunakan oleh master atau transaksi lain');return}if(!confirm('Delete data ini?'))return;db[type].splice(index,1);saveDB();renderAll();toast('Data berhasil dihapus')}
 const IMPORT_SPECS={
  hubs:[['name','Hub Name'],['type','Hub Type'],['location','Location'],['address','Address'],['latitude','Latitude'],['longitude','Longitude'],['openTime','Open Time'],['closeTime','Close Time'],['operatingHours','Operating Hours'],['is24Hours','Open 24 Hours'],['status','Status']],
