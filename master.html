@@ -2409,28 +2409,30 @@ saveMaintenance=function(index){
 
   rcBaseSaveMaintenance(index);
 
-  const modalStillOpen=
-    document.getElementById('modalMask')
-      ?.classList.contains('open');
+const modalStillOpen=
+  document.getElementById('modalMask')
+    ?.classList.contains('open');
 
-  if(!modalStillOpen){
-    const savedTask=
-      isNew &&
-      db.maintenanceTasks.length>beforeCount
-        ? db.maintenanceTasks.at(-1)
-        : db.maintenanceTasks[index];
+if(!modalStillOpen){
+  const savedTask=
+    isNew &&
+    db.maintenanceTasks.length>beforeCount
+      ? db.maintenanceTasks.at(-1)
+      : db.maintenanceTasks[index];
 
-    if(savedTask){
-      Object.assign(savedTask,extras);
-    }
-
-    runMasterRiskValidation(
-      'maintenanceTasks'
-    );
-
-    saveDB();
-    renderAll();
+  if(savedTask){
+    Object.assign(savedTask,extras);
   }
+
+  /*
+   * Validation tetap berjalan, tetapi tidak membuka
+   * modal setelah setiap penyimpanan Maintenance Task.
+   */
+  runMasterRiskValidation(
+    'maintenanceTasks',
+    true
+  );
+}
 };
 const rcBaseConfirmStartMaintenance=confirmStartMaintenance;
 confirmStartMaintenance=function(){
