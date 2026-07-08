@@ -1548,7 +1548,8 @@ function collectFraudAlerts(){
   (db.auditTrail||[]).filter(x=>!x.validHash).forEach(x=>alerts.push(makeFraudAlert('IMMUTABLE_AUDIT','Critical','Audit Trail',x.entity,'Audit trail integrity failure',`${x.id} has an invalid hash chain after action “${x.action}”.`,x.timestamp,{phase:1,control:'Immutable audit trail',confidence:99,evidence:[x.entity],negativeCase:`Audit event ${x.id} was stored with hash ${x.hash}, but the chain validation against previous hash ${x.prevHash} failed after “${x.action}”.`,expectedCondition:'Every audit event has a valid immutable hash chain.',actualCondition:`Hash ${x.hash} is invalid for ${x.id}.`,sourceRecord:`${x.id} • ${x.entity} • ${x.timestamp}`})));
   (db.sodEvents||[]).filter(x=>x.status==='Violation'||x.maker===x.checker).forEach(x=>alerts.push(makeFraudAlert('SEGREGATION_DUTIES','Critical','Access Control',x.reference,'Segregation of duties violation',`${x.maker} acted as both maker and checker for ${x.action}.`,'Access event',{phase:1,control:'Role & segregation of duties',confidence:98,evidence:[x.id],negativeCase:`User ${x.maker} created and also approved the same transaction action: ${x.action}.`,expectedCondition:'Maker and checker must be different authorized users.',actualCondition:`Maker = checker = ${x.maker}.`,sourceRecord:`${x.id} • ${x.reference}`})));
   (db.geofenceEvents||[]).filter(x=>x.status==='Outside'||Number(x.distance)>Number(x.radius)).forEach(x=>alerts.push(makeFraudAlert('GEOFENCE_CONTROL','High','Monitoring Shipment',x.fleetOrder,'Pickup or delivery outside geofence',`${x.type} event was ${x.distance} m from location while allowed radius is ${x.radius} m.`,x.timestamp,{phase:1,control:'Geofence pickup/delivery',confidence:96,evidence:[x.id],negativeCase:`The ${x.type.toLowerCase()} event for ${x.fleetOrder} was submitted ${x.distance} m from ${x.location}.`,expectedCondition:`Event location must be within ${x.radius} m of ${x.location}.`,actualCondition:`Recorded distance ${x.distance} m; status ${x.status}.`,sourceRecord:`${x.id} • ${x.fleetOrder} • ${x.timestamp}`})));
-  const docUse={};activePlans.forEach(p=>(p.docs||[]).forEach(d=>(docUse[d]=docUse[d]||[]).push(p.id)));Object.entries(docUse).filter(([,plans])=>plans.length>1).forEach(([doc,plans])=>alerts.push(makeFraudAlert('DUPLICATE_DOCUMENT','Critical','Shipment Planning',doc,'Document assigned to multiple active plans',`${doc} is used by ${plans.join(', ')}.`,'Live detection',{phase:2,control:'Fraud rule engine',confidence:99,recurrence:plans.length,evidence:plans,negativeCase:`The same source document ${doc} remains assigned to more than one active shipment plan.`,expectedCondition:'One DO/STO can only belong to one active plan at a time.',actualCondition:`Assigned to ${plans.length} active plans: ${plans.join(', ')}.`,sourceRecord:`${doc} • ${plans.join(' • ')}`})));
+  // Source documents may be reused across multiple active shipment plans.
+  // This condition is allowed and must not create a fraud alert or block Loading & Dispatch.
   const resourceUse={};activePlans.filter(p=>p.shipmentDate&&p.vehicle&&p.vehicle!=='-').forEach(p=>{const k=p.shipmentDate+'|'+p.vehicle;(resourceUse[k]=resourceUse[k]||[]).push(p.id)});Object.entries(resourceUse).filter(([,plans])=>plans.length>1).forEach(([key,plans])=>{const [date,vehicle]=key.split('|');alerts.push(makeFraudAlert('DOUBLE_BOOKING','High','Shipment Schedule',plans.join(' / '),'Vehicle double booking',`${vehicle} is assigned to ${plans.join(', ')} on ${date}.`,date,{phase:2,control:'Fraud rule engine',confidence:95,evidence:plans,negativeCase:`Vehicle ${vehicle} was allocated to multiple active plans on the same shipment date.`,expectedCondition:'One vehicle can only serve one overlapping active schedule.',actualCondition:`${plans.length} plans on ${date}: ${plans.join(', ')}.`,sourceRecord:`${vehicle} • ${date} • ${plans.join(' • ')}`}));});
   (db.plans||[]).forEach(p=>{const actual=Number(p.actualCost||0),planned=Number(p.plannedCost||0);if(actual&&planned&&actual>planned*1.2){const pct=Math.round((actual-planned)/planned*100);alerts.push(makeFraudAlert('COST_VARIANCE',pct>=40?'Critical':'High','Report / Cost',p.id,'Abnormal transport cost variance',`Actual cost is ${pct}% above planned cost (${fmtIDR(actual)} vs ${fmtIDR(planned)}).`,'Cost reconciliation',{phase:2,control:'Risk scoring',confidence:90,exposure:actual-planned,evidence:[p.id],negativeCase:`Shipment ${p.id} closed with actual transport cost materially above its approved plan.`,expectedCondition:`Actual cost must not exceed 120% of planned cost (${fmtIDR(planned*1.2)}).`,actualCondition:`Actual ${fmtIDR(actual)} versus planned ${fmtIDR(planned)}; variance +${pct}%.`,sourceRecord:`${p.id} • planned ${planned} • actual ${actual}`}));}(p.stops||[]).forEach(s=>{if((p.status==='Completed'||s.pod)&&s.status==='Successfully Delivered'&&(!s.signatureData||!s.podPhotoData||!s.podHash)){const missing=[!s.podPhotoData?'photo':'',!s.signatureData?'signature':'',!s.podHash?'evidence hash':''].filter(Boolean);alerts.push(makeFraudAlert('SECURE_POD','High','Driver Mobile',s.doc,'Secure POD validation failed',`Successful delivery is missing ${missing.join(', ')}.`,s.arrival||'Delivery completion',{phase:1,control:'Secure POD',confidence:94,evidence:[s.podPhotoName||'POD record'],planId:p.id,negativeCase:`Stop ${s.doc} was marked Successfully Delivered even though mandatory secure POD components were not completed.`,expectedCondition:'Successful delivery requires POD photo, receiver signature, and evidence hash.',actualCondition:`Missing: ${missing.join(', ')}.`,sourceRecord:`${p.id} • ${s.doc} • ${s.arrival||'completion'}`}));}});if(p.routeEdited)alerts.push(makeFraudAlert('MANUAL_ROUTE','Low','Shipment Planning',p.id,'Route manually overridden',`Auto-generated route was manually edited to ${p.route||'-'}.`,'Plan update',{phase:1,control:'Route deviation',confidence:65,evidence:[p.id],negativeCase:`The generated route for ${p.id} was manually replaced after planning.`,expectedCondition:'Shipment uses the approved system-generated route or records an approved exception.',actualCondition:`Manual route: ${p.route||'-'}; exception approval not recorded.`,sourceRecord:`${p.id} • routeEdited=true`}));});
   const proofUse={};(db.costRecords||[]).filter(c=>c.proof&&c.proof!=='-').forEach(c=>(proofUse[c.proof]=proofUse[c.proof]||[]).push(c.id));Object.entries(proofUse).filter(([,ids])=>ids.length>1).forEach(([proof,ids])=>{const fos=[...new Set(ids.map(id=>(db.costRecords||[]).find(c=>c.id===id)?.fleetOrder).filter(Boolean))];alerts.push(makeFraudAlert('DUPLICATE_PROOF','Critical','Cost Management',fos.join(' / '),'Duplicate expense proof',`${proof} is attached to ${ids.join(', ')}.`,'Expense scan',{phase:2,control:'Evidence management',confidence:97,evidence:ids,negativeCase:`The same receipt file ${proof} was uploaded against multiple expense records.`,expectedCondition:'Each expense record has a unique receipt or explicitly linked shared proof.',actualCondition:`Used by ${ids.length} records: ${ids.join(', ')}.`,sourceRecord:`${proof} • ${ids.join(' • ')}`}));});
@@ -2064,11 +2065,15 @@ const moduleName=v6Module();if(moduleName==='MASTER')v6InstallMasterUI();else if
   'use strict';
   function expiredAt(date,reference){if(!date||!reference)return false;return String(date)<String(reference)}
   window.runOperationalRiskValidation=function(scope='all',silent=false){
-    if(typeof rcEnsureData==='function')rcEnsureData();const scopes=scope==='all'?['Shipment Planning','Shipment Schedule','Loading & Dispatch','Monitoring Shipment','Driver Mobile']:[scope];scopes.forEach(x=>rcClearScope(x));
+    if(typeof rcEnsureData==='function')rcEnsureData();
+    // Migration: duplicate source-document usage is allowed. Clear legacy events so old localStorage data cannot keep Loading blocked.
+    (db.riskEvents||[]).filter(event=>['DUPLICATE_SOURCE_DOCUMENT','DUPLICATE_DOCUMENT'].includes(event.rule)).forEach(event=>{event.status='Cleared';event.blocking=false;});
+    const scopes=scope==='all'?['Shipment Planning','Shipment Schedule','Loading & Dispatch','Monitoring Shipment','Driver Mobile']:[scope];scopes.forEach(x=>rcClearScope(x));
     if(scopes.includes('Shipment Planning')){
       const active=(db.plans||[]).filter(p=>!['Completed','Cancelled'].includes(p.status));
       active.forEach(p=>{
-        (p.docs||[]).forEach(doc=>{const refs=active.filter(q=>q.id!==p.id&&(q.docs||[]).includes(doc)).map(q=>q.id);if(refs.length)rcEmit({rule:'DUPLICATE_SOURCE_DOCUMENT',sourceModule:'Shipment Planning',sourceType:'Shipment Planning',sourceRef:p.id,relatedRefs:refs,title:'Source document appears in multiple active plans',negativeCase:`${doc} juga digunakan oleh ${refs.join(', ')}.`,expectedCondition:'One DO/STO can only belong to one active shipment plan.',actualCondition:`Duplicate assignment: ${p.id}, ${refs.join(', ')}.`,severity:'Critical',blocking:true,sourceRecord:doc});});
+        // Reusing the same DO/STO in multiple active plans is permitted.
+        // Do not emit DUPLICATE_SOURCE_DOCUMENT as an issue or blocking validation.
         if(Number(p.util||0)>100)rcEmit({rule:'VEHICLE_CAPACITY_EXCEEDED',sourceModule:'Shipment Planning',sourceType:'Shipment Planning',sourceRef:p.id,title:'Vehicle capacity exceeded',negativeCase:`Utilization ${p.util}% melebihi kapasitas kendaraan.`,expectedCondition:'Weight and volume utilization must be at or below 100%.',actualCondition:`${p.util}%`,severity:'Critical',blocking:true,sourceRecord:p.vehicle||p.id});
         if(p.source==='Fleet Company'){
           const v=db.vehicles.find(x=>x.plate===p.vehicle),d=db.drivers.find(x=>x.name===p.driver);
@@ -2818,6 +2823,311 @@ window.refreshDocumentStatus=function(){
     items.push({label:'Delete Plan',danger:true,run:()=>deletePlan(id)});
     return items;
   };
+})();
+</script>
+
+<style>
+/* ===== Loading & Dispatch — Pre-Loading Check V2 (isolated to this menu) ===== */
+#page-loading .loading-check-layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(320px,.75fr);gap:14px;align-items:start}
+#page-loading .preload-card{background:#fff;border:1px solid #c8e7f2;border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(20,30,40,.04)}
+#page-loading .preload-card-head{display:flex;align-items:center;gap:11px;padding:13px 14px;background:#f3fbfe;border-bottom:1px solid #d8edf5}
+#page-loading .preload-card-icon{width:31px;height:31px;border-radius:9px;background:#dff3fa;color:var(--cyan-dark);display:flex;align-items:center;justify-content:center;font-weight:700;flex:none}
+#page-loading .preload-card-title b{display:block;font-size:12.5px}
+#page-loading .preload-card-title span{display:block;font-size:10px;color:var(--muted);margin-top:2px}
+#page-loading .preload-state{margin-left:auto}
+#page-loading .preload-body{padding:13px 14px}
+#page-loading .preload-progress{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+#page-loading .preload-progress>span{font-size:11px;white-space:nowrap}
+#page-loading .preload-progress .progress{flex:1}
+#page-loading .preload-progress b{font:500 10.5px 'Roboto Mono';white-space:nowrap}
+#page-loading .preload-check-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+#page-loading .preload-check{border:1px solid var(--line);border-radius:8px;padding:10px;background:#fff;min-height:92px}
+#page-loading .preload-check.is-passed{border-color:#c9e9d4;background:#fbfffc}
+#page-loading .preload-check.is-failed{border-color:#efbdb7;background:#fff8f7}
+#page-loading .preload-check.is-pending{background:#fafbfc}
+#page-loading .preload-check.is-na{background:#f7f8f9}
+#page-loading .preload-check-head{display:flex;align-items:flex-start;gap:7px}
+#page-loading .preload-check-head b{font-size:11px;line-height:1.35}
+#page-loading .preload-check-head .badge{margin-left:auto;flex:none}
+#page-loading .preload-check p{font-size:9.8px;color:var(--muted);line-height:1.4;margin-top:4px}
+#page-loading .preload-check .corrective{margin-top:6px;padding:6px 7px;border-left:3px solid var(--red);background:#fff1ef;border-radius:0 5px 5px 0;color:#9f342a;font-size:9.5px;line-height:1.4}
+#page-loading .preload-manual-fields{display:grid;gap:6px;margin-top:8px}
+#page-loading .preload-manual-fields .select,#page-loading .preload-manual-fields .input{min-width:0;width:100%;padding:6px 8px;font-size:10.5px}
+#page-loading .preload-evidence{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+#page-loading .preload-evidence input{font-size:9.5px;padding:5px;max-width:100%}
+#page-loading .preload-evidence small{font-size:9px;color:var(--muted);word-break:break-word}
+#page-loading .preload-footer-form{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+#page-loading .preload-footer-form .field.full{grid-column:1/-1}
+#page-loading .preload-footer-form .input,#page-loading .preload-footer-form .textarea{width:100%}
+#page-loading .preload-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:11px;border-top:1px solid #eef1f3}
+#page-loading .preload-actions .preload-time{font-size:10px;color:var(--muted);margin-right:auto}
+#page-loading .loading-work-area{margin-top:12px}
+#page-loading .loading-summary-message{margin-top:10px;margin-bottom:0}
+#page-loading .preload-validation-note{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+#page-loading .preload-validation-note>div{border:1px solid var(--line);border-radius:8px;padding:9px 10px;background:#fafcfd;font-size:10px;color:var(--muted)}
+#page-loading .preload-validation-note b{display:block;color:var(--txt);font-size:10.8px;margin-bottom:3px}
+#page-loading .b-checking{background:#e2f1f6;color:var(--cyan-dark)}
+#page-loading .b-checking-passed{background:var(--green-bg);color:var(--green)}
+@media(max-width:1050px){#page-loading .loading-check-layout{grid-template-columns:1fr}}
+@media(max-width:760px){#page-loading .preload-check-grid,#page-loading .preload-footer-form,#page-loading .preload-validation-note{grid-template-columns:1fr}#page-loading .preload-footer-form .field.full{grid-column:auto}}
+</style>
+<script>
+(function loadingDispatchPreCheckV2(){
+  'use strict';
+  const SCHEMA_VERSION=2;
+  const baseStartLoading=window.startLoading;
+  const baseStatusBadge=window.statusBadge;
+  const legacyAdvancedStatuses=['Loading','Ready to Dispatch','In Transit','Unloading','Returning','Completed'];
+  const manualDefinitions={
+    staging:{label:'Barang tersedia di staging area',description:'Petugas memastikan barang sudah dipisahkan, diberi label, dan siap dimuat.'},
+    vehicleCondition:{label:'Kondisi kendaraan layak',description:'Petugas memeriksa kebersihan, bak, pintu, ban, dan kondisi fisik kendaraan.'},
+    seal:{label:'Seal tersedia dan sesuai',description:'Petugas memastikan seal atau alat pengaman tersedia dan sesuai kebutuhan shipment.'}
+  };
+  function nowText(){return new Date().toLocaleString('sv-SE').slice(0,16)}
+  function safe(value){return typeof esc==='function'?esc(value):String(value??'')}
+  function checkBadge(status){
+    const normalized=status==='Pass'?'Passed':status;
+    const cls={Passed:'b-green',Pending:'b-orange',Failed:'b-red','Not Applicable':'b-gray','Not Started':'b-gray','In Progress':'b-orange','Checking Passed':'b-checking-passed'}[normalized]||'b-gray';
+    const label=normalized==='Not Applicable'?'N/A':normalized;
+    return `<span class="badge ${cls}">${safe(label)}</span>`;
+  }
+  function createManualValue(result='Pending'){
+    const normalized=result==='Passed'?'Pass':result;
+    return {result:['Pass','Fail','Not Applicable','Pending'].includes(normalized)?normalized:'Pending',note:'',evidenceName:''};
+  }
+  function newCheckState(plan,legacyPassed=false){
+    return {
+      schemaVersion:SCHEMA_VERSION,
+      status:legacyPassed?'Passed':'Not Started',
+      validationRunAt:'',startedAt:legacyPassed?'Migrated from existing loading status':'',savedAt:'',completedAt:legacyPassed?'Migrated from existing loading status':'',
+      checkerName:legacyPassed?'System Migration':'',notes:legacyPassed?'Existing shipment was already beyond the checking stage.':'',
+      automatic:{},
+      manual:{
+        staging:createManualValue(legacyPassed?'Pass':'Pending'),
+        vehicleCondition:createManualValue(legacyPassed?'Pass':'Pending'),
+        seal:createManualValue(legacyPassed?'Pass':'Pending')
+      }
+    };
+  }
+  function ensureCheckState(plan){
+    const legacyPassed=legacyAdvancedStatuses.includes(plan.status);
+    let c=plan.preLoadingCheck;
+    if(!c||c.schemaVersion!==SCHEMA_VERSION){
+      const old=c||{};
+      c=newCheckState(plan,legacyPassed);
+      if(!legacyPassed&&plan.status==='Checking'){
+        c.status=old.status==='Completed'||old.status==='Passed'?'Passed':'In Progress';
+        c.startedAt=old.startedAt||nowText();c.completedAt=old.completedAt||'';c.checkerName=old.checkerName||'';c.notes=old.notes||'';
+        const oldManual=old.manual||{};
+        c.manual.staging=createManualValue(oldManual.staging||'Pending');
+        c.manual.vehicleCondition=createManualValue(oldManual.vehicle||oldManual.vehicleCondition||'Pending');
+        c.manual.seal=createManualValue(oldManual.seal||'Pending');
+      }
+      plan.preLoadingCheck=c;
+    }
+    c.automatic=c.automatic||{};c.manual=c.manual||{};
+    Object.keys(manualDefinitions).forEach(key=>{
+      const value=c.manual[key];
+      if(!value||typeof value!=='object')c.manual[key]=createManualValue(value||'Pending');
+      c.manual[key].result=c.manual[key].result==='Passed'?'Pass':(c.manual[key].result||'Pending');
+      c.manual[key].note=c.manual[key].note||'';c.manual[key].evidenceName=c.manual[key].evidenceName||'';
+    });
+    c.status=c.status||'Not Started';c.checkerName=c.checkerName||'';c.notes=c.notes||'';
+    return c;
+  }
+  function openBlockingEvents(plan){
+    const allowedNonBlockingRules=['DUPLICATE_SOURCE_DOCUMENT','DUPLICATE_DOCUMENT'];
+    const rows=(db.riskEvents||[]).filter(event=>
+      event&&
+      event.status!=='Cleared'&&
+      event.blocking&&
+      !allowedNonBlockingRules.includes(event.rule)&&
+      (event.sourceRef===plan.id||(event.relatedRefs||[]).includes(plan.id))
+    );
+    return rows;
+  }
+  function contractIsValid(plan){
+    if(plan.source!=='Expedition')return true;
+    const contract=(db.contracts||[]).find(item=>item.id===plan.contract);
+    return !!contract&&contract.status==='Active'&&(!contract.endDate||contract.endDate>=plan.shipmentDate);
+  }
+  function computeAutomaticChecks(plan){
+    const docs=(plan.docs||[]).filter(Boolean);
+    const knownDocs=docs.filter(id=>(db.documents||[]).some(doc=>doc.id===id));
+    const vehicle=(db.vehicles||[]).find(item=>item.plate===plan.vehicle);
+    const driver=(db.drivers||[]).find(item=>item.name===plan.driver);
+    const isInternal=plan.source==='Fleet Company';
+    const contractValid=contractIsValid(plan);
+    const blockers=openBlockingEvents(plan);
+    const capacityPassed=isInternal?Number(plan.util||0)<=100:contractValid;
+    const driverPassed=isInternal?!!driver:!!plan.supplier&&contractValid;
+    const vehiclePassed=isInternal?!!vehicle&&vehicle.status!=='Maintenance':contractValid;
+    const docsPassed=docs.length>0&&(knownDocs.length===docs.length||docs.every(id=>/^(DO|STO)[\/-]/i.test(id)));
+    const blockingPassed=blockers.length===0&&contractValid;
+    return {
+      shipmentDocs:{label:'Shipment Plan dan DO/STO sesuai',result:docsPassed?'Passed':'Failed',description:docsPassed?`${docs.length} dokumen DO/STO sesuai dengan shipment plan.`:'Dokumen shipment belum lengkap atau tidak terhubung ke shipment plan.',corrective:'Tambahkan DO/STO yang valid ke Shipment Plan, lalu klik Run Validation.'},
+      driver:{label:'Driver sudah ditentukan',result:driverPassed?'Passed':'Failed',description:driverPassed?(isInternal?`${plan.driver} terhubung ke Master Driver.`:`PIC driver dikelola oleh carrier ${plan.supplier}.`):'Driver aktif belum ditentukan pada shipment plan.',corrective:'Pilih driver aktif dari Master Driver atau pastikan carrier dan kontraknya aktif.'},
+      vehicle:{label:'Kendaraan sesuai shipment plan',result:vehiclePassed?'Passed':'Failed',description:vehiclePassed?(isInternal?`${plan.vehicle} sesuai dengan resource pada shipment plan.`:'Kendaraan dikelola oleh carrier sesuai kontrak aktif.'):'Kendaraan tidak ditemukan, tidak sesuai, atau sedang Maintenance.',corrective:'Pilih kendaraan valid yang sesuai pada Shipment Planning, lalu jalankan validasi ulang.'},
+      capacity:{label:'Kapasitas kendaraan mencukupi',result:capacityPassed?'Passed':'Failed',description:capacityPassed?(isInternal?`Utilization ${Number(plan.util||0)}% masih dalam kapasitas kendaraan.`:'Kapasitas dikonfirmasi melalui kontrak carrier aktif.'):`Utilization ${Number(plan.util||0)}% melebihi kapasitas kendaraan.`,corrective:'Gunakan kendaraan berkapasitas lebih besar atau pecah shipment menjadi lebih dari satu plan.'},
+      documentBlocking:{label:'Dokumen tidak memiliki blocking',result:blockingPassed?'Passed':'Failed',description:blockingPassed?'Dokumen, fraud alert, kontrak, dan data master tidak memiliki blocking aktif.':`${blockers.length+(contractValid?0:1)} blocking aktif ditemukan dari Risk & Control / kontrak.`,corrective:'Buka View Alerts, perbaiki source record atau kontrak, clear blocking, lalu klik Run Validation.'}
+    };
+  }
+  function applyAutomaticValidation(plan){
+    const c=ensureCheckState(plan);
+    c.automatic=computeAutomaticChecks(plan);
+    c.validationRunAt=nowText();
+    return c.automatic;
+  }
+  function automaticList(plan){
+    const c=ensureCheckState(plan);
+    if(!c.validationRunAt||!Object.keys(c.automatic||{}).length)applyAutomaticValidation(plan);
+    const a=c.automatic;
+    return [a.shipmentDocs,a.driver,a.vehicle,a.capacity,a.documentBlocking].filter(Boolean);
+  }
+  function manualResolved(item){return item.result==='Pass'||item.result==='Not Applicable'}
+  function allChecksResolved(plan){
+    const c=ensureCheckState(plan);
+    return automaticList(plan).every(item=>item.result==='Passed')&&Object.values(c.manual).every(manualResolved);
+  }
+  function failedCount(plan){
+    const c=ensureCheckState(plan);
+    return automaticList(plan).filter(item=>item.result==='Failed').length+Object.values(c.manual).filter(item=>item.result==='Fail').length;
+  }
+  function passedCount(plan){
+    const c=ensureCheckState(plan);
+    return automaticList(plan).filter(item=>item.result==='Passed').length+Object.values(c.manual).filter(manualResolved).length;
+  }
+  function captureVisibleDraft(plan){
+    const c=ensureCheckState(plan);
+    const checker=document.getElementById('preloadCheckerName');if(checker)c.checkerName=checker.value.trim();
+    const notes=document.getElementById('preloadOverallNotes');if(notes)c.notes=notes.value.trim();
+    Object.keys(manualDefinitions).forEach(key=>{
+      const status=document.getElementById(`preload-status-${key}`);if(status)c.manual[key].result=status.value;
+      const note=document.getElementById(`preload-note-${key}`);if(note)c.manual[key].note=note.value.trim();
+    });
+    return c;
+  }
+  function renderAutomaticCard(item){
+    const passed=item.result==='Passed';
+    return `<div class="preload-check ${passed?'is-passed':'is-failed'}"><div class="preload-check-head"><b>${safe(item.label)}</b>${checkBadge(item.result)}</div><p>${safe(item.description)}</p>${passed?'':`<div class="corrective"><b>Corrective action:</b> ${safe(item.corrective)}</div>`}</div>`;
+  }
+  function renderManualCard(key,plan){
+    const c=ensureCheckState(plan),item=c.manual[key],definition=manualDefinitions[key],editable=c.status==='In Progress'&&plan.status==='Checking';
+    const css=item.result==='Pass'?'is-passed':item.result==='Fail'?'is-failed':item.result==='Not Applicable'?'is-na':'is-pending';
+    const badgeStatus=item.result==='Pass'?'Passed':item.result==='Fail'?'Failed':item.result;
+    return `<div class="preload-check ${css}"><div class="preload-check-head"><b>${safe(definition.label)}</b>${checkBadge(badgeStatus)}</div><p>${safe(definition.description)}</p><div class="preload-manual-fields"><select class="select" id="preload-status-${key}" ${editable?'':'disabled'} onchange="setPreLoadingManualStatus('${key}',this.value)"><option value="Pending" ${item.result==='Pending'?'selected':''}>Select status</option><option value="Pass" ${item.result==='Pass'?'selected':''}>Pass</option><option value="Fail" ${item.result==='Fail'?'selected':''}>Fail</option><option value="Not Applicable" ${item.result==='Not Applicable'?'selected':''}>Not Applicable</option></select><input class="input" id="preload-note-${key}" ${editable?'':'disabled'} value="${safe(item.note)}" placeholder="Catatan pemeriksaan (optional)"><div class="preload-evidence">${editable?`<input type="file" accept="image/*" onchange="setPreLoadingEvidence('${key}',this)">`:''}<small>${item.evidenceName?`Evidence: ${safe(item.evidenceName)}`:'Evidence foto belum ditambahkan.'}</small></div></div>${item.result==='Fail'?'<div class="corrective"><b>Corrective action:</b> Selesaikan temuan operasional, tambahkan catatan/evidence, lalu ubah status menjadi Pass.</div>':''}</div>`;
+  }
+  function renderPreLoadingCard(plan){
+    const c=ensureCheckState(plan),passed=passedCount(plan),total=8,progress=Math.round(passed/total*100);
+    const canComplete=c.status==='In Progress'&&allChecksResolved(plan)&&!!c.checkerName;
+    const locked=c.status==='Passed'||legacyAdvancedStatuses.includes(plan.status);
+    const stateLabel=c.status==='Passed'?'Checking Passed':c.status;
+    return `<div class="preload-card"><div class="preload-card-head"><span class="preload-card-icon">✓</span><div class="preload-card-title"><b>Pre-Loading Check</b><span>Pemeriksaan sistem dan operasional wajib selesai sebelum loading dimulai.</span></div><div class="preload-state">${checkBadge(stateLabel)}</div></div><div class="preload-body"><div class="preload-validation-note"><div><b>Run Validation</b>Validasi otomatis untuk dokumen, kapasitas, fraud alert, kontrak, dan data master.</div><div><b>Pre-Loading Check</b>Pemeriksaan langsung untuk barang staging, kondisi kendaraan, seal, dan kondisi fisik.</div></div><div class="preload-progress"><span>Checking progress</span><div class="progress"><span style="width:${progress}%"></span></div><b>${passed}/${total}</b></div><div class="preload-check-grid">${renderAutomaticCard(automaticList(plan)[0])}${renderAutomaticCard(automaticList(plan)[1])}${renderAutomaticCard(automaticList(plan)[2])}${renderAutomaticCard(automaticList(plan)[3])}${renderManualCard('staging',plan)}${renderAutomaticCard(automaticList(plan)[4])}${renderManualCard('vehicleCondition',plan)}${renderManualCard('seal',plan)}</div><div class="preload-footer-form"><div class="field"><label>Checker Name <span class="text-red">*</span></label><input class="input" id="preloadCheckerName" ${locked?'disabled':''} value="${safe(c.checkerName)}" placeholder="Nama petugas pemeriksa" oninput="refreshPreLoadingCompleteButton()"></div><div class="field"><label>Completed At</label><div class="readonly-value">${safe(c.completedAt||'Not completed')}</div></div><div class="field full"><label>Overall Notes (optional)</label><textarea class="textarea" id="preloadOverallNotes" ${locked?'disabled':''} placeholder="Tambahkan catatan umum pemeriksaan bila diperlukan">${safe(c.notes)}</textarea></div></div><div class="preload-actions"><span class="preload-time">${c.startedAt?`Started: ${safe(c.startedAt)}`:'Checking belum dimulai.'}${c.savedAt?` • Saved: ${safe(c.savedAt)}`:''}</span><button class="btn btn-primary" ${c.status==='Not Started'&&plan.status==='Planned'?'':'disabled'} onclick="startPreLoadingCheck()">Start Checking</button><button class="btn btn-outline" ${c.status==='In Progress'?'':'disabled'} onclick="savePreLoadingCheck()">Save Check</button><button class="btn btn-success" id="completePreLoadingButton" ${canComplete?'':'disabled'} onclick="completePreLoadingCheck()">Complete Checking</button></div></div></div>`;
+  }
+  function renderLoadingDocuments(plan){
+    if(!['Loading','Ready to Dispatch'].includes(plan.status))return '';
+    const loaded=plan.loadedDocs||[],editable=plan.status==='Loading';
+    return `<div class="loading-work-area"><div class="scan-box"><input class="input" id="scanDocInput" ${editable?'':'disabled'} placeholder="Scan / input DO or STO number"><button class="btn btn-cyan" ${editable?'':'disabled'} onclick="scanLoadingDoc()">Scan Document</button></div><div class="load-list">${(plan.docs||[]).map(id=>`<div class="load-row"><div class="name"><b class="mono">${safe(id)}</b><small>${loaded.includes(id)?'Validated for this shipment':'Waiting for scan'}</small></div><div>${checkBadge(loaded.includes(id)?'Passed':'Pending')}</div><div class="qty">${loaded.includes(id)?'100%':'0%'}</div></div>`).join('')}</div></div>`;
+  }
+  function flowStage(plan){
+    const c=ensureCheckState(plan);
+    if(plan.status==='Planned'&&c.status!=='Not Started')return 'Checking';
+    return plan.status;
+  }
+  function loadingGateMessage(plan){
+    const c=ensureCheckState(plan),failures=failedCount(plan);
+    if(failures>0){
+      const noun=failures===1?'check requires':'checks require';
+      return `<div class="notice danger loading-summary-message">Loading cannot be started because ${failures} ${noun} corrective action.</div>`;
+    }
+    if(c.status!=='Passed')return '<div class="notice warn loading-summary-message">Complete the pre-loading check before starting the loading process.</div>';
+    return '<div class="notice loading-summary-message">Pre-loading check passed. Loading can now be started.</div>';
+  }
+  function patchValidationBanner(plan){
+    const page=document.getElementById('page-loading');if(!page)return;
+    let banner=page.querySelector('.rc-banner[data-rc-source="Loading & Dispatch"]');
+    if(!banner){
+      const head=page.querySelector('.page-head');
+      if(head){head.insertAdjacentHTML('afterend','<div class="rc-banner" data-rc-source="Loading & Dispatch"></div>');banner=page.querySelector('.rc-banner[data-rc-source="Loading & Dispatch"]')}
+    }
+    if(!banner)return;
+    const failures=plan?automaticList(plan).filter(item=>item.result==='Failed').length:0;
+    banner.innerHTML=`<span>🛡️</span><div><strong>Loading Readiness Validation</strong><div>Run Validation mengisi checklist otomatis dari dokumen, kapasitas, fraud alert, kontrak, dan data master.</div></div><div class="rc-stats"><span class="rc-chip ${failures?'high':'low'}">${failures?'Attention':'Low Risk'}</span><span class="rc-chip">${failures} Validation Issue</span><span class="rc-chip ${failures?'critical':''}">${failures} Blocking</span></div><div class="rc-actions"><button class="btn btn-outline" onclick="runPreLoadingValidation()">Run Validation</button>${typeof rcOpenEvents==='function'?'<button class="btn btn-ghost" onclick="rcOpenEvents(\'Loading & Dispatch\')">View Alerts</button>':''}</div>`;
+  }
+  window.renderLoading=function(){
+    const plans=(db.plans||[]).filter(plan=>['Planned','Checking','Loading','Ready to Dispatch'].includes(plan.status));
+    const select=document.getElementById('loadingPlanSelect');if(!select)return;
+    select.innerHTML=plans.map(plan=>`<option value="${safe(plan.id)}">${safe(plan.id)} — ${safe(plan.source)} — ${safe(plan.status==='Checking'&&ensureCheckState(plan).status==='Passed'?'Checking Passed':plan.status)}</option>`).join('')||'<option value="">No plan available</option>';
+    if(!activeLoadingPlan||!plans.some(plan=>plan.id===activeLoadingPlan))activeLoadingPlan=plans[0]?.id||'';
+    select.value=activeLoadingPlan;
+    window.selectLoadingPlan(activeLoadingPlan);
+  };
+  window.selectLoadingPlan=function(id){
+    activeLoadingPlan=id;
+    const plan=(db.plans||[]).find(item=>item.id===id),flow=document.getElementById('loadingFlow'),content=document.getElementById('loadingContent');
+    if(!plan){if(flow)flow.innerHTML='';if(content)content.innerHTML='<div class="empty">No shipment waiting for checking or loading.</div>';patchValidationBanner(null);return}
+    const c=ensureCheckState(plan);if(!c.validationRunAt)applyAutomaticValidation(plan);
+    const steps=['Planned','Checking','Loading','Ready to Dispatch','In Transit'];
+    const current=Math.max(0,steps.indexOf(flowStage(plan)));
+    flow.innerHTML=`<div class="flow">${steps.map((step,index)=>`${index?'<span class="flow-arrow">→</span>':''}<span class="flow-step ${index<current?'done':index===current?'current':''}">${step}</span>`).join('')}</div>`;
+    const loaded=plan.loadedDocs||[],docCount=(plan.docs||[]).length,docDenominator=Math.max(1,docCount),preloadPercent=Math.round(passedCount(plan)/8*100);
+    let primaryButton='';
+    if(plan.status==='Planned'||plan.status==='Checking')primaryButton=`<button class="btn btn-primary" ${c.status==='Passed'?'':'disabled'} onclick="startLoading()">Start Loading</button>`;
+    else if(plan.status==='Loading')primaryButton=`<button class="btn btn-success" ${loaded.length===docCount&&docCount>0?'':'disabled'} onclick="completeLoading()">Complete Loading</button>`;
+    else if(plan.status==='Ready to Dispatch')primaryButton='<button class="btn btn-primary" onclick="dispatchPlan()">Gate-Out / Dispatch</button>';
+    content.innerHTML=`<div class="loading-check-layout"><div><div class="notice"><b>${safe(plan.id)}</b> • ${safe(plan.vehicle&&plan.vehicle!=='-'?plan.vehicle:plan.supplier||'-')} • ${safe(plan.driver&&plan.driver!=='-'?plan.driver:plan.supplier||'-')}<br>${safe(plan.route||'-')}</div>${renderPreLoadingCard(plan)}${renderLoadingDocuments(plan)}</div><div><div class="card"><div class="card-head">Loading Summary</div><div class="card-body"><div class="metric-row"><span class="name">Pre-Loading Check</span><div class="progress"><span style="width:${preloadPercent}%"></span></div><b>${preloadPercent}%</b></div><div class="metric-row"><span class="name">Document Loaded</span><div class="progress"><span style="width:${loaded.length/docDenominator*100}%"></span></div><b>${loaded.length}/${docCount}</b></div><div class="metric-row"><span class="name">Item Verification</span><div class="progress"><span style="width:${loaded.length/docDenominator*100}%"></span></div><b>${loaded.length===docCount&&docCount>0?'100%':'0%'}</b></div><div class="notice ${Number(plan.util||0)>90?'warn':''}">Vehicle capacity utilization: <b>${Number(plan.util||0)}%</b></div>${primaryButton}${(plan.status==='Planned'||plan.status==='Checking')?loadingGateMessage(plan):''}</div></div></div></div>`;
+    patchValidationBanner(plan);
+  };
+  window.runPreLoadingValidation=function(){
+    const plan=(db.plans||[]).find(item=>item.id===activeLoadingPlan);if(!plan)return;
+    captureVisibleDraft(plan);applyAutomaticValidation(plan);saveDB();window.renderLoading();toast('System validation completed and automatic checklist updated');
+  };
+  window.startPreLoadingCheck=function(){
+    const plan=(db.plans||[]).find(item=>item.id===activeLoadingPlan);if(!plan||plan.status!=='Planned')return;
+    const c=ensureCheckState(plan);applyAutomaticValidation(plan);c.status='In Progress';c.startedAt=nowText();c.savedAt='';c.completedAt='';plan.status='Checking';plan.lastUpdate='Pre-loading checking started';saveDB();window.renderLoading();toast('Pre-Loading Check started');
+  };
+  window.setPreLoadingManualStatus=function(key,value){
+    const plan=(db.plans||[]).find(item=>item.id===activeLoadingPlan);if(!plan)return;
+    const c=captureVisibleDraft(plan);if(c.status!=='In Progress'){toast('Klik Start Checking terlebih dahulu');return}
+    if(c.manual[key])c.manual[key].result=value;saveDB();window.renderLoading();
+  };
+  window.setPreLoadingEvidence=function(key,input){
+    const plan=(db.plans||[]).find(item=>item.id===activeLoadingPlan);if(!plan)return;
+    const c=captureVisibleDraft(plan);if(c.status!=='In Progress')return;
+    if(c.manual[key])c.manual[key].evidenceName=input.files?.[0]?.name||'';saveDB();window.renderLoading();toast(c.manual[key].evidenceName?'Evidence photo attached':'Evidence photo removed');
+  };
+  window.refreshPreLoadingCompleteButton=function(){
+    const plan=(db.plans||[]).find(item=>item.id===activeLoadingPlan),button=document.getElementById('completePreLoadingButton');if(!plan||!button)return;
+    const c=captureVisibleDraft(plan);button.disabled=!(c.status==='In Progress'&&allChecksResolved(plan)&&!!c.checkerName);
+  };
+  window.savePreLoadingCheck=function(){
+    const plan=(db.plans||[]).find(item=>item.id===activeLoadingPlan);if(!plan)return;
+    const c=captureVisibleDraft(plan);if(c.status!=='In Progress'){toast('Klik Start Checking terlebih dahulu');return}
+    c.savedAt=nowText();saveDB();window.renderLoading();toast('Pre-loading check saved');
+  };
+  window.completePreLoadingCheck=function(){
+    const plan=(db.plans||[]).find(item=>item.id===activeLoadingPlan);if(!plan)return;
+    const c=captureVisibleDraft(plan);const failures=failedCount(plan);
+    if(!c.checkerName){toast('Checker Name wajib diisi');return}
+    if(failures>0){toast(`Loading cannot be started because ${failures} ${failures===1?'check requires':'checks require'} corrective action.`);return}
+    if(!allChecksResolved(plan)){toast('Semua checklist manual harus Pass atau Not Applicable');return}
+    c.status='Passed';c.completedAt=nowText();c.savedAt=nowText();plan.status='Checking';plan.lastUpdate='Pre-loading checking passed';saveDB();window.renderLoading();toast('Checking Passed. Start Loading is now active');
+  };
+  window.startLoading=function(){
+    const plan=(db.plans||[]).find(item=>item.id===activeLoadingPlan);if(!plan)return;
+    const c=captureVisibleDraft(plan),failures=failedCount(plan);
+    if(c.status!=='Passed'||!allChecksResolved(plan)){
+      toast(failures>0?`Loading cannot be started because ${failures} ${failures===1?'check requires':'checks require'} corrective action.`:'Complete the pre-loading check before starting the loading process.');return;
+    }
+    if(typeof baseStartLoading==='function')baseStartLoading();
+  };
+  window.statusBadge=function(status){
+    if(status==='Checking')return '<span class="badge b-checking">Checking</span>';
+    if(status==='Checking Passed')return '<span class="badge b-checking-passed">Checking Passed</span>';
+    return typeof baseStatusBadge==='function'?baseStatusBadge(status):checkBadge(status);
+  };
+  const pageText=document.querySelector('#page-loading .page-head p');if(pageText)pageText.textContent='Validasi sistem, pre-loading checking, konfirmasi loading, driver handover, dan gate-out.';
+  setTimeout(()=>{if(document.querySelector('.page.active')?.id==='page-loading')window.renderLoading()},0);
 })();
 </script>
 
