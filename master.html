@@ -2187,87 +2187,9 @@ masterFields=function(type,obj={},isNew=false){const base=rcBaseMasterFields(typ
  }[type]||[];return [...base,...extra]}
 const rcBaseSaveMaster=saveMaster;
 saveMaster=function(type,index){
-  if(type==='vehicles'){
-    const vin=
-      document.getElementById('mf-vin')
-        ?.value.trim();
-
-    const gps=
-      document.getElementById('mf-gpsDeviceId')
-        ?.value.trim();
-
-    if(
-      db.vehicles.some((x,i)=>
-        i!==index &&
-        vin &&
-        x.vin===vin
-      )
-    ){
-      toast('VIN / Chassis Number harus unik');
-      return;
-    }
-
-    if(
-      db.vehicles.some((x,i)=>
-        i!==index &&
-        gps &&
-        x.gpsDeviceId===gps
-      )
-    ){
-      toast(
-        'GPS Device ID hanya boleh terpasang '+
-        'pada satu kendaraan aktif'
-      );
-      return;
-    }
-  }
-
-  if(type==='drivers'){
-    const device=
-      document.getElementById('mf-deviceId')
-        ?.value.trim();
-
-    if(
-      db.drivers.some((x,i)=>
-        i!==index &&
-        device &&
-        x.deviceId===device
-      )
-    ){
-      toast(
-        'Registered Device ID sudah digunakan driver lain'
-      );
-      return;
-    }
-  }
-
-  rcBaseSaveMaster(type,index);
-
-  if(
-    !document.getElementById('modalMask')
-      ?.classList.contains('open')
-  ){
-    rcEnsureMasterFields();
-
-    rcAudit(
-      type,
-      index===null ? 'NEW' : String(index),
-      'SAVE',
-      '',
-      '',
-      'Master risk fields saved'
-    );
-
-    /*
-     * Silent validation agar toast keberhasilan simpan
-     * tidak tertimpa pesan "Master risk validation completed".
-     *
-     * runMasterRiskValidation sudah menjalankan
-     * saveDB() dan renderAll().
-     */
-    runMasterRiskValidation(type,true);
-  }
-};
+ if(type==='vehicles'){const vin=document.getElementById('mf-vin')?.value.trim(),gps=document.getElementById('mf-gpsDeviceId')?.value.trim();if(db.vehicles.some((x,i)=>i!==index&&vin&&x.vin===vin)){toast('VIN / Chassis Number harus unik');return}if(db.vehicles.some((x,i)=>i!==index&&gps&&x.gpsDeviceId===gps)){toast('GPS Device ID hanya boleh terpasang pada satu kendaraan aktif');return}}
+ if(type==='drivers'){const device=document.getElementById('mf-deviceId')?.value.trim();if(db.drivers.some((x,i)=>i!==index&&device&&x.deviceId===device)){toast('Registered Device ID sudah digunakan driver lain');return}}
+ rcBaseSaveMaster(type,index);if(!document.getElementById('modalMask')?.classList.contains('open')){rcEnsureMasterFields();rcAudit(type,index===null?'NEW':String(index),'SAVE','','','Master risk fields saved');runMasterRiskValidation(type);saveDB();renderAll()}}
 const rcBaseOpenMaintenance=openMaintenanceForm;
 openMaintenanceForm=function(index=null,view=false,vehicleId=''){rcBaseOpenMaintenance(index,view,vehicleId);const obj=index===null?{}:db.maintenanceTasks[index]||{},grid=document.querySelector('#modalBody .form-grid');if(!grid)return;const dis=view?'disabled':'';grid.insertAdjacentHTML('beforeend',`<div class="field"><label>Maintenance Vendor</label><input class="input" id="mt-vendor" value="${esc(obj.vendor||'Authorized Workshop')}" ${dis}></div><div class="field"><label>Work Order Number</label><input class="input" id="mt-workorder" value="${esc(obj.workOrderNo||'')}" ${dis}></div><div class="field"><label>Vendor Invoice Number</label><input class="input" id="mt-invoice" value="${esc(obj.invoiceNo||'')}" ${dis}></div><div class="field"><label>Warranty Status</label><select class="select" id="mt-warranty" ${dis}><option ${obj.warrantyStatus==='Checked'?'selected':''}>Checked</option><option ${obj.warrantyStatus==='Not Checked'?'selected':''}>Not Checked</option><option ${obj.warrantyStatus==='Covered'?'selected':''}>Covered</option></select></div><div class="field"><label>Odometer Before</label><input class="input" id="mt-odo-before" type="number" min="0" value="${esc(obj.odometerBefore||0)}" ${dis}></div><div class="field"><label>Odometer After</label><input class="input" id="mt-odo-after" type="number" min="0" value="${esc(obj.odometerAfter||0)}" ${dis}></div><div class="field"><label>Evidence Status</label><select class="select" id="mt-evidence" ${dis}><option ${obj.evidenceStatus==='Complete'?'selected':''}>Complete</option><option ${obj.evidenceStatus==='Pending'?'selected':''}>Pending</option><option ${obj.evidenceStatus==='Missing'?'selected':''}>Missing</option></select></div><div class="field"><label>Approval Status</label><select class="select" id="mt-approval" ${dis}><option ${obj.approvalStatus==='Approved'?'selected':''}>Approved</option><option ${obj.approvalStatus==='Pending Review'?'selected':''}>Pending Review</option><option ${obj.approvalStatus==='Rejected'?'selected':''}>Rejected</option></select></div>`)}
 const rcBaseSaveMaintenance=saveMaintenance;
@@ -2409,272 +2331,50 @@ saveMaintenance=function(index){
 
   rcBaseSaveMaintenance(index);
 
-const modalStillOpen=
-  document.getElementById('modalMask')
-    ?.classList.contains('open');
+  const modalStillOpen=
+    document.getElementById('modalMask')
+      ?.classList.contains('open');
 
-if(!modalStillOpen){
-  const savedTask=
-    isNew &&
-    db.maintenanceTasks.length>beforeCount
-      ? db.maintenanceTasks.at(-1)
-      : db.maintenanceTasks[index];
+  if(!modalStillOpen){
+    const savedTask=
+      isNew &&
+      db.maintenanceTasks.length>beforeCount
+        ? db.maintenanceTasks.at(-1)
+        : db.maintenanceTasks[index];
 
-  if(savedTask){
-    Object.assign(savedTask,extras);
+    if(savedTask){
+      Object.assign(savedTask,extras);
+    }
+
+    runMasterRiskValidation(
+      'maintenanceTasks'
+    );
+
+    saveDB();
+    renderAll();
   }
-
-  /*
-   * Validation tetap berjalan, tetapi tidak membuka
-   * modal setelah setiap penyimpanan Maintenance Task.
-   */
-  runMasterRiskValidation(
-    'maintenanceTasks',
-    true
-  );
-}
 };
 const rcBaseConfirmStartMaintenance=confirmStartMaintenance;
 confirmStartMaintenance=function(){
-  const pending=pendingMaintenanceStart;
-
-  const task=
-    pending &&
-    db.maintenanceTasks.find(item=>
-      item.id===pending.id
-    );
-
-  if(!pending || !task){
-    return;
-  }
-
-  const config=maintenanceCostSettings();
-
-  const estimate=Number(
-    task.estimateCost ??
-    task.cost ??
-    0
-  );
-
-  const actual=Number(
-    pending.actualCost ||
-    0
-  );
-
-  const variance=
-    estimate
-      ? ((actual-estimate)/estimate)*100
-      : 0;
-
-  const approved=
-    (db.approvalRequests||[]).some(approval=>
-      [
-        'MAINTENANCE_COST_VARIANCE',
-        'Maintenance Cost Variance'
-      ].includes(approval.type) &&
-
-      (
-        approval.ref===task.id ||
-        approval.reference===task.id
-      ) &&
-
-      approval.status==='Approved'
-    );
-
-  if(
-    estimate>0 &&
-    variance>config.blockingVariancePct &&
-    !approved
-  ){
-    task.approvalStatus='Pending Review';
-
-    rcRequestApproval(
-      'MAINTENANCE_COST_VARIANCE',
-      task.id,
-      'Actual cost '+
-        variance.toFixed(1)+
-        '% above estimate',
-      'Critical'
-    );
-
-    /*
-     * Hanya clear event milik task terkait.
-     * Jangan menghapus seluruh alert Maintenance Task.
-     */
-    (db.riskEvents||[]).forEach(event=>{
-      if(
-        event.sourceType==='maintenanceTasks' &&
-        event.sourceRef===task.id &&
-        event.status==='Open'
-      ){
-        event.status='Cleared';
-      }
-    });
-
-    rcEmit({
-      rule:'MAINTENANCE_COST_VARIANCE',
-      sourceModule:'Maintenance Task',
-      sourceType:'maintenanceTasks',
-      sourceRef:task.id,
-      title:'Maintenance start blocked by cost variance',
-
-      negativeCase:
-        `${task.id} akan dimulai dengan Actual Cost `+
-        `${variance.toFixed(1)}% di atas Estimate Cost.`,
-
-      expectedCondition:
-        `Actual Cost tidak boleh melewati hard blocking `+
-        `variance ${config.blockingVariancePct}% `+
-        `dari Estimate Cost.`,
-
-      actualCondition:
-        `Estimate ${estimate}; Actual ${actual}; `+
-        `Variance ${variance.toFixed(1)}%.`,
-
-      threshold:
-        `${config.blockingVariancePct}%`,
-
-      severity:'Critical',
-      confidence:98,
-      exposure:Math.max(0,actual-estimate),
-      blocking:true,
-      sourceRecord:task.id,
-
-      recommendedAction:
-        'Revisi Actual Cost atau selesaikan approval '+
-        'sebelum Start Task.'
-    });
-
-    rcAudit(
-      'Maintenance Task',
-      task.id,
-      'START_BLOCKED',
-      estimate,
-      actual,
-      'Actual cost exceeds blocking threshold'
-    );
-
-    saveDB();
-
-    pendingMaintenanceStart=null;
-    closeModal();
-    renderAll();
-
-    openModal(
-      'Start Maintenance Blocked',
-
-      `
-        <div class="notice danger">
-          <b>Task tidak dapat dimulai.</b><br>
-
-          Actual Cost ${fmtIDR(actual)}
-          memiliki variance ${variance.toFixed(1)}%,
-          melebihi hard blocking
-          ${config.blockingVariancePct}%.
-        </div>
-
-        <div class="rc-block">
-          Revisi Actual Cost atau proses approval
-          terlebih dahulu.
-        </div>
-      `,
-
-      `
-        <button
-          class="btn btn-ghost"
-          onclick="closeModal()"
-        >
-          Close
-        </button>
-
-        <button
-          class="btn btn-outline"
-          onclick="
-            closeModal();
-            rcOpenEvents(
-              'Maintenance Task',
-              '${esc(task.id)}'
-            )
-          "
-        >
-          View Blocking Issue
-        </button>
-      `,
-
-      true
-    );
-
-    return;
-  }
-
-  if(approved){
-    task.approvalStatus='Approved';
-
-    (db.riskEvents||[]).forEach(event=>{
-      if(
-        event.sourceType==='maintenanceTasks' &&
-        event.sourceRef===task.id &&
-        event.rule==='MAINTENANCE_COST_VARIANCE' &&
-        event.status==='Open'
-      ){
-        event.status='Cleared';
-      }
-    });
-  }
-
-  rcBaseConfirmStartMaintenance();
-
-  if(
-    !approved &&
-    estimate>0 &&
-    variance>config.warningVariancePct
-  ){
-    task.approvalStatus='Pending Review';
-
-    rcRequestApproval(
-      'MAINTENANCE_COST_VARIANCE',
-      task.id,
-      'Actual cost '+
-        variance.toFixed(1)+
-        '% above estimate'
-    );
-
-    rcEmit({
-      rule:'MAINTENANCE_COST_VARIANCE',
-      sourceModule:'Maintenance Task',
-      sourceType:'maintenanceTasks',
-      sourceRef:task.id,
-      title:'Maintenance cost exceeds allowed variance',
-
-      negativeCase:
-        `${task.id} dimulai dengan Actual Cost `+
-        `${variance.toFixed(1)}% di atas Estimate Cost.`,
-
-      expectedCondition:
-        `Actual Cost berada dalam toleransi maksimal `+
-        `${config.warningVariancePct}% dari Estimate Cost.`,
-
-      actualCondition:
-        `Estimate ${estimate}; Actual ${actual}; `+
-        `Variance ${variance.toFixed(1)}%.`,
-
-      threshold:
-        `${config.warningVariancePct}%`,
-
-      severity:'High',
-      confidence:95,
-      exposure:Math.max(0,actual-estimate),
-      blocking:false,
-      sourceRecord:task.id,
-
-      recommendedAction:
-        'Fleet Manager review and invoice verification.'
-    });
-
-    saveDB();
-    renderAll();
-  }
-};
+ const p=pendingMaintenanceStart,task=p&&db.maintenanceTasks.find(x=>x.id===p.id);if(!p||!task)return;
+ const cfg=maintenanceCostSettings(),estimate=Number(task.estimateCost??task.cost??0),actual=Number(p.actualCost||0),variance=estimate?((actual-estimate)/estimate*100):0;
+ if(estimate>0&&variance>cfg.blockingVariancePct){
+  task.approvalStatus='Pending Review';
+  rcRequestApproval('MAINTENANCE_COST_VARIANCE',task.id,'Actual cost '+variance.toFixed(1)+'% above estimate','Critical');
+  rcClearScope('Maintenance Task');
+  rcEmit({rule:'MAINTENANCE_COST_VARIANCE',sourceModule:'Maintenance Task',sourceType:'maintenanceTasks',sourceRef:task.id,title:'Maintenance start blocked by cost variance',negativeCase:`${task.id} akan dimulai dengan Actual Cost ${variance.toFixed(1)}% di atas Estimate Cost.`,expectedCondition:`Actual Cost tidak boleh melewati hard blocking variance ${cfg.blockingVariancePct}% dari Estimate Cost.`,actualCondition:`Estimate ${estimate}; Actual ${actual}; Variance ${variance.toFixed(1)}%.`,threshold:`${cfg.blockingVariancePct}%`,severity:'Critical',confidence:98,exposure:Math.max(0,actual-estimate),blocking:true,sourceRecord:task.id,recommendedAction:'Revisi Actual Cost atau selesaikan approval sebelum Start Task.'});
+  rcAudit('Maintenance Task',task.id,'START_BLOCKED',estimate,actual,'Actual cost exceeds blocking threshold');
+  saveDB();pendingMaintenanceStart=null;closeModal();renderAll();
+  openModal('Start Maintenance Blocked',`<div class="notice danger"><b>Task tidak dapat dimulai.</b><br>Actual Cost ${fmtIDR(actual)} memiliki variance ${variance.toFixed(1)}%, melebihi hard blocking ${cfg.blockingVariancePct}%.</div><div class="rc-block">Revisi Actual Cost atau proses approval terlebih dahulu.</div>`,`<button class="btn btn-ghost" onclick="closeModal()">Close</button><button class="btn btn-outline" onclick="closeModal();rcOpenEvents('Maintenance Task','${esc(task.id)}')">View Blocking Issue</button>`,true);
+  return;
+ }
+ rcBaseConfirmStartMaintenance();
+ if(estimate>0&&variance>cfg.warningVariancePct){
+  task.approvalStatus='Pending Review';
+  rcRequestApproval('MAINTENANCE_COST_VARIANCE',task.id,'Actual cost '+variance.toFixed(1)+'% above estimate');
+  rcEmit({rule:'MAINTENANCE_COST_VARIANCE',sourceModule:'Maintenance Task',sourceType:'maintenanceTasks',sourceRef:task.id,title:'Maintenance cost exceeds allowed variance',negativeCase:`${task.id} dimulai dengan Actual Cost ${variance.toFixed(1)}% di atas Estimate Cost.`,expectedCondition:`Actual Cost berada dalam toleransi maksimal ${cfg.warningVariancePct}% dari Estimate Cost.`,actualCondition:`Estimate ${estimate}; Actual ${actual}; Variance ${variance.toFixed(1)}%.`,threshold:`${cfg.warningVariancePct}%`,severity:'High',confidence:95,exposure:Math.max(0,actual-estimate),blocking:false,sourceRecord:task.id,recommendedAction:'Fleet Manager review and invoice verification.'});
+  saveDB();renderAll();
+ }
 }
 function rcMasterRecordEvents(type,ref){const label={hubs:'Hub Management',carriers:'Carrier & Contract',contracts:'Carrier & Contract',vehicles:'Vehicle Master',maintenanceTasks:'Maintenance Task',drivers:'Driver Master',routes:'Route & Lane Master'}[type]||type;return rcEventsFor(label,ref)}
 function rcDecorateMasterTable(type){const map={hubs:['hubTbody','Hub Management'],carriers:['carrierTbody','Carrier & Contract'],contracts:['contractTbody','Carrier & Contract'],vehicles:['vehicleTbody','Vehicle Master'],drivers:['driverTbody','Driver Master'],routes:['routeTbody','Route & Lane Master']},cfg=map[type];if(!cfg)return;const tb=document.getElementById(cfg[0]);if(!tb)return;const table=tb.closest('table'),head=table?.querySelector('thead tr');if(head&&!head.querySelector('[data-rc-risk]'))head.lastElementChild?.insertAdjacentHTML('beforebegin','<th data-rc-risk class="rc-table-risk">Risk Control</th>');const records=filteredMasterRecords(type);[...tb.querySelectorAll('tr')].forEach((tr,i)=>{if(tr.querySelector('.empty')){const td=tr.querySelector('td');if(td)td.colSpan=Number(td.colSpan||1)+1;return}const rec=records[i]?.x;if(!rec||tr.querySelector('[data-rc-risk]'))return;tr.lastElementChild?.insertAdjacentHTML('beforebegin',`<td data-rc-risk>${rcBadge(rcMasterRecordEvents(type,rec.id))}</td>`)});}
@@ -2954,30 +2654,7 @@ const moduleName=v6Module();if(moduleName==='MASTER')v6InstallMasterUI();else if
   function ensureMasterAlignedData(){
     try{if(typeof rcEnsureData==='function')rcEnsureData();}catch(e){}
     (db.drivers||[]).forEach((d,i)=>Object.assign(d,{identityStatus:d.identityStatus||'Verified',deviceId:d.deviceId||('DEVICE-'+String(i+1).padStart(4,'0')),employmentStatus:d.employmentStatus||'Active',watchlistStatus:d.watchlistStatus||'Clear',maxWorkingHours:Number(d.maxWorkingHours||12),riskStatus:d.riskStatus||'Low'}));
-    (db.vehicles||[]).forEach((v,i)=>
-  Object.assign(v,{
-    tankCapacity:Number(
-      v.tankCapacity||([80,120,200][i%3])
-    ),
-
-    /*
-     * Nilai 0 adalah angka valid dan tidak boleh
-     * dianggap sebagai nilai kosong.
-     */
-    odometer:Number(
-      v.odometer ?? (40000+i*12500)
-    ),
-
-    identityVerification:
-      v.identityVerification||'Verified',
-
-    fuelType:
-      v.fuelType||'Diesel',
-
-    riskStatus:
-      v.riskStatus||'Low'
-  })
-);
+    (db.vehicles||[]).forEach((v,i)=>Object.assign(v,{tankCapacity:Number(v.tankCapacity||([80,120,200][i%3])),odometer:Number(v.odometer||40000+i*12500),identityVerification:v.identityVerification||'Verified',fuelType:v.fuelType||'Diesel',riskStatus:v.riskStatus||'Low'}));
     (db.contracts||[]).forEach(c=>{if(String(c.podRequirement||'').includes('OTP'))c.podRequirement='Photo + Signature';});
     db.driverStates=db.driverStates||{};
     const rows=operationalDemoRows();rows.forEach(x=>{if(!(db.documents||[]).some(d=>d.id===x.id))db.documents.push(x)});db.operationalDemoVersion=DEMO_VERSION;saveDB();
