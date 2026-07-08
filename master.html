@@ -2187,9 +2187,87 @@ masterFields=function(type,obj={},isNew=false){const base=rcBaseMasterFields(typ
  }[type]||[];return [...base,...extra]}
 const rcBaseSaveMaster=saveMaster;
 saveMaster=function(type,index){
- if(type==='vehicles'){const vin=document.getElementById('mf-vin')?.value.trim(),gps=document.getElementById('mf-gpsDeviceId')?.value.trim();if(db.vehicles.some((x,i)=>i!==index&&vin&&x.vin===vin)){toast('VIN / Chassis Number harus unik');return}if(db.vehicles.some((x,i)=>i!==index&&gps&&x.gpsDeviceId===gps)){toast('GPS Device ID hanya boleh terpasang pada satu kendaraan aktif');return}}
- if(type==='drivers'){const device=document.getElementById('mf-deviceId')?.value.trim();if(db.drivers.some((x,i)=>i!==index&&device&&x.deviceId===device)){toast('Registered Device ID sudah digunakan driver lain');return}}
- rcBaseSaveMaster(type,index);if(!document.getElementById('modalMask')?.classList.contains('open')){rcEnsureMasterFields();rcAudit(type,index===null?'NEW':String(index),'SAVE','','','Master risk fields saved');runMasterRiskValidation(type);saveDB();renderAll()}}
+  if(type==='vehicles'){
+    const vin=
+      document.getElementById('mf-vin')
+        ?.value.trim();
+
+    const gps=
+      document.getElementById('mf-gpsDeviceId')
+        ?.value.trim();
+
+    if(
+      db.vehicles.some((x,i)=>
+        i!==index &&
+        vin &&
+        x.vin===vin
+      )
+    ){
+      toast('VIN / Chassis Number harus unik');
+      return;
+    }
+
+    if(
+      db.vehicles.some((x,i)=>
+        i!==index &&
+        gps &&
+        x.gpsDeviceId===gps
+      )
+    ){
+      toast(
+        'GPS Device ID hanya boleh terpasang '+
+        'pada satu kendaraan aktif'
+      );
+      return;
+    }
+  }
+
+  if(type==='drivers'){
+    const device=
+      document.getElementById('mf-deviceId')
+        ?.value.trim();
+
+    if(
+      db.drivers.some((x,i)=>
+        i!==index &&
+        device &&
+        x.deviceId===device
+      )
+    ){
+      toast(
+        'Registered Device ID sudah digunakan driver lain'
+      );
+      return;
+    }
+  }
+
+  rcBaseSaveMaster(type,index);
+
+  if(
+    !document.getElementById('modalMask')
+      ?.classList.contains('open')
+  ){
+    rcEnsureMasterFields();
+
+    rcAudit(
+      type,
+      index===null ? 'NEW' : String(index),
+      'SAVE',
+      '',
+      '',
+      'Master risk fields saved'
+    );
+
+    /*
+     * Silent validation agar toast keberhasilan simpan
+     * tidak tertimpa pesan "Master risk validation completed".
+     *
+     * runMasterRiskValidation sudah menjalankan
+     * saveDB() dan renderAll().
+     */
+    runMasterRiskValidation(type,true);
+  }
+};
 const rcBaseOpenMaintenance=openMaintenanceForm;
 openMaintenanceForm=function(index=null,view=false,vehicleId=''){rcBaseOpenMaintenance(index,view,vehicleId);const obj=index===null?{}:db.maintenanceTasks[index]||{},grid=document.querySelector('#modalBody .form-grid');if(!grid)return;const dis=view?'disabled':'';grid.insertAdjacentHTML('beforeend',`<div class="field"><label>Maintenance Vendor</label><input class="input" id="mt-vendor" value="${esc(obj.vendor||'Authorized Workshop')}" ${dis}></div><div class="field"><label>Work Order Number</label><input class="input" id="mt-workorder" value="${esc(obj.workOrderNo||'')}" ${dis}></div><div class="field"><label>Vendor Invoice Number</label><input class="input" id="mt-invoice" value="${esc(obj.invoiceNo||'')}" ${dis}></div><div class="field"><label>Warranty Status</label><select class="select" id="mt-warranty" ${dis}><option ${obj.warrantyStatus==='Checked'?'selected':''}>Checked</option><option ${obj.warrantyStatus==='Not Checked'?'selected':''}>Not Checked</option><option ${obj.warrantyStatus==='Covered'?'selected':''}>Covered</option></select></div><div class="field"><label>Odometer Before</label><input class="input" id="mt-odo-before" type="number" min="0" value="${esc(obj.odometerBefore||0)}" ${dis}></div><div class="field"><label>Odometer After</label><input class="input" id="mt-odo-after" type="number" min="0" value="${esc(obj.odometerAfter||0)}" ${dis}></div><div class="field"><label>Evidence Status</label><select class="select" id="mt-evidence" ${dis}><option ${obj.evidenceStatus==='Complete'?'selected':''}>Complete</option><option ${obj.evidenceStatus==='Pending'?'selected':''}>Pending</option><option ${obj.evidenceStatus==='Missing'?'selected':''}>Missing</option></select></div><div class="field"><label>Approval Status</label><select class="select" id="mt-approval" ${dis}><option ${obj.approvalStatus==='Approved'?'selected':''}>Approved</option><option ${obj.approvalStatus==='Pending Review'?'selected':''}>Pending Review</option><option ${obj.approvalStatus==='Rejected'?'selected':''}>Rejected</option></select></div>`)}
 const rcBaseSaveMaintenance=saveMaintenance;
