@@ -2469,7 +2469,57 @@ const moduleName=v6Module();if(moduleName==='MASTER')v6InstallMasterUI();else if
     if(p==='dashboard')renderDashboard();if(p==='schedule')renderSchedule();if(p==='monitoring')renderMonitoring();if(p==='loading')renderLoading();if(p==='driver-mobile')renderDriverMobile();if(p==='report')renderReport();if(p==='integration')renderIntegration();if(p==='mapping')renderMapping();if(p==='fleet-order')renderFleetOrders();if(p==='cost')renderCostManagement();if(p==='maintenance')renderMaintenance();if(p==='antifraud')renderAntiFraud();window.scrollTo(0,0);
   };
 
-  window.renderAll=function(){if(baseRenderAll)baseRenderAll();if(document.getElementById('dashboardKpis'))renderDashboard();if(document.getElementById('reportKpis'))renderReport();if(document.getElementById('integrationKpis'))renderIntegration();if(document.getElementById('fraudKpis'))renderAntiFraud();};
+ window.renderAll=function(){
+  /*
+   * Sinkronkan data lama setiap halaman dirender.
+   * saveDB hanya dipanggil jika memang ada status
+   * resource yang berubah.
+   */
+  const resourceStatusChanged=
+    typeof reconcileCompletedPlanResources
+      ==='function' &&
+    reconcileCompletedPlanResources();
+
+  if(resourceStatusChanged){
+    saveDB();
+  }
+
+  if(baseRenderAll){
+    baseRenderAll();
+  }
+
+  if(
+    document.getElementById(
+      'dashboardKpis'
+    )
+  ){
+    renderDashboard();
+  }
+
+  if(
+    document.getElementById(
+      'reportKpis'
+    )
+  ){
+    renderReport();
+  }
+
+  if(
+    document.getElementById(
+      'integrationKpis'
+    )
+  ){
+    renderIntegration();
+  }
+
+  if(
+    document.getElementById(
+      'fraudKpis'
+    )
+  ){
+    renderAntiFraud();
+  }
+};
 
   document.querySelectorAll('.nav-item').forEach(x=>x.onclick=()=>goPage(x.dataset.page));
   ensureDriverHistoryData();renderAll();if(document.getElementById('page-'+(document.body.dataset.initialPage||'dashboard')))goPage(document.body.dataset.initialPage||'dashboard');
