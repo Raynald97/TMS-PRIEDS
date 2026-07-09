@@ -930,10 +930,226 @@ function dispatchPlan(){
   const p=db.plans.find(x=>x.id===activeLoadingPlan);if(!p)return;if(p.status!=='Ready to Dispatch'){toast('Complete loading before dispatch');return}const st=(db.driverStates||{})[p.id];if(st&&!st.loadConfirmed){toast('Driver belum melakukan Confirm Load Received');return}p.status='In Transit';p.health='On Schedule';p.lastUpdate='Gate-out recorded just now';const fo=fleetOrderForPlan(p.id),v=db.vehicles.find(x=>x.plate===p.vehicle),d=db.drivers.find(x=>x.name===p.driver);if(v)v.status='In Transit';if(d)d.status='On Trip';if(st)st.step=4;if(fo){fo.status='Dijalankan';fo.updated='Gate-out / dispatched';fo.tracking=fo.tracking||'https://tracking.example/'+fo.id.replaceAll('/','-');fo.lastLocation=p.origin;}
   integrationEvent('Fleet Order',fo?.id||p.id,'order.dispatched','Gate-out confirmed; trip started','Prieds → McEasy');saveDB();renderAll();goPage('monitoring');toast('Dispatch synchronized to Driver Mobile, Monitoring, and McEasy Fleet Order');
 }
+function releaseCompletedPlanResources(plan){
+  if(
+    !plan ||
+    plan.source!=='Fleet Company'
+  ){
+    return false;
+  }
+
+  /*
+   * Jangan melepas resource bila masih dipakai
+   * Shipment Plan aktif lainnya.
+   */
+  const activePlans=(db.plans||[]).filter(other=>
+    other.id!==plan.id &&
+    other.source==='Fleet Company' &&
+    ![
+      'Completed',
+      'Cancelled'
+    ].includes(other.status)
+  );
+
+  const vehicleStillUsed=
+    activePlans.some(other=>
+      other.vehicle===plan.vehicle
+    );
+
+  const driverStillUsed=
+    activePlans.some(other=>
+      other.driver===plan.driver
+    );
+
+  const vehicle=
+    (db.vehicles||[]).find(item=>
+      item.plate===plan.vehicle
+    );
+
+  const driver=
+    (db.drivers||[]).find(item=>
+      item.name===plan.driver
+    );
+
+  let changed=false;
+
+  /*
+   * Hanya status operasional yang dilepas.
+   * Maintenance atau Inactive tidak boleh
+   * otomatis berubah menjadi Available.
+   */
+  if(
+    !vehicleStillUsed &&
+    vehicle &&
+    [
+      'Reserved',
+      'Loading',
+      'In Transit',
+      'Returning'
+    ].includes(vehicle.status)
+  ){
+    vehicle.status='Available';
+    changed=true;
+  }
+
+  if(
+    !driverStillUsed &&
+    driver &&
+    [
+      'Assigned',
+      'On Trip',
+      'Returning'
+    ].includes(driver.status)
+  ){
+    driver.status='Available';
+    changed=true;
+  }
+
+  return changed;
+}
+
+function reconcileCompletedPlanResources(){
+  let changed=false;
+
+  /*
+   * Memperbaiki data lama di localStorage yang
+   * Shipment Plan-nya sudah Completed/Cancelled,
+   * tetapi resource masih Reserved/Assigned.
+   */
+  (db.plans||[])
+    .filter(plan=>
+      [
+        'Completed',
+        'Cancelled'
+      ].includes(plan.status)
+    )
+    .forEach(plan=>{
+      if(
+        releaseCompletedPlanResources(plan)
+      ){
+        changed=true;
+      }
+    });
+
+  return changed;
+}
+
 function applyFleetOrderToPlan(x){
-  const p=db.plans.find(v=>v.id===x.planId);if(!p)return;if(x.vehicle&&x.vehicle!=='-')p.vehicle=x.vehicle;if(x.driver&&x.driver!=='-')p.driver=x.driver;
-  const map={Confirm:'Planned',Dijadwalkan:'Planned',Loading:'Loading',Dijalankan:'In Transit','OTW Tujuan':'In Transit',Unloading:'Unloading',Delivered:p.status==='Returning'?'Returning':'Completed',Failed:'Exception'};p.status=map[x.status]||p.status;p.health=x.status==='Failed'?'Exception':x.status==='Delivered'?'Completed':'On Schedule';p.lastUpdate='McEasy: '+x.status+' • '+x.updated;ensureDriverStates();const st=db.driverStates[p.id];if(st){if(['Dijalankan','OTW Tujuan'].includes(x.status))st.step=Math.max(st.step,4);if(x.status==='Unloading')st.step=Math.max(st.step,6);if(x.status==='Delivered'&&p.status!=='Completed')st.step=Math.max(st.step,7);if(x.status==='Delivered'&&p.status==='Completed')st.step=8;}
-  if(x.status==='Delivered'&&p.status==='Completed')p.stops.forEach(s=>{s.status='Successfully Delivered';s.pod=true;s.arrival=new Date().toLocaleString('sv-SE').slice(0,16)});
+  const p=db.plans.find(item=>
+    item.id===x.planId
+  );
+
+  if(!p){
+    return;
+  }
+
+  if(
+    x.vehicle &&
+    x.vehicle!=='-'
+  ){
+    p.vehicle=x.vehicle;
+  }
+
+  if(
+    x.driver &&
+    x.driver!=='-'
+  ){
+    p.driver=x.driver;
+  }
+
+  const map={
+    Confirm:'Planned',
+    Dijadwalkan:'Planned',
+    Loading:'Loading',
+    Dijalankan:'In Transit',
+    'OTW Tujuan':'In Transit',
+    Unloading:'Unloading',
+
+    Delivered:
+      p.status==='Returning'
+        ?'Returning'
+        :'Completed',
+
+    Failed:'Exception'
+  };
+
+  p.status=
+    map[x.status] ||
+    p.status;
+
+  p.health=
+    x.status==='Failed'
+      ?'Exception'
+      :x.status==='Delivered'
+        ?'Completed'
+        :'On Schedule';
+
+  p.lastUpdate=
+    'McEasy: '+
+    x.status+
+    ' • '+
+    x.updated;
+
+  ensureDriverStates();
+
+  const state=
+    db.driverStates[p.id];
+
+  if(state){
+    if(
+      [
+        'Dijalankan',
+        'OTW Tujuan'
+      ].includes(x.status)
+    ){
+      state.step=
+        Math.max(state.step,4);
+    }
+
+    if(x.status==='Unloading'){
+      state.step=
+        Math.max(state.step,6);
+    }
+
+    if(
+      x.status==='Delivered' &&
+      p.status!=='Completed'
+    ){
+      state.step=
+        Math.max(state.step,7);
+    }
+
+    if(
+      x.status==='Delivered' &&
+      p.status==='Completed'
+    ){
+      state.step=8;
+      state.closed=true;
+    }
+  }
+
+  if(
+    x.status==='Delivered' &&
+    p.status==='Completed'
+  ){
+    p.stops.forEach(stop=>{
+      stop.status=
+        'Successfully Delivered';
+
+      stop.pod=true;
+
+      stop.arrival=
+        new Date()
+          .toLocaleString('sv-SE')
+          .slice(0,16);
+    });
+
+    /*
+     * Release Vehicle dan Driver ketika plan
+     * resmi menjadi Completed.
+     */
+    releaseCompletedPlanResources(p);
+  }
 }
 function saveFleetOrder(){
   const planId=document.getElementById('fo-plan').value,p=db.plans.find(x=>x.id===planId);if(!p){toast('Shipment Plan wajib dipilih');return}if(db.fleetOrders.some(x=>x.planId===planId)){toast('Duplicate blocked: plan already has Fleet Order');return}const addr=db.addressMappings.find(a=>p.destination.includes(a.location)||p.stops.some(s=>s.customer.includes(a.customer)));if(addr&&addr.status!=='Valid'){toast('Address coordinate must be valid');return}const id='FO/MC/'+String(db.fleetOrders.length+1).padStart(5,'0'),dep=document.getElementById('fo-departure').value.replace('T',' '),vehicle=document.getElementById('fo-vehicle').value,driver=document.getElementById('fo-driver').value,status=document.getElementById('fo-status').value;if(status==='Dijadwalkan'&&(!vehicle||!driver)){toast('Vehicle dan Driver wajib untuk status Dijadwalkan');return}const fo={id,planId,docs:[...p.docs],customer:p.stops.map(s=>s.customer).join(' / '),departure:dep,origin:p.origin,destination:p.destination,vehicle:vehicle||p.vehicle||'-',driver:driver||p.driver||'-',status,sync:'Synced',eta:p.eta+' 17:00',tracking:'',lastLocation:'-',distancePlan:db.routes.find(r=>p.destination.includes(r.destination))?.distance||0,distanceActual:0,temp:'-',repeat:document.getElementById('fo-repeat').value,updated:'just now'};db.fleetOrders.push(fo);if(fo.vehicle!=='-')p.vehicle=fo.vehicle;if(fo.driver!=='-')p.driver=fo.driver;const d=db.drivers.find(x=>x.name===p.driver),v=db.vehicles.find(x=>x.plate===p.vehicle);if(d)d.status='Assigned';if(v)v.status='Reserved';ensureDriverStates();integrationEvent('Fleet Order',id,'fleet_order.create','Fleet Order created from '+planId,'Prieds → McEasy');saveDB();closeModal();renderAll();toast(id+' created and assigned trip is available in Driver Mobile');
