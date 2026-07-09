@@ -172,6 +172,18 @@ a.nav-item{text-decoration:none}
 /* ===== COMPLETE SUITE: REPORT CENTER + MCEASY UI ===== */
 .report-tabbar{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 14px;padding:8px;background:#fff;border:1px solid var(--line);border-radius:9px}.report-tab{border:1px solid transparent;background:#f3f5f6;color:#606a73;border-radius:7px;padding:8px 12px;font-size:11.5px;cursor:pointer}.report-tab.active{background:var(--cyan-dark);color:#fff}.report-panel{display:none}.report-panel.active{display:block}.driver-history-table{min-width:1900px}.report-grid-stack{grid-template-columns:1.15fr .85fr}.report-grid-stack .tbl{min-width:900px}.link-cell{border:0;background:none;color:var(--blue);text-decoration:underline;cursor:pointer;font:500 11px 'Roboto Mono'}.report-mini{font-size:9.5px;color:var(--muted);margin-top:3px}.variance-up{color:var(--red);font-weight:500}.variance-down{color:var(--green);font-weight:500}
 .report-card-action{display:flex;justify-content:flex-end;padding-top:12px;margin-top:12px;border-top:1px solid #eff2f4}.report-card-action .btn{min-width:112px}.report-detail-summary{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));gap:10px;margin-bottom:14px}.report-detail-stat{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:#fafcfd}.report-detail-stat span{display:block;font-size:9.5px;color:var(--muted)}.report-detail-stat b{display:block;margin-top:4px;font:600 15px 'Roboto Mono',monospace}.report-detail-table{min-width:980px}.filter-search-btn{min-width:86px}@media(max-width:760px){.report-detail-summary{grid-template-columns:1fr 1fr}.report-card-action .btn,.filter-search-btn{width:100%}}
+/* Fleet & Maintenance report: stacked tables, local summary, no forced horizontal scroll */
+.fleet-report-stack{display:flex;flex-direction:column;gap:14px}
+.fleet-report-stack .table-wrap{overflow-x:visible}
+.fleet-report-stack .tbl{width:100%;min-width:0;table-layout:auto}
+.fleet-report-stack .tbl thead th{white-space:normal}
+.fleet-report-stack .tbl th,.fleet-report-stack .tbl td{padding:10px 9px;overflow-wrap:anywhere}
+.fleet-table-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);background:#f8fafb}
+.fleet-overview-card{border:1px solid var(--line);border-radius:8px;background:#fff;padding:10px 12px;min-width:0}
+.fleet-overview-card span{display:block;font-size:9.5px;color:var(--muted)}
+.fleet-overview-card b{display:block;margin-top:4px;font:600 15px 'Roboto Mono',monospace;color:var(--txt)}
+.fleet-overview-card small{display:block;margin-top:3px;font-size:9px;color:var(--muted)}
+@media(max-width:900px){.fleet-table-overview{grid-template-columns:1fr}.fleet-report-stack .tbl{font-size:11px}.fleet-report-stack .tbl th,.fleet-report-stack .tbl td{padding:8px 6px}}
 .mceasy-page{--mc:#262262;--mc2:#393185;--mc-accent:#7168d7;--mc-soft:#f0effa}.mceasy-module-head,.mceasy-subhead{background:linear-gradient(135deg,#241f60,#3b337f);border-radius:11px 11px 0 0;color:#fff;padding:12px 15px;display:flex;align-items:center;gap:14px;box-shadow:0 8px 20px rgba(38,34,98,.18)}.mceasy-brand{display:flex;align-items:center;gap:10px}.mceasy-brand b{display:block;font-size:13px}.mceasy-brand small{display:block;font-size:9.5px;opacity:.72;margin-top:2px}.mceasy-mark{width:34px;height:34px;border-radius:9px;background:#fff;color:#302a73;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800}.mceasy-head-actions{margin-left:auto;display:flex;align-items:center;gap:8px}.mceasy-head-actions button,.mceasy-subnav button{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;border-radius:7px;padding:7px 10px;font-size:10.5px;cursor:pointer}.mceasy-head-actions button.primary{background:#fff;color:#302a73}.mceasy-live{font-size:10px;display:flex;align-items:center;gap:6px}.mceasy-live i{width:7px;height:7px;background:#58d98f;border-radius:50%;box-shadow:0 0 0 4px rgba(88,217,143,.15)}.mceasy-layout{display:grid;grid-template-columns:185px minmax(0,1fr);background:#f4f5f8;border:1px solid #dedfeb;border-top:0;border-radius:0 0 11px 11px;min-height:calc(100vh - 116px);overflow:hidden}.mceasy-rail{background:#2a2569;padding:15px 10px;color:#fff}.mceasy-rail button{display:block;width:100%;border:0;background:transparent;color:#d7d5ea;text-align:left;border-radius:7px;padding:9px 10px;font-size:11px;cursor:pointer;margin-bottom:4px}.mceasy-rail button:hover,.mceasy-rail button.active{background:rgba(255,255,255,.12);color:#fff}.mceasy-rail-label{font-size:8.5px;text-transform:uppercase;letter-spacing:.8px;color:#9994c3;padding:15px 9px 6px}.mceasy-rail-state{border:1px solid rgba(255,255,255,.13);border-radius:8px;padding:9px}.mceasy-rail-state small{display:block;color:#aaa6ce;font-size:9px;margin-top:5px}.mceasy-main{padding:15px;min-width:0}.mceasy-page-title{margin-bottom:10px}.mceasy-alert-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px}.mceasy-alert{border-radius:8px;padding:10px 11px;color:#fff;min-height:62px;box-shadow:0 4px 12px rgba(30,32,50,.08)}.mceasy-alert.red{background:#e85c69}.mceasy-alert.yellow{background:#e8a63d}.mceasy-alert.purple{background:#7468cf}.mceasy-alert b{display:block;font-size:11px}.mceasy-alert span{display:block;font-size:9.5px;opacity:.88;margin-top:4px}.mceasy-kpis{grid-template-columns:repeat(5,minmax(130px,1fr));gap:9px}.mceasy-kpis .kpi{border-radius:8px;padding:11px 12px}.mceasy-kpis .kpi .value{font-size:20px}.mceasy-dashboard-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:12px}.mceasy-card,.mceasy-table-card{background:#fff;border:1px solid #e0e2ea;border-radius:9px;overflow:hidden}.mceasy-card-head{display:flex;align-items:center;padding:11px 13px;border-bottom:1px solid #ececf2}.mceasy-card-head b{font-size:11.5px}.mceasy-card-head span{margin-left:auto;font-size:9.5px;color:#969aa4}.mceasy-chart{height:145px;padding:12px;display:flex;align-items:flex-end;gap:8px}.mc-bar-wrap{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px}.mc-bar{width:100%;max-width:38px;background:linear-gradient(to top,#312a75,#786ed5);border-radius:4px 4px 0 0;min-height:4px}.mc-bar.secondary{background:linear-gradient(to top,#d55c68,#f09a91)}.mc-bar-label{font-size:8.5px;color:#969aa4}.mceasy-donut-list{padding:13px;display:grid;gap:9px;width:100%}.mceasy-donut-row{display:grid;grid-template-columns:90px 1fr 38px;gap:8px;align-items:center;font-size:10px}.mceasy-donut-row .progress{height:7px}.mceasy-flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:15px 13px}.mceasy-flow span{background:#f0eff8;color:#393276;border:1px solid #dfdced;border-radius:7px;padding:8px 9px;font-size:9.5px}.mceasy-flow i{color:#8d89ae}.mceasy-webhook{margin:0 13px 13px;border:1px solid #5f55bd;color:#493f9c;background:#fff;border-radius:7px;padding:7px 10px;font-size:10px;cursor:pointer}.mceasy-table-card .toolbar{background:#fafafe}.mceasy-subhead{border-radius:10px;margin-bottom:12px}.mceasy-subnav{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}.mceasy-page>.page-head,.mceasy-page>.page-subnav,.mceasy-page>.kpi-grid,.mceasy-page>.window,.mceasy-page>.integration-grid{position:relative}.mceasy-page .page-subnav .btn.active,.mceasy-page .page-subnav .btn:hover{background:#332c78;color:#fff;border-color:#332c78}
 @media(max-width:1100px){.report-grid-stack,.mceasy-dashboard-grid{grid-template-columns:1fr}.mceasy-kpis{grid-template-columns:repeat(3,1fr)}.mceasy-alert-strip{grid-template-columns:1fr}}
 @media(max-width:760px){.mceasy-layout{grid-template-columns:1fr}.mceasy-rail{display:flex;overflow:auto;gap:5px}.mceasy-rail button{min-width:125px}.mceasy-rail-label,.mceasy-rail-state{display:none}.mceasy-module-head,.mceasy-subhead{align-items:flex-start;flex-direction:column}.mceasy-head-actions,.mceasy-subnav{margin-left:0}.mceasy-kpis{grid-template-columns:1fr 1fr}.report-tab{flex:1 1 calc(50% - 7px)}}
@@ -298,9 +310,8 @@ a.nav-item{text-decoration:none}
 <section class="page" id="page-report">
 <div class="page-head">
 <div><h1>Report Center</h1><p>Laporan tabel dari histori Shipment, Driver Mobile, Fleet, Maintenance, ePOD, dan biaya pada satu database.</p></div>
-<div class="head-actions"><button class="btn btn-outline" onclick="downloadActiveReport()">Download Active Report</button><button class="btn btn-ghost" onclick="renderReport()">↻ Refresh</button></div>
+<div class="head-actions"><button class="btn btn-outline" id="downloadActiveReportBtn" onclick="downloadActiveReport()">Download</button><button class="btn btn-ghost" onclick="renderReport()">↻ Refresh</button></div>
 </div>
-<div class="shared-banner"><span class="shared-dot"></span><span>Report bukan snapshot terpisah. Data dibaca langsung dari Master, Operational, Integration, dan Driver Mobile history.</span></div>
 <div class="report-tabbar">
 <button class="report-tab active" data-report-tab="performance" onclick="reportCenterTab('performance',this)">Transport Performance</button>
 <button class="report-tab" data-report-tab="driver" onclick="reportCenterTab('driver',this)">Driver Mobile History</button>
@@ -335,9 +346,18 @@ a.nav-item{text-decoration:none}
 </div>
 <div class="report-panel" id="report-panel-fleet">
 <div class="kpi-grid" id="fleetReportKpis"></div>
-<div class="grid-2 report-grid-stack">
-<div class="window" style="min-height:0"><div class="card-head">Vehicle Utilization &amp; Odometer<span>Master + completed trip history</span></div><div class="toolbar report-filter-toolbar"><input class="input" id="fleetVehicleSearch" oninput="renderFleetMaintenanceReport()" onkeydown="if(event.key==='Enter')applyFleetVehicleFilter()" placeholder="Vehicle / type / carrier / pool"/><select class="select" id="fleetVehicleStatus" onchange="renderFleetMaintenanceReport()"><option value="">All Vehicle Status</option><option>Available</option><option>Assigned</option><option>In Transit</option><option>Returning</option><option>Maintenance</option><option>Inactive</option></select><button class="btn btn-primary filter-search-btn" type="button" onclick="applyFleetVehicleFilter()">Search</button></div><div class="table-wrap"><table class="tbl blue"><thead><tr><th>Vehicle</th><th>Type</th><th>Carrier / Pool</th><th>Status</th><th>Tank</th><th>Current Odometer</th><th>Total Trips</th><th>Completed</th><th>Recorded Distance</th><th>Actual Cost</th><th>Document Validity</th></tr></thead><tbody id="vehicleUtilizationTbody"></tbody></table></div></div>
-<div class="window" style="min-height:0"><div class="card-head">Maintenance History<span>estimate vs actual cost</span></div><div class="toolbar report-filter-toolbar"><input class="input" id="maintenanceReportSearch" oninput="renderFleetMaintenanceReport()" onkeydown="if(event.key==='Enter')applyMaintenanceReportFilter()" placeholder="Task / vehicle / category / schedule"/><select class="select" id="maintenanceReportStatus" onchange="renderFleetMaintenanceReport()"><option value="">All Maintenance Status</option><option>Scheduled</option><option>Open</option><option>In Progress</option><option>Completed</option><option>Cancelled</option></select><button class="btn btn-primary filter-search-btn" type="button" onclick="applyMaintenanceReportFilter()">Search</button></div><div class="table-wrap"><table class="tbl"><thead><tr><th>Task</th><th>Vehicle</th><th>Category</th><th>Schedule</th><th>Status</th><th>Estimate</th><th>Actual</th><th>Variance</th><th>Next Service</th></tr></thead><tbody id="maintenanceHistoryTbody"></tbody></table></div></div>
+<div class="fleet-report-stack">
+<div class="window fleet-report-window" style="min-height:0">
+<div class="card-head">Vehicle Utilization &amp; Odometer<span>Master + completed trip history</span></div>
+<div class="toolbar report-filter-toolbar"><input class="input" id="fleetVehicleSearch" oninput="renderFleetMaintenanceReport()" onkeydown="if(event.key==='Enter')applyFleetVehicleFilter()" placeholder="Vehicle / type / carrier / pool"/><select class="select" id="fleetVehicleStatus" onchange="renderFleetMaintenanceReport()"><option value="">All Vehicle Status</option><option>Available</option><option>Assigned</option><option>In Transit</option><option>Returning</option><option>Maintenance</option><option>Inactive</option></select><button class="btn btn-primary filter-search-btn" type="button" onclick="applyFleetVehicleFilter()">Search</button><button class="btn btn-ghost" type="button" onclick="downloadFleetVehicleReport()">Download</button></div>
+<div class="fleet-table-overview" id="fleetVehicleOverview"></div>
+<div class="table-wrap"><table class="tbl blue"><thead><tr><th>Vehicle</th><th>Type</th><th>Carrier / Pool</th><th>Status</th><th>Tank</th><th>Current Odometer</th><th>Total Trips</th><th>Completed</th><th>Recorded Distance</th><th>Actual Cost</th><th>Document Validity</th></tr></thead><tbody id="vehicleUtilizationTbody"></tbody></table></div>
+</div>
+<div class="window fleet-report-window" style="min-height:0">
+<div class="card-head">Maintenance History<span>estimate vs actual cost</span></div>
+<div class="toolbar report-filter-toolbar"><input class="input" id="maintenanceReportSearch" oninput="renderFleetMaintenanceReport()" onkeydown="if(event.key==='Enter')applyMaintenanceReportFilter()" placeholder="Task / vehicle / category / schedule"/><select class="select" id="maintenanceReportStatus" onchange="renderFleetMaintenanceReport()"><option value="">All Maintenance Status</option><option>Scheduled</option><option>Open</option><option>In Progress</option><option>Completed</option><option>Cancelled</option></select><button class="btn btn-primary filter-search-btn" type="button" onclick="applyMaintenanceReportFilter()">Search</button><button class="btn btn-ghost" type="button" onclick="downloadMaintenanceHistoryReport()">Download</button></div>
+<div class="table-wrap"><table class="tbl"><thead><tr><th>Task</th><th>Vehicle</th><th>Category</th><th>Schedule</th><th>Status</th><th>Estimate</th><th>Actual</th><th>Variance</th><th>Next Service</th></tr></thead><tbody id="maintenanceHistoryTbody"></tbody></table></div>
+</div>
 </div>
 </div>
 <div class="report-panel" id="report-panel-cost">
@@ -2180,6 +2200,39 @@ const moduleName=v6Module();if(moduleName==='MASTER')v6InstallMasterUI();else if
 
   PAGE_NAMES.dashboard='Overview Dashboard';PAGE_NAMES.report='Report Center';PAGE_NAMES.antifraud='Risk & Anti-Fraud';
 
+  function fleetCriticalIssues(){return (db.dataQualityIssues||[]).filter(x=>x.severity==='Critical');}
+  function updateFleetReportControls(){
+    const pageDownload=document.getElementById('downloadActiveReportBtn');
+    if(pageDownload)pageDownload.classList.toggle('hidden',activeReportTab==='fleet');
+    const syncBtn=document.querySelector('#page-report .v6-report-quality .v6-sync-banner button');
+    if(!syncBtn)return;
+    if(activeReportTab==='fleet'){
+      const criticalCount=fleetCriticalIssues().length;
+      syncBtn.disabled=criticalCount===0;
+      syncBtn.setAttribute('onclick','validateAndSyncFleetReport()');
+      syncBtn.title=criticalCount?`Validate and synchronize ${criticalCount} critical alert(s)`:'No critical alert to validate';
+    }else{
+      syncBtn.disabled=false;
+      syncBtn.setAttribute('onclick','v6RunSync()');
+      syncBtn.removeAttribute('title');
+    }
+  }
+
+  window.validateAndSyncFleetReport=function(){
+    const before=fleetCriticalIssues();
+    if(!before.length){updateFleetReportControls();return toast('Tidak ada critical alert yang perlu divalidasi');}
+    if(typeof window.v6RunSync==='function')window.v6RunSync();
+    else{try{saveDB();renderAll();}catch(e){console.error(e);}}
+    renderFleetMaintenanceReport();
+    const remaining=fleetCriticalIssues();
+    updateFleetReportControls();
+    if(remaining.length){
+      const rows=remaining.map(x=>[esc(x.dataset||'-'),`<span class="mono">${esc(x.ref||'-')}</span>`,esc(x.message||'-'),'<span class="badge b-red">Critical</span>']);
+      openModal('Critical Alert Validation',`<div class="notice danger">Validate & Sync selesai. ${remaining.length} critical alert masih memerlukan koreksi pada data sumber.</div>${reportDetailTable(['Dataset','Reference','Validation Result','Severity'],rows,'No critical alert found.')}`,'<button class="btn btn-ghost" type="button" onclick="closeModal()">Close</button>');
+      toast(`Validation selesai: ${remaining.length} critical alert masih aktif`);
+    }else toast('Validate & Sync selesai. Seluruh critical alert telah terselesaikan');
+  };
+
   window.reportCenterTab=function(tab,btn){
     activeReportTab=tab;
     document.querySelectorAll('.report-panel').forEach(x=>x.classList.toggle('active',x.id==='report-panel-'+tab));
@@ -2188,6 +2241,7 @@ const moduleName=v6Module();if(moduleName==='MASTER')v6InstallMasterUI();else if
     if(tab==='delivery')renderDeliveryReport();
     if(tab==='fleet')renderFleetMaintenanceReport();
     if(tab==='cost')renderCostDetailReport();
+    updateFleetReportControls();
   };
 
   function ensureDriverHistoryData(){
@@ -2285,8 +2339,11 @@ const moduleName=v6Module();if(moduleName==='MASTER')v6InstallMasterUI();else if
     const vehicles=allVehicles.filter(v=>(!vehicleStatus||v.status===vehicleStatus)&&(!vehicleQuery||JSON.stringify(v).toLowerCase().includes(vehicleQuery))),maintenanceRows=maintenance.filter(x=>(!maintenanceStatus||x.status===maintenanceStatus)&&(!maintenanceQuery||JSON.stringify(x).toLowerCase().includes(maintenanceQuery)));
     const totalDist=histories.reduce((a,x)=>a+recordDistance(x),0),actualMaint=maintenance.reduce((a,x)=>a+Number(x.actualCost||0),0);
     document.getElementById('fleetReportKpis').innerHTML=kpiCards([{l:'Registered Vehicle',v:allVehicles.length,f:'Vehicle Master',a:'var(--blue)',click:"openReportKpiDetail('fleet','registered')"},{l:'Available Fleet',v:allVehicles.filter(x=>x.status==='Available').length,f:'Ready for planning',a:'var(--green)',click:"openReportKpiDetail('fleet','available')"},{l:'Recorded Distance',v:totalDist.toLocaleString('id-ID')+' km',f:'Driver Mobile odometer',a:'var(--purple)',click:"openReportKpiDetail('fleet','distance')"},{l:'Maintenance Tasks',v:maintenance.length,f:`${maintenance.filter(x=>x.status==='In Progress').length} in progress`,a:'var(--orange)',click:"openReportKpiDetail('fleet','maintenanceTasks')"},{l:'Actual Maintenance Cost',v:fmtIDR(actualMaint),f:'Completed and active tasks',a:'var(--red)',click:"openReportKpiDetail('fleet','maintenanceCost')"}]);
+    const visiblePlates=new Set(vehicles.map(v=>v.plate)),visibleHistories=histories.filter(h=>visiblePlates.has(h.vehicle)),visibleFuel=vehicles.reduce((a,v)=>a+Number(v.tankCapacity||0),0),visibleDistance=visibleHistories.reduce((a,x)=>a+recordDistance(x),0),visibleCost=visibleHistories.reduce((a,x)=>a+Number(x.actualCost||x.plannedCost||0),0),overview=document.getElementById('fleetVehicleOverview');
+    if(overview)overview.innerHTML=`<div class="fleet-overview-card"><span>Total Fuel Capacity</span><b>${visibleFuel.toLocaleString('id-ID')} L</b><small>Sum of Tank column for displayed vehicles</small></div><div class="fleet-overview-card"><span>Total Recorded Distance</span><b>${visibleDistance.toLocaleString('id-ID')} km</b><small>Completed and recorded Driver Mobile trips</small></div><div class="fleet-overview-card"><span>Total Actual Cost</span><b>${fmtIDR(visibleCost)}</b><small>Actual or recorded trip cost for displayed vehicles</small></div>`;
     vb.innerHTML=vehicles.map(v=>{const trips=histories.filter(h=>h.vehicle===v.plate),dist=trips.reduce((a,x)=>a+recordDistance(x),0),cost=trips.reduce((a,x)=>a+Number(x.actualCost||x.plannedCost||0),0),docs=[expiryInfo(v.stnkExpiry),expiryInfo(v.kirExpiry)];return `<tr><td><b>${esc(v.plate)}</b><div class="muted">${esc(v.id||'-')}</div></td><td>${esc(v.type||'-')}</td><td>${esc(v.carrier||'-')}<div class="muted">${esc(v.pool||'-')}</div></td><td>${statusBadge(v.status)}</td><td>${Number(v.tankCapacity||0)} L • ${esc(v.fuelType||'-')}</td><td>${Number(v.odometer||0).toLocaleString('id-ID')} km</td><td>${trips.length}</td><td>${trips.filter(x=>x.status==='Completed').length}</td><td>${dist.toLocaleString('id-ID')} km</td><td>${fmtIDR(cost)}</td><td>${statusBadge(docs.some(x=>x.status==='Expired')?'Expired':docs.some(x=>x.status==='Expiring Soon')?'Expiring Soon':'Valid')}<div class="report-mini">STNK ${esc(v.stnkExpiry||'-')} • KIR ${esc(v.kirExpiry||'-')}</div></td></tr>`}).join('')||'<tr><td colspan="11" class="empty">No vehicle utilization data found.</td></tr>';
     mb.innerHTML=maintenanceRows.map(x=>{const est=Number(x.cost||x.estimatedCost||0),act=Number(x.actualCost||0),variance=act-est;return `<tr><td class="mono">${esc(x.id)}</td><td>${esc(x.vehicle||x.plate||'-')}</td><td>${esc(x.category||'-')}</td><td>${esc(x.schedule||x.date||'-')}</td><td>${statusBadge(x.status)}</td><td>${fmtIDR(est)}</td><td>${fmtIDR(act)}</td><td class="${variance>0?'variance-up':'variance-down'}">${variance>0?'+':''}${fmtIDR(variance)}</td><td>${esc(x.nextServiceDate||'-')}</td></tr>`}).join('')||'<tr><td colspan="9" class="empty">No maintenance history found.</td></tr>';
+    updateFleetReportControls();
   };
 
   window.renderCostDetailReport=function(){
@@ -2296,6 +2353,9 @@ const moduleName=v6Module();if(moduleName==='MASTER')v6InstallMasterUI();else if
   };
 
   function csvDownload(name,rows){const csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);}
+  function downloadRenderedReportTable(tbodyId,fileName,emptyMessage){const tbody=document.getElementById(tbodyId),table=tbody?.closest('table');if(!table||tbody.querySelector('.empty'))return toast(emptyMessage);const rows=[...table.querySelectorAll('tr')].map(tr=>[...tr.children].map(cell=>cell.innerText.trim()));csvDownload(fileName,rows);}
+  window.downloadFleetVehicleReport=function(){downloadRenderedReportTable('vehicleUtilizationTbody','fleet_vehicle_utilization.csv','No vehicle utilization data to download');};
+  window.downloadMaintenanceHistoryReport=function(){downloadRenderedReportTable('maintenanceHistoryTbody','maintenance_history.csv','No maintenance history data to download');};
   window.downloadDriverHistoryReport=function(){const rows=driverRows();csvDownload('driver_mobile_history.csv',[['Trip','Date','Driver','Mobile User','Vehicle','Carrier','Pool','Route','Checker','Identity Attachment','First Odometer','End Odometer','Distance','Fuel Start L','Fuel End L','Tank Capacity L','Successful Stops','Total Stops','ePOD','Exception','Actual Cost','Status'],...rows.map(r=>[r.planId,r.shipmentDate,r.driver,r.username,r.vehicle,r.carrier,r.pool,r.route,r.checker,r.identityAttachment,r.odometerStart,r.odometerEnd,recordDistance(r),r.fuelStartLiters,r.fuelEndLiters,r.tankCapacity,r.success,r.stops,r.pod,r.exceptions,r.actualCost||r.plannedCost,r.status])]);};
   window.downloadActiveReport=function(){if(activeReportTab==='driver')return downloadDriverHistoryReport();if(activeReportTab==='performance'&&typeof downloadReport==='function')return downloadReport();const table=document.querySelector('#report-panel-'+activeReportTab+' table');if(!table)return toast('No table available');const rows=[...table.querySelectorAll('tr')].map(tr=>[...tr.children].map(td=>td.innerText.trim()));csvDownload(activeReportTab+'_report.csv',rows);};
 
@@ -2307,7 +2367,7 @@ const moduleName=v6Module();if(moduleName==='MASTER')v6InstallMasterUI();else if
     const rail=document.getElementById('mceasyRailLatency');if(rail)rail.textContent=`${db.mceasyConfig?.latency||'-'} • ${db.mceasyConfig?.environment||'-'}`;
   }
 
-  window.renderReport=function(){if(baseRenderReport)baseRenderReport();renderDriverHistoryReport();renderDeliveryReport();renderFleetMaintenanceReport();renderCostDetailReport();};
+  window.renderReport=function(){if(baseRenderReport)baseRenderReport();renderDriverHistoryReport();renderDeliveryReport();renderFleetMaintenanceReport();renderCostDetailReport();updateFleetReportControls();};
   window.renderIntegration=function(){if(baseRenderIntegration)baseRenderIntegration();renderMcEasyVisuals();};
 
   window.goPage=function(p){
